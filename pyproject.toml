@@ -1,14 +1,21 @@
 [project]
 name = "spaal2-core"
-version = "0.1.0"
+version = "2.0.0"
 description = "Add your description here"
 readme = "README.md"
 authors = [
     { name = "organic-nailer", email = "hykwyuk0125@gmail.com" }
 ]
 requires-python = ">=3.9"
-dependencies = []
+dependencies = [
+    "numpy>=1.26.4,<2.0.0",
+    "open3d>=0.18.0",
+    "simple-pcd-viewer",
+]
 
 [build-system]
 requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
+
+[tool.uv.sources]
+simple-pcd-viewer = { git = "https://github.com/organic-nailer/simple_pcd_viewer.git" }
