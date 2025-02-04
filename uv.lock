@@ -1,0 +1,7 @@
+version = 1
+requires-python = ">=3.9"
+
+[[package]]
+name = "spaal2-core"
+version = "0.1.0"
+source = { virtual = "." }
