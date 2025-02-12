@@ -1,6 +1,6 @@
 [project]
 name = "spaal2-core"
-version = "2.2.0"
+version = "2.3.0"
 description = "Add your description here"
 readme = "README.md"
 authors = [
@@ -25,4 +25,4 @@ include = [
 ]
 
 [tool.uv.sources]
-simple-pcd-viewer = { git = "https://github.com/organic-nailer/simple_pcd_viewer.git" }
+simple-pcd-viewer = { git = "https://github.com/organic-nailer/simple_pcd_viewer.git", tag = "v0.4.0" }
