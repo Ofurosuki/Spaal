@@ -3,8 +3,7 @@ from spaal2.core import (
     PreciseDuration, 
     apply_noise, 
     DummyLidarVLP16, 
-    DummySpooferAdaptiveHFR,
-    DummySpooferContinuousPulse,
+    DummySpooferAdaptiveHFRWithPerturbation,
     visualize,  
 )
 import time
@@ -13,20 +12,16 @@ import numpy as np
 
 def main():
 
-    lidar = DummyLidarVLP16()
+    lidar = DummyLidarVLP16(amplitude=1.0, pulse_width=PreciseDuration(nanoseconds=5))
     outdoor = DummyOutdoor(50.0, 0.8)
-    spoofer = DummySpooferAdaptiveHFR(
+    spoofer = DummySpooferAdaptiveHFRWithPerturbation(
         frequency=20 * 1e6, 
         duration=PreciseDuration(milliseconds=20),
         spoofer_distance_m=10.0,
         pulse_width=PreciseDuration(nanoseconds=5),
+        perturbation_ns=20.0,  # Add perturbation
+        amplitude=5.0,
     )
-    # spoofer = DummySpooferAdaptiveHFR(
-    #     frequency=20 * 1e6, 
-    #     duration=PreciseDuration(milliseconds=20),
-    #     spoofer_distance_m=10.0,
-    #     pulse_width=DummySpooferContinuousPulse.PreciseDuration(nanoseconds=5),
-    # )
 
     start = time.time()
     point_list = []
@@ -34,7 +29,6 @@ def main():
     while True:
         try:
             config, signal = lidar.scan()
-            #print(len(signal))
 
             if config.altitude == 900 and abs(config.azimuth - 1000) < 20:
                 spoofer.trigger(config, signal) # spooferをトリガー

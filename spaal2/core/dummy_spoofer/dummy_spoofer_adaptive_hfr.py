@@ -15,6 +15,7 @@ class DummySpooferAdaptiveHFR(DummySpooferInterface):
                  duration: PreciseDuration,
                  spoofer_distance_m: float,
                  pulse_width: PreciseDuration,
+                 amplitude: float = 9.0,
                  debug: bool = False) -> None:
         """
         Parameters
@@ -34,19 +35,22 @@ class DummySpooferAdaptiveHFR(DummySpooferInterface):
         self.duration = duration
         self.distance_m = spoofer_distance_m
         self.pulse_width = pulse_width
+        self.amplitude = amplitude
         self.pulse_period_ns = 1 / self.frequency * 1e9
         self.trigger_time: Optional[PreciseDuration] = None
-        if debug:
-            print(f"Spoofer: Adaptive HFR")
-            print(f"\tfrequency: {self.frequency / 1e6} MHz")
-            print(f"\tduration: {self.duration}")
-            print(f"\tpulse_width: {self.pulse_width}")
 
+        self._precompute_pulse_shape()
+
+    def set_amplitude(self, amplitude: float):
+        self.amplitude = amplitude
+        self._precompute_pulse_shape()
+
+    def _precompute_pulse_shape(self):
         # パルス形状を事前計算
-        sigma = pulse_width.in_nanoseconds / (2 * np.sqrt(2 * np.log2(2)))
+        sigma = self.pulse_width.in_nanoseconds / (2 * np.sqrt(2 * np.log2(2)))
         pulse_x = np.arange(-3 * sigma, 3 * sigma, 1.0)
         # ガウス分布
-        pulse_shape = 9 * np.exp(-((pulse_x) ** 2) / (2 * sigma ** 2))
+        pulse_shape = self.amplitude * np.exp(-((pulse_x) ** 2) / (2 * sigma ** 2))
 
         # 5000nsのバッファを事前計算し、必要な部分だけを逐一切り出すようにする
         max_duration = PreciseDuration(nanoseconds=5000)

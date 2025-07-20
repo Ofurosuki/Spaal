@@ -6,18 +6,23 @@ from spaal2.core import PreciseDuration, MeasurementConfig, VeloPoint
 class DummyLidarVLP16:
     vertical_angles: list[int] = [-15, 1, -13, 3, -11, 5, -9, 7, -7, 9, -5, 11, -3, 13, -1, 15]
 
-    def __init__(self, base_timestamp: PreciseDuration = PreciseDuration(nanoseconds=0)) -> None:
+    def __init__(self, base_timestamp: PreciseDuration = PreciseDuration(nanoseconds=0), amplitude: float = 1.0, pulse_width: PreciseDuration = PreciseDuration(nanoseconds=10)) -> None:
         self.index: int = 0
         self.max_index: int = int(360 // 0.2 * 16)
         self.accept_window = PreciseDuration(nanoseconds=800)
         self.base_timestamp = base_timestamp
+        self.amplitude = amplitude
+        self.pulse_width = pulse_width
+
+    def set_amplitude(self, amplitude: float):
+        self.amplitude = amplitude
         print(f"LiDAR: VLP16")
 
     def new_frame(self, base_timestamp: PreciseDuration) -> "DummyLidarVLP16":
         """
         新しいフレームを作成する
         """
-        return DummyLidarVLP16(base_timestamp=base_timestamp)
+        return DummyLidarVLP16(base_timestamp=base_timestamp, amplitude=self.amplitude, pulse_width=self.pulse_width)
 
     def _get_current_angle(self) -> tuple[int, int]:
         """
@@ -48,7 +53,8 @@ class DummyLidarVLP16:
         timestamp = self._get_current_timestamp()
 
         signal = np.zeros((self.accept_window.in_nanoseconds, ))
-        signal[:10] = 1.0
+        pulse_width_ns = self.pulse_width.in_nanoseconds
+        signal[:pulse_width_ns] = self.amplitude
 
         self.index += 1
         return MeasurementConfig(
