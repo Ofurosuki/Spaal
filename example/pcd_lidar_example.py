@@ -73,24 +73,6 @@ def run_pcd_lidar_example_with_hfr_spoofer():
     print(f"Detected {len(point_list)} points.")
     original_points = np.asarray(lidar.point_cloud.points)
 
-    # --- Rotation Logic ---
-    # Rotate the original point cloud by the calculated offset to check alignment.
-    # We use the negative offset to align the PCD's starting angle with the simulation's 0-degree start.
-    #angle_rad = np.deg2rad(-lidar.initial_azimuth_offset)
-    angle_rad = 0
-    cos_a = np.cos(angle_rad)
-    sin_a = np.sin(angle_rad)
-    
-    # Z-axis rotation matrix
-    rotation_matrix = np.array([
-        [cos_a, -sin_a, 0],
-        [sin_a,  cos_a, 0],
-        [0,          0, 1]
-    ])
-
-    # Apply the rotation
-    rotated_original_points = original_points.dot(rotation_matrix.T)
-    # --- End Rotation Logic ---
 
     no_signal_points = lidar.get_no_signal_points()
     print(f"Number of no-signal points: {len(no_signal_points)}")
@@ -98,7 +80,7 @@ def run_pcd_lidar_example_with_hfr_spoofer():
     # Convert the list of VeloPoint objects to a NumPy array for visualization
     simulated_points_np = np.array([[p.x, p.y, p.z] for p in point_list])
 
-    visualize_comparison(rotated_original_points, simulated_points_np, no_signal_points)
+    visualize_comparison(original_points, simulated_points_np, no_signal_points)
 
 if __name__ == "__main__":
     run_pcd_lidar_example_with_hfr_spoofer()

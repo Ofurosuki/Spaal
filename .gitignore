@@ -10,4 +10,5 @@ wheels/
 .venv
 
 example/*.pcd
+**.npy
 .vscode/

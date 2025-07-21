@@ -37,6 +37,7 @@ class PcdLidarVLP16:
         if len(self.points) > 0:
             first_point = self.points[0]
             self.initial_azimuth_offset = np.rad2deg(np.arctan2(first_point[1], first_point[0]))
+            print(f"Initial azimuth offset: {self.initial_azimuth_offset} degrees") 
         else:
             self.initial_azimuth_offset = 0
 
@@ -168,8 +169,8 @@ class PcdLidarVLP16:
         distance_m = (highest_peak_time * self.time_resolution_ns) * 0.15
         alpha = np.deg2rad(config.azimuth / 100.0)
         omega = np.deg2rad(config.altitude / 100.0)
-        x = distance_m * np.cos(alpha) * np.cos(omega)
-        y = distance_m * np.sin(alpha) * np.cos(omega)
+        x = distance_m * np.sin(alpha) * np.cos(omega)
+        y = distance_m * np.cos(alpha) * np.cos(omega)
         z = distance_m * np.sin(omega)
 
         return [
