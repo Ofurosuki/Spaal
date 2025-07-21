@@ -17,6 +17,7 @@ class DummySpooferAdaptiveHFRWithPerturbation(DummySpooferInterface):
                  pulse_width: PreciseDuration,
                  perturbation_ns: float,
                  amplitude: float = 9.0,
+                 time_resolution_ns: float = 1.0,
                  debug: bool = False) -> None:
         """
         Parameters
@@ -32,6 +33,8 @@ class DummySpooferAdaptiveHFRWithPerturbation(DummySpooferInterface):
         perturbation_ns : float
             The maximum random time perturbation to add to each pulse, in nanoseconds.
             The perturbation will be in the range [-perturbation_ns, +perturbation_ns].
+        time_resolution_ns : float, optional
+            The time resolution of the output signal in nanoseconds, by default 1.0.
         debug : bool, optional
             Whether to print debug information, by default False.
         """
@@ -41,6 +44,7 @@ class DummySpooferAdaptiveHFRWithPerturbation(DummySpooferInterface):
         self.pulse_width = pulse_width
         self.perturbation_ns = perturbation_ns
         self.amplitude = amplitude
+        self.time_resolution_ns = time_resolution_ns
         self.pulse_period_ns = 1 / self.frequency * 1e9
         self.trigger_time: Optional[PreciseDuration] = None
         self.pulse_perturbations: dict[int, float] = {}
@@ -52,39 +56,37 @@ class DummySpooferAdaptiveHFRWithPerturbation(DummySpooferInterface):
         self._precompute_pulse_shape()
 
     def _precompute_pulse_shape(self):
-        # Pre-calculate the Gaussian pulse shape
+        # Pre-calculate the Gaussian pulse shape at a high resolution (1.0 ns)
         sigma = self.pulse_width.in_nanoseconds / (2 * np.sqrt(2 * np.log2(2)))
         pulse_x_range = math.ceil(3 * sigma)
-        pulse_x = np.arange(-pulse_x_range, pulse_x_range + 1)
+        pulse_x = np.arange(-pulse_x_range, pulse_x_range + 1, 1.0)
         self.pulse_shape = self.amplitude * np.exp(-(pulse_x ** 2) / (2 * sigma ** 2))
 
     def trigger(self, config: MeasurementConfig, signal: npt.NDArray[np.float64]):
         if self.trigger_time is not None:
             return
 
-        # Apply delay based on distance
+        delay_indices = int(self.distance_m / (0.15 * self.time_resolution_ns))
         new_signal = np.zeros_like(signal)
-        delay = int(self.distance_m / 0.15)
-        if delay < signal.size:
-            new_signal[delay:] = signal[:-delay]
+        if delay_indices < len(signal):
+            new_signal[delay_indices:] = signal[:-delay_indices]
         signal = new_signal
 
-        # Find the first rising edge to trigger on
         raises = np.flatnonzero(
             (signal[:-1] < 0.5) & (signal[1:] >= 0.5)
         ) + 1
         if raises.size == 0:
             return
         peak_index = raises[0]
-        peak_time = config.start_timestamp + PreciseDuration(nanoseconds=peak_index)
-
-        self.trigger_time = peak_time
-        self.pulse_perturbations = {} # トリガー時に摂動をリセット
+        peak_time_ns = peak_index * self.time_resolution_ns
+        self.trigger_time = config.start_timestamp + PreciseDuration(nanoseconds=peak_time_ns)
+        self.pulse_perturbations = {} # Reset perturbations on trigger
         print(f"Triggered at {self.trigger_time.in_nanoseconds}ns")
 
     def get_range_signal(self, start_timestamp: PreciseDuration, duration: PreciseDuration) -> npt.NDArray[np.float64]:
+        output_length = int(duration.in_nanoseconds / self.time_resolution_ns)
         if self.trigger_time is None:
-            return np.zeros(duration.in_nanoseconds)
+            return np.zeros(output_length)
 
         attack_start_time = self.trigger_time
         attack_end_time = self.trigger_time + self.duration
@@ -95,47 +97,44 @@ class DummySpooferAdaptiveHFRWithPerturbation(DummySpooferInterface):
         attack_start_ns = attack_start_time.in_nanoseconds
         attack_end_ns = attack_end_time.in_nanoseconds
 
-        # If the request window is completely outside the attack window, return zeros
         if request_end_ns <= attack_start_ns or request_start_ns >= attack_end_ns:
             if request_start_ns >= attack_end_ns:
-                self.trigger_time = None  # Reset trigger
-            return np.zeros(duration.in_nanoseconds)
+                self.trigger_time = None
+            return np.zeros(output_length)
 
-        output_signal = np.zeros(duration.in_nanoseconds)
+        # Create the target time points for the output signal
+        target_time_points = request_start_ns + np.arange(output_length) * self.time_resolution_ns
+        output_signal = np.zeros(output_length)
 
-        # Determine the range of pulse indices that could fall within the request window
-        pulse_half_width = len(self.pulse_shape) // 2
-        
-        # Start index considers the earliest possible time a pulse could start affecting the window
-        start_pulse_idx = math.floor((request_start_ns - attack_start_ns - pulse_half_width - self.perturbation_ns) / self.pulse_period_ns)
-        
-        # End index considers the latest possible time a pulse could start and still affect the window
-        end_pulse_idx = math.ceil((request_end_ns - attack_start_ns + pulse_half_width + self.perturbation_ns) / self.pulse_period_ns)
+        pulse_half_width_ns = (len(self.pulse_shape) // 2)
+
+        start_pulse_idx = math.floor((request_start_ns - attack_start_ns - pulse_half_width_ns - self.perturbation_ns) / self.pulse_period_ns)
+        end_pulse_idx = math.ceil((request_end_ns - attack_start_ns + pulse_half_width_ns + self.perturbation_ns) / self.pulse_period_ns)
 
         for pulse_idx in range(start_pulse_idx, end_pulse_idx):
-            ideal_pulse_time = attack_start_ns + pulse_idx * self.pulse_period_ns
+            ideal_pulse_time_ns = attack_start_ns + pulse_idx * self.pulse_period_ns
             
-            # Add random perturbation
             if pulse_idx not in self.pulse_perturbations:
                 self.pulse_perturbations[pulse_idx] = np.random.uniform(-self.perturbation_ns, self.perturbation_ns)
             perturbation = self.pulse_perturbations[pulse_idx]
-            perturbed_time = round(ideal_pulse_time + perturbation)
+            perturbed_time_ns = ideal_pulse_time_ns + perturbation
 
-            # Only generate pulses that are within the overall attack duration
-            if not (attack_start_ns <= perturbed_time < attack_end_ns):
+            if not (attack_start_ns <= perturbed_time_ns < attack_end_ns):
                 continue
 
-            # Calculate the start position of the pulse in the output signal array
-            pulse_start_in_output = perturbed_time - pulse_half_width - request_start_ns
+            # Define the time window for this specific pulse
+            pulse_start_ns = perturbed_time_ns - pulse_half_width_ns
+            pulse_end_ns = perturbed_time_ns + pulse_half_width_ns
 
-            # Determine the slices for copying the pulse shape into the output signal
-            out_start = max(0, pulse_start_in_output)
-            out_end = min(duration.in_nanoseconds, pulse_start_in_output + len(self.pulse_shape))
-            
-            shape_start = max(0, -pulse_start_in_output)
-            shape_end = shape_start + (out_end - out_start)
+            # Find which points in the target signal are affected by this pulse
+            affected_indices = np.where((target_time_points >= pulse_start_ns) & (target_time_points <= pulse_end_ns))[0]
 
-            if out_start < out_end:
-                output_signal[out_start:out_end] += self.pulse_shape[shape_start:shape_end]
+            if len(affected_indices) > 0:
+                # Time points relative to the center of the pulse
+                relative_time_points = target_time_points[affected_indices] - perturbed_time_ns
+                # Interpolate the high-res pulse_shape to find the values at our target time points
+                high_res_x = np.arange(-pulse_half_width_ns, pulse_half_width_ns + 1, 1.0)
+                interpolated_values = np.interp(relative_time_points, high_res_x, self.pulse_shape)
+                output_signal[affected_indices] += interpolated_values
 
-        return output_signal
+        return np.clip(output_signal, 0, self.amplitude)

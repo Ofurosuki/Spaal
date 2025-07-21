@@ -6,23 +6,28 @@ from spaal2.core import PreciseDuration, MeasurementConfig, VeloPoint
 class DummyLidarVLP16:
     vertical_angles: list[int] = [-15, 1, -13, 3, -11, 5, -9, 7, -7, 9, -5, 11, -3, 13, -1, 15]
 
-    def __init__(self, base_timestamp: PreciseDuration = PreciseDuration(nanoseconds=0), amplitude: float = 1.0, pulse_width: PreciseDuration = PreciseDuration(nanoseconds=10)) -> None:
+    def __init__(self, base_timestamp: PreciseDuration = PreciseDuration(nanoseconds=0), amplitude: float = 1.0, pulse_width: PreciseDuration = PreciseDuration(nanoseconds=10), time_resolution_ns: float = 1.0) -> None:
         self.index: int = 0
         self.max_index: int = int(360 // 0.2 * 16)
         self.accept_window = PreciseDuration(nanoseconds=800)
         self.base_timestamp = base_timestamp
         self.amplitude = amplitude
         self.pulse_width = pulse_width
+        self.time_resolution_ns = time_resolution_ns
 
     def set_amplitude(self, amplitude: float):
         self.amplitude = amplitude
-        print(f"LiDAR: VLP16")
 
     def new_frame(self, base_timestamp: PreciseDuration) -> "DummyLidarVLP16":
         """
         新しいフレームを作成する
         """
-        return DummyLidarVLP16(base_timestamp=base_timestamp, amplitude=self.amplitude, pulse_width=self.pulse_width)
+        return DummyLidarVLP16(
+            base_timestamp=base_timestamp, 
+            amplitude=self.amplitude, 
+            pulse_width=self.pulse_width,
+            time_resolution_ns=self.time_resolution_ns
+        )
 
     def _get_current_angle(self) -> tuple[int, int]:
         """
@@ -52,9 +57,11 @@ class DummyLidarVLP16:
         azimuth, altitude = self._get_current_angle()
         timestamp = self._get_current_timestamp()
 
-        signal = np.zeros((self.accept_window.in_nanoseconds, ))
-        pulse_width_ns = self.pulse_width.in_nanoseconds
-        signal[:pulse_width_ns] = self.amplitude
+        signal_length = int(self.accept_window.in_nanoseconds / self.time_resolution_ns)
+        signal = np.zeros((signal_length, ))
+        pulse_width_indices = int(self.pulse_width.in_nanoseconds / self.time_resolution_ns)
+        if pulse_width_indices > 0:
+            signal[:pulse_width_indices] = self.amplitude
 
         self.index += 1
         return MeasurementConfig(

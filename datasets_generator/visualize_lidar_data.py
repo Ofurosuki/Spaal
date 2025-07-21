@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.widgets import Slider
 import os
+import argparse
 
 class LidarSignalVisualizer:
     def __init__(self, npy_file_path):
@@ -15,25 +16,21 @@ class LidarSignalVisualizer:
 
         self.num_frames, self.num_channels, self.num_horizontal, self.num_samples = self.data.shape
 
-        # 初期表示のインデックス
         self.current_frame = 0
         self.current_channel = 0
         self.current_horizontal = 0
 
-        # プロットのセットアップ
         self.fig, self.ax = plt.subplots(figsize=(12, 7))
         plt.subplots_adjust(bottom=0.35)
 
-        # 初期の1Dプロット
         initial_signal = self.data[self.current_frame, self.current_channel, self.current_horizontal, :]
         self.line, = self.ax.plot(initial_signal)
         self.ax.set_title(f'Frame: {self.current_frame}, Channel: {self.current_channel}, Horizontal Idx: {self.current_horizontal}')
         self.ax.set_xlabel('Sample Index (Time/Distance)')
         self.ax.set_ylabel('Signal Amplitude')
-        self.ax.set_ylim(0, np.max(self.data) * 1.1 if np.max(self.data) > 0 else 10) # Y軸の範囲を適切に設定
+        self.ax.set_ylim(0, np.max(self.data) * 1.1 if np.max(self.data) > 0 else 10)
         self.ax.grid(True)
 
-        # フレーム選択スライダー
         ax_frame = plt.axes([0.25, 0.2, 0.65, 0.03])
         self.frame_slider = Slider(
             ax=ax_frame,
@@ -44,7 +41,6 @@ class LidarSignalVisualizer:
             valstep=1
         )
 
-        # チャンネル選択スライダー
         ax_channel = plt.axes([0.25, 0.15, 0.65, 0.03])
         self.channel_slider = Slider(
             ax=ax_channel,
@@ -55,7 +51,6 @@ class LidarSignalVisualizer:
             valstep=1
         )
 
-        # 水平インデックス選択スライダー
         ax_horizontal = plt.axes([0.25, 0.1, 0.65, 0.03])
         self.horizontal_slider = Slider(
             ax=ax_horizontal,
@@ -66,7 +61,6 @@ class LidarSignalVisualizer:
             valstep=1
         )
 
-        # スライダーの更新イベントに関数を接続
         self.frame_slider.on_changed(self.update)
         self.channel_slider.on_changed(self.update)
         self.horizontal_slider.on_changed(self.update)
@@ -76,7 +70,6 @@ class LidarSignalVisualizer:
         self.current_channel = int(self.channel_slider.val)
         self.current_horizontal = int(self.horizontal_slider.val)
         
-        # プロットデータとタイトルを更新
         new_signal = self.data[self.current_frame, self.current_channel, self.current_horizontal, :]
         self.line.set_ydata(new_signal)
         self.ax.set_title(f'Frame: {self.current_frame}, Channel: {self.current_channel}, Horizontal Idx: {self.current_horizontal}')
@@ -86,12 +79,13 @@ class LidarSignalVisualizer:
         plt.show()
 
 if __name__ == '__main__':
-    # 使用例
-    dataset_file = './lidar_datasets/lidar_signal.npy'
-    
-    if not os.path.exists(dataset_file):
-        print(f"Error: Dataset file not found at '{dataset_file}'")
+    parser = argparse.ArgumentParser(description="Visualize LiDAR signal datasets from .npy files.")
+    parser.add_argument("--npy-file", type=str, help="Path to the .npy file to visualize.")
+    args = parser.parse_args()
+
+    if not os.path.exists(args.npy_file):
+        print(f"Error: Dataset file not found at '{args.npy_file}'")
         print("Please run 'lidar_signal_generator.py' first to generate the dataset.")
     else:
-        visualizer = LidarSignalVisualizer(dataset_file)
+        visualizer = LidarSignalVisualizer(args.npy_file)
         visualizer.show()

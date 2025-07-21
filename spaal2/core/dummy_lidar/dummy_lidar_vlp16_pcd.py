@@ -2,6 +2,7 @@ import numpy as np
 import numpy.typing as npt
 from typing import Optional
 import open3d as o3d
+import os
 
 from spaal2.core import PreciseDuration, MeasurementConfig, VeloPoint
 
@@ -18,66 +19,68 @@ class PcdLidarVLP16:
         self.time_resolution_ns = time_resolution_ns
         self.lidar_position = lidar_position
         self.lidar_rotation = lidar_rotation
+        self.pcd_file_path = pcd_file_path
 
-        self.point_cloud = o3d.io.read_point_cloud(pcd_file_path)
+        if not os.path.exists(pcd_file_path) and pcd_file_path:
+             raise FileNotFoundError(f"PCD file not found at {pcd_file_path}")
+        
+        if os.path.exists(pcd_file_path):
+            self.point_cloud = o3d.io.read_point_cloud(pcd_file_path)
+        else:
+            self.point_cloud = o3d.geometry.PointCloud()
+
         self.points = np.asarray(self.point_cloud.points)
 
         self.all_point_indices = set(range(len(self.points)))
         self.detected_point_indices = set()
 
-        # Set the initial azimuth offset so the scan starts at the first point's angle
-        first_point = self.points[0]
-        self.initial_azimuth_offset = np.rad2deg(np.arctan2(first_point[1], first_point[0]))
-        print(f"Initial azimuth offset: {self.initial_azimuth_offset} degrees")
+        if len(self.points) > 0:
+            first_point = self.points[0]
+            self.initial_azimuth_offset = np.rad2deg(np.arctan2(first_point[1], first_point[0]))
+        else:
+            self.initial_azimuth_offset = 0
 
         self.depth_map, self.original_point_indices_map = self._create_depth_map()
-        self.no_signal_scan_angles: list[tuple[int, int]] = [] # Store (azimuth, altitude) for no signal
+        self.no_signal_scan_angles: list[tuple[int, int]] = []
 
     def _create_depth_map(self):
         depth_map = {}
         original_point_indices_map = {}
-        # Discretize azimuth and altitude to match LiDAR's scanning pattern
-        horizontal_resolution = 20  # 0.2 degrees in hundredths
-
+        horizontal_resolution = 20
+        
         for i, point in enumerate(self.points):
             x, y, z = point
             if np.linalg.norm([x, y, z]) == 0:
                 continue
-
+            
             depth = np.linalg.norm(point)
-            # Y軸を0度とする座標系に合わせるため、arctan2の引数を(x, y)に変更
             azimuth_deg = np.rad2deg(np.arctan2(x, y))
             altitude_deg = np.rad2deg(np.arcsin(z / depth))
 
-            # Find the closest vertical angle in the VLP-16 spec
             closest_vertical_angle = min(self.vertical_angles, key=lambda v_angle: abs(v_angle - altitude_deg))
-
-            # Discretize the azimuth to the LiDAR's horizontal resolution
-            # and handle the wrap-around at 360 degrees
+            
             azimuth_index = round(azimuth_deg * 100 / horizontal_resolution)
             discretized_azimuth = (azimuth_index * horizontal_resolution)
 
             azimuth_key = int(discretized_azimuth % 36000)
             altitude_key = int(closest_vertical_angle * 100)
 
-            # If the key already exists, only update if the new point is closer
             if (azimuth_key, altitude_key) not in depth_map or depth < depth_map[(azimuth_key, altitude_key)]:
                 depth_map[(azimuth_key, altitude_key)] = depth
                 original_point_indices_map[(azimuth_key, altitude_key)] = i
-
+                
         return depth_map, original_point_indices_map
 
     def set_amplitude(self, amplitude: float):
         self.amplitude = amplitude
-        print(f"LiDAR: VLP16 (PCD)")
 
     def new_frame(self, base_timestamp: PreciseDuration) -> "PcdLidarVLP16":
         return PcdLidarVLP16(
-            pcd_file_path="",
-            lidar_position=self.lidar_position,
+            pcd_file_path=self.pcd_file_path,
+            lidar_position=self.lidar_position, 
             lidar_rotation=self.lidar_rotation,
-            base_timestamp=base_timestamp,
-            amplitude=self.amplitude,
+            base_timestamp=base_timestamp, 
+            amplitude=self.amplitude, 
             pulse_width=self.pulse_width,
             time_resolution_ns=self.time_resolution_ns
         )
@@ -93,7 +96,7 @@ class PcdLidarVLP16:
         horizontal_resolution = 20
         azimuth_index = round(absolute_azimuth_deg * 100 / horizontal_resolution)
         discretized_azimuth = (azimuth_index * horizontal_resolution)
-
+        
         lookup_key = int(discretized_azimuth % 36000)
 
         return lookup_key, altitude
@@ -113,7 +116,7 @@ class PcdLidarVLP16:
         timestamp = self._get_current_timestamp()
 
         depth = self.depth_map.get((azimuth, altitude))
-
+        
         signal_length = int(self.accept_window.in_nanoseconds / self.time_resolution_ns)
         signal = np.zeros((signal_length, ))
 
@@ -121,7 +124,7 @@ class PcdLidarVLP16:
             point_idx = self.original_point_indices_map.get((azimuth, altitude))
             if point_idx is not None:
                 self.detected_point_indices.add(point_idx)
-
+            
             time_of_flight_index = int(depth / (0.15 * self.time_resolution_ns))
             if time_of_flight_index < signal_length:
                 pulse_width_indices = int(self.pulse_width.in_nanoseconds / self.time_resolution_ns)
@@ -147,7 +150,7 @@ class PcdLidarVLP16:
         raises = np.flatnonzero(
             (signal[:-1] < 0.01) & (signal[1:] >= 0.01)
         ) + 1
-
+        
         if len(raises) == 0:
             return []
 
@@ -165,8 +168,8 @@ class PcdLidarVLP16:
         distance_m = (highest_peak_time * self.time_resolution_ns) * 0.15
         alpha = np.deg2rad(config.azimuth / 100.0)
         omega = np.deg2rad(config.altitude / 100.0)
-        x = distance_m * np.sin(alpha) * np.cos(omega)
-        y = distance_m * np.cos(alpha) * np.cos(omega)
+        x = distance_m * np.cos(alpha) * np.cos(omega)
+        y = distance_m * np.sin(alpha) * np.cos(omega)
         z = distance_m * np.sin(omega)
 
         return [
