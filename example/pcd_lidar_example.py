@@ -11,7 +11,8 @@ from spaal2.core import (
 def run_pcd_lidar_example_with_hfr_spoofer():
     # Path to the PCD file
     # The user provided this path, assuming it exists.
-    pcd_file_path = "C:/Users/nextr/spaal2-core/example/1464001237.670017000.pcd"
+    #pcd_file_path = "C:/Users/nextr/spaal2-core/example/1464001237.670017000.pcd"
+    pcd_file_path = "C:/Users/nextr/spaal2-core/example/1464002254.951256000.pcd"
 
     # LiDAR position and orientation
     lidar_position = np.array([0.0, 0.0, 0.0])
@@ -33,9 +34,12 @@ def run_pcd_lidar_example_with_hfr_spoofer():
         duration=PreciseDuration(milliseconds=20),
         spoofer_distance_m=10.0,
         pulse_width=PreciseDuration(nanoseconds=5),
+        time_resolution_ns=lidar.time_resolution_ns, # LiDARの分解能と統一
     )
 
     print("Running PCD LiDAR example with HFR spoofer...")
+
+    #print(f"Initial Azimuth Offset: {lidar.initial_azimuth_offset}")
 
     point_list = []
     # Perform a full scan
@@ -44,18 +48,18 @@ def run_pcd_lidar_example_with_hfr_spoofer():
             config, signal = lidar.scan()
 
             # Trigger the spoofer at a specific angle (e.g., altitude 1 degree, azimuth ~180 degrees)
-            # if config.altitude == 100 and abs(config.azimuth - 100) < 20:
-            #     spoofer.trigger(config, signal)
+            if config.altitude == 100 and abs(config.azimuth - 0) == 7000:
+                spoofer.trigger(config, signal)
 
-            # # Apply outdoor conditions and noise to the legitimate signal
-            # #signal = apply_noise(outdoor.apply(signal), ratio=0.1)
+            # Apply outdoor conditions and noise to the legitimate signal
+            #signal = apply_noise(outdoor.apply(signal), ratio=0.1)
             
-            # # Get the spoofer's signal and add noise
-            # external_signal = apply_noise(spoofer.get_range_signal(config.start_timestamp, config.accept_duration), ratio=0.01)
+            # Get the spoofer's signal and add noise
+            external_signal = apply_noise(spoofer.get_range_signal(config.start_timestamp, config.accept_duration), ratio=0.01)
             
-            # # Combine the legitimate and spoofed signals
-            # signal = np.maximum(signal, external_signal)
-            # signal = np.clip(signal, 0, 9)
+            # Combine the legitimate and spoofed signals
+            signal = np.maximum(signal, external_signal)
+            signal = np.clip(signal, 0, 9)
 
             # Receive points from the combined signal
             points = lidar.receive(config, signal)
@@ -73,7 +77,7 @@ def run_pcd_lidar_example_with_hfr_spoofer():
     # Rotate the original point cloud by the calculated offset to check alignment.
     # We use the negative offset to align the PCD's starting angle with the simulation's 0-degree start.
     #angle_rad = np.deg2rad(-lidar.initial_azimuth_offset)
-    angle_rad = np.deg2rad(90)  # Rotate by -90 degrees to align with the simulation's 0-degree start
+    angle_rad = 0
     cos_a = np.cos(angle_rad)
     sin_a = np.sin(angle_rad)
     
@@ -89,8 +93,12 @@ def run_pcd_lidar_example_with_hfr_spoofer():
     # --- End Rotation Logic ---
 
     no_signal_points = lidar.get_no_signal_points()
+    print(f"Number of no-signal points: {len(no_signal_points)}")
 
-    visualize_comparison(rotated_original_points, point_list, no_signal_points)
+    # Convert the list of VeloPoint objects to a NumPy array for visualization
+    simulated_points_np = np.array([[p.x, p.y, p.z] for p in point_list])
+
+    visualize_comparison(rotated_original_points, simulated_points_np, no_signal_points)
 
 if __name__ == "__main__":
     run_pcd_lidar_example_with_hfr_spoofer()

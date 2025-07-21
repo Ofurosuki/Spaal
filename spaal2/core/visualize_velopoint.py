@@ -23,13 +23,21 @@ def visualize(points: list[VeloPoint]):
     vis = spv.single.SingleFrameVisualizer(np.hstack([p,c]), rule=rule)
     vis.show(show_controller=True)
 
-def visualize_comparison(original_points: np.ndarray, simulated_points: list[VeloPoint], no_signal_points: np.ndarray = np.array([])):
+def visualize_comparison(original_points: np.ndarray, simulated_points, no_signal_points: np.ndarray = np.array([])):
     original_pcd = o3d.geometry.PointCloud()
     original_pcd.points = o3d.utility.Vector3dVector(original_points)
     original_pcd.paint_uniform_color([0, 0, 1])  # Blue for original
 
     simulated_pcd = o3d.geometry.PointCloud()
-    simulated_points_np = np.array([[p.x, p.y, p.z] for p in simulated_points])
+    
+    # Handle both list of VeloPoint and numpy array for simulated_points
+    if isinstance(simulated_points, list) and len(simulated_points) > 0 and isinstance(simulated_points[0], VeloPoint):
+        simulated_points_np = np.array([[p.x, p.y, p.z] for p in simulated_points])
+    elif isinstance(simulated_points, np.ndarray):
+        simulated_points_np = simulated_points
+    else:
+        simulated_points_np = np.array([])
+
     if simulated_points_np.size > 0:
         simulated_pcd.points = o3d.utility.Vector3dVector(simulated_points_np)
         simulated_pcd.paint_uniform_color([1, 0, 0])  # Red for simulated
@@ -37,6 +45,7 @@ def visualize_comparison(original_points: np.ndarray, simulated_points: list[Vel
     geometries_to_draw = [original_pcd, simulated_pcd]
 
     if no_signal_points.size > 0:
+        print(f"Visualizing {len(no_signal_points)} no-signal points.")
         no_signal_pcd = o3d.geometry.PointCloud()
         no_signal_pcd.points = o3d.utility.Vector3dVector(no_signal_points)
         no_signal_pcd.paint_uniform_color([0, 1, 0])  # Green for no signal

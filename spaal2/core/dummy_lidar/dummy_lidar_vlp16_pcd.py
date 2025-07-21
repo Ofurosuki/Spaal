@@ -21,11 +21,15 @@ class PcdLidarVLP16:
 
         self.point_cloud = o3d.io.read_point_cloud(pcd_file_path)
         self.points = np.asarray(self.point_cloud.points)
-        
+
+        self.all_point_indices = set(range(len(self.points)))
+        self.detected_point_indices = set()
+
         # Set the initial azimuth offset so the scan starts at the first point's angle
         first_point = self.points[0]
         self.initial_azimuth_offset = np.rad2deg(np.arctan2(first_point[1], first_point[0]))
-        
+        print(f"Initial azimuth offset: {self.initial_azimuth_offset} degrees")
+
         self.depth_map, self.original_point_indices_map = self._create_depth_map()
         self.no_signal_scan_angles: list[tuple[int, int]] = [] # Store (azimuth, altitude) for no signal
 
@@ -34,19 +38,20 @@ class PcdLidarVLP16:
         original_point_indices_map = {}
         # Discretize azimuth and altitude to match LiDAR's scanning pattern
         horizontal_resolution = 20  # 0.2 degrees in hundredths
-        
+
         for i, point in enumerate(self.points):
             x, y, z = point
             if np.linalg.norm([x, y, z]) == 0:
                 continue
-            
+
             depth = np.linalg.norm(point)
-            azimuth_deg = np.rad2deg(np.arctan2(y, x))
+            # Y軸を0度とする座標系に合わせるため、arctan2の引数を(x, y)に変更
+            azimuth_deg = np.rad2deg(np.arctan2(x, y))
             altitude_deg = np.rad2deg(np.arcsin(z / depth))
 
             # Find the closest vertical angle in the VLP-16 spec
             closest_vertical_angle = min(self.vertical_angles, key=lambda v_angle: abs(v_angle - altitude_deg))
-            
+
             # Discretize the azimuth to the LiDAR's horizontal resolution
             # and handle the wrap-around at 360 degrees
             azimuth_index = round(azimuth_deg * 100 / horizontal_resolution)
@@ -59,8 +64,7 @@ class PcdLidarVLP16:
             if (azimuth_key, altitude_key) not in depth_map or depth < depth_map[(azimuth_key, altitude_key)]:
                 depth_map[(azimuth_key, altitude_key)] = depth
                 original_point_indices_map[(azimuth_key, altitude_key)] = i
-                print(f"Mapping point to Azimuth: {azimuth_key/100}, Altitude: {altitude_key/100}, Depth: {depth}")
-                
+
         return depth_map, original_point_indices_map
 
     def set_amplitude(self, amplitude: float):
@@ -69,11 +73,11 @@ class PcdLidarVLP16:
 
     def new_frame(self, base_timestamp: PreciseDuration) -> "PcdLidarVLP16":
         return PcdLidarVLP16(
-            pcd_file_path="", 
-            lidar_position=self.lidar_position, 
+            pcd_file_path="",
+            lidar_position=self.lidar_position,
             lidar_rotation=self.lidar_rotation,
-            base_timestamp=base_timestamp, 
-            amplitude=self.amplitude, 
+            base_timestamp=base_timestamp,
+            amplitude=self.amplitude,
             pulse_width=self.pulse_width,
             time_resolution_ns=self.time_resolution_ns
         )
@@ -83,18 +87,13 @@ class PcdLidarVLP16:
         vertical_index = self.index % 16
         altitude = self._vertical_index_to_altitude(vertical_index)
 
-        # 1. Calculate the ideal, relative angle of the simulation step (e.g., 0.0, 0.2, 0.4 degrees)
         relative_azimuth_deg = horizontal_index * 0.2
-
-        # 2. Calculate the target absolute angle in the real world by applying the offset
         absolute_azimuth_deg = relative_azimuth_deg + self.initial_azimuth_offset
 
-        # 3. Discretize this target angle using the *exact same logic* as in _create_depth_map
-        #    to ensure the lookup key matches perfectly.
-        horizontal_resolution = 20  # 0.2 degrees in hundredths
+        horizontal_resolution = 20
         azimuth_index = round(absolute_azimuth_deg * 100 / horizontal_resolution)
         discretized_azimuth = (azimuth_index * horizontal_resolution)
-        
+
         lookup_key = int(discretized_azimuth % 36000)
 
         return lookup_key, altitude
@@ -114,18 +113,20 @@ class PcdLidarVLP16:
         timestamp = self._get_current_timestamp()
 
         depth = self.depth_map.get((azimuth, altitude))
-        
-        # Calculate time of flight based on the new resolution
+
         signal_length = int(self.accept_window.in_nanoseconds / self.time_resolution_ns)
         signal = np.zeros((signal_length, ))
 
         if depth is not None:
-            time_of_flight_index = int(depth / (0.15 * self.time_resolution_ns)) # Convert depth to index
+            point_idx = self.original_point_indices_map.get((azimuth, altitude))
+            if point_idx is not None:
+                self.detected_point_indices.add(point_idx)
+
+            time_of_flight_index = int(depth / (0.15 * self.time_resolution_ns))
             if time_of_flight_index < signal_length:
                 pulse_width_indices = int(self.pulse_width.in_nanoseconds / self.time_resolution_ns)
                 signal[time_of_flight_index:time_of_flight_index + pulse_width_indices] = self.amplitude
         else:
-            # Record the angle if no depth is found for this scan
             self.no_signal_scan_angles.append((azimuth, altitude))
 
         self.index += 1
@@ -137,19 +138,16 @@ class PcdLidarVLP16:
         ), signal
 
     def get_no_signal_points(self) -> np.ndarray:
-        no_signal_points_list = []
-        for az, alt in self.no_signal_scan_angles:
-            # Find the original point index that corresponds to this (az, alt) key
-            original_idx = self.original_point_indices_map.get((az, alt))
-            if original_idx is not None:
-                no_signal_points_list.append(self.points[original_idx])
-        return np.array(no_signal_points_list)
+        undetected_indices = self.all_point_indices - self.detected_point_indices
+        if not undetected_indices:
+            return np.array([])
+        return self.points[list(undetected_indices)]
 
     def receive(self, config: MeasurementConfig, signal: npt.NDArray[np.float64]) -> list[VeloPoint]:
         raises = np.flatnonzero(
             (signal[:-1] < 0.01) & (signal[1:] >= 0.01)
         ) + 1
-        
+
         if len(raises) == 0:
             return []
 
