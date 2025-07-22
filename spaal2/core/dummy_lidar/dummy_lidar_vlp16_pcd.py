@@ -158,7 +158,7 @@ class PcdLidarVLP16:
         peaks = np.empty_like(raises, dtype=np.float64)
         for i in range(len(raises)):
             peaks[i] = np.max(
-                signal[raises[i]:min(len(signal), raises[i] + 10)]
+                signal[raises[i]:min(len(signal), raises[i] + 50)]
             )
 
         highest_peak_index = np.argmax(peaks)
