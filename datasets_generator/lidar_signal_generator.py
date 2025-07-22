@@ -100,7 +100,6 @@ class LidarSignalDatasetGenerator:
                     if config.altitude == 900 and abs(config.azimuth - 1000) < 20:
                         self.spoofer.trigger(config, signal)
 
-                    signal = apply_noise(self.outdoor.apply(signal), ratio=self.noise_ratio)
                     sunlight_noise = gen_sunlight(len(signal), self.sunlight_mean)
                     signal = signal + sunlight_noise
                     
