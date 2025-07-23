@@ -13,28 +13,23 @@ class HistMatrixVisualizer:
             self.hist_matrix = data['signals']
             self.initial_azimuth_offset = data['initial_azimuth_offset']
             self.vertical_angles = data['vertical_angles']
+            self.fov = data['fov']
+
 
     def _reconstruct_point_cloud(self, frame_index: int = 0):
         points = []
         frame_data = self.hist_matrix[frame_index]
-        channels, horizontal_resolution, samples_per_scan = frame_data.shape
+        channels, horizontal_resolution, _ = frame_data.shape
 
         for v_idx in range(channels):
             for h_idx in range(horizontal_resolution):
                 signal = frame_data[v_idx, h_idx, :]
-                
-                raises = np.flatnonzero((signal[:-1] < 0.01) & (signal[1:] >= 0.01)) + 1
-                if len(raises) == 0:
+                raises = np.flatnonzero((signal[:-1] < 0.1) & (signal[1:] >= 0.1)) + 1
+                if not raises.any():
                     continue
-
-                peaks = np.array([np.max(signal[r:min(len(signal), r + 50)]) for r in raises])
                 
-                if len(peaks) == 0:
-                    continue
-
-                highest_peak_index = np.argmax(peaks)
-                highest_peak_time = raises[highest_peak_index]
-
+                # A simple approach: take the first detected peak
+                highest_peak_time = raises[0]
                 distance_m = (highest_peak_time * self.time_resolution_ns) * 0.15
                 
                 altitude_deg = self.vertical_angles[v_idx]
@@ -43,9 +38,8 @@ class HistMatrixVisualizer:
                 alpha = np.deg2rad(azimuth_deg)
                 omega = np.deg2rad(altitude_deg)
                 
-                # Standard spherical to cartesian conversion (X-forward)
-                y = distance_m * np.cos(omega) * np.cos(alpha)
                 x = distance_m * np.cos(omega) * np.sin(alpha)
+                y = distance_m * np.cos(omega) * np.cos(alpha)
                 z = distance_m * np.sin(omega)
                 
                 points.append([x, y, z])

@@ -128,7 +128,8 @@ class LidarSignalDatasetGenerator:
                  signals=all_frames_data, 
                  initial_azimuth_offset=initial_azimuth_offset, 
                  vertical_angles=vertical_angles,
-                 fov=fov)
+                 fov=fov,
+                 time_resolution_ns=self.time_resolution_ns)
         print(f"Saved all frames to {output_filename}")
 
 if __name__ == '__main__':
