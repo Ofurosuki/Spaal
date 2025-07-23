@@ -119,8 +119,16 @@ class LidarSignalDatasetGenerator:
 
             all_frames_data[frame_num, :, :, :] = frame_data
 
-        output_filename = os.path.join(self.output_dir, f"{filename_prefix}.npy")
-        np.save(output_filename, all_frames_data)
+        initial_azimuth_offset = self.lidar.initial_azimuth_offset if hasattr(self.lidar, 'initial_azimuth_offset') else 0.0
+        vertical_angles = self.lidar.vertical_angles
+        fov = 360.0  # FOV for VLP16 is 360 degrees
+
+        output_filename = os.path.join(self.output_dir, f"{filename_prefix}.npz")
+        np.savez(output_filename, 
+                 signals=all_frames_data, 
+                 initial_azimuth_offset=initial_azimuth_offset, 
+                 vertical_angles=vertical_angles,
+                 fov=fov)
         print(f"Saved all frames to {output_filename}")
 
 if __name__ == '__main__':

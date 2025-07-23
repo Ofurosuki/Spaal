@@ -1,16 +1,18 @@
+
 import numpy as np
 import open3d as o3d
 import argparse
 
 class HistMatrixVisualizer:
-    vertical_angles: list[int] = [-15, 1, -13, 3, -11, 5, -9, 7, -7, 9, -5, 11, -3, 13, -1, 15]
-
-    def __init__(self, npy_file_path: str, pcd_file_path: str = None, time_resolution_ns: float = 1.0, initial_azimuth_offset: float = 0.0):
-        self.npy_file_path = npy_file_path
+    def __init__(self, npz_file_path: str, pcd_file_path: str = None, time_resolution_ns: float = 1.0):
+        self.npz_file_path = npz_file_path
         self.pcd_file_path = pcd_file_path
         self.time_resolution_ns = time_resolution_ns
-        self.initial_azimuth_offset = initial_azimuth_offset
-        self.hist_matrix = np.load(npy_file_path)
+        
+        with np.load(npz_file_path) as data:
+            self.hist_matrix = data['signals']
+            self.initial_azimuth_offset = data['initial_azimuth_offset']
+            self.vertical_angles = data['vertical_angles']
 
     def _reconstruct_point_cloud(self, frame_index: int = 0):
         points = []
@@ -67,14 +69,13 @@ class HistMatrixVisualizer:
         o3d.visualization.draw_geometries(geometries)
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description="Visualize LiDAR histogram matrix.")
-    parser.add_argument("--npy-file", type=str, help="Path to the .npy histogram matrix file.")
+    parser = argparse.ArgumentParser(description="Visualize LiDAR histogram matrix from .npz file.")
+    parser.add_argument("--npz-file", type=str, help="Path to the .npz histogram matrix file.")
     parser.add_argument("--pcd-file", type=str, default=None, help="Path to the .pcd file for comparison.")
     parser.add_argument("--time-resolution-ns", type=float, default=0.2, help="Time resolution in nanoseconds.")
-    parser.add_argument("--initial-azimuth-offset", type=float, default=0.0, help="Initial azimuth offset in degrees.")
     parser.add_argument("--frame", type=int, default=0, help="Frame index to visualize.")
     
     args = parser.parse_args()
 
-    visualizer = HistMatrixVisualizer(args.npy_file, args.pcd_file, args.time_resolution_ns, args.initial_azimuth_offset)
+    visualizer = HistMatrixVisualizer(args.npz_file, args.pcd_file, args.time_resolution_ns)
     visualizer.visualize(args.frame)

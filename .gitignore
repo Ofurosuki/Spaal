@@ -12,3 +12,4 @@ wheels/
 example/*.pcd
 **.npy
 .vscode/
+**.npz

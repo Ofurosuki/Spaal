@@ -9,7 +9,8 @@ class LidarSignalVisualizer:
         if not os.path.exists(npy_file_path):
             raise FileNotFoundError(f"The specified file was not found: {npy_file_path}")
         
-        self.data = np.load(npy_file_path)
+        with np.load(npy_file_path) as data:
+            self.data = data['signals']
         
         if self.data.ndim != 4:
             raise ValueError(f"Expected a 4D array, but got an array with shape {self.data.shape}")
