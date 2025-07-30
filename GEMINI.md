@@ -13,3 +13,6 @@ Hist-matrixとは、 altitude x Azimuth x Histdata の形式でLiDARのHistgram�
 
 # 実行環境
 uvを使用しているので、uv run ~~とする。
+
+# coding rules
+- commentは英語で書く。
