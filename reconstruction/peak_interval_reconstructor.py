@@ -45,28 +45,39 @@ class PeakIntervalReconstructor:
                     if len(peaks) < min_run_length:
                         continue
 
-                    intervals_ns = np.diff(peaks) * self.time_resolution_ns
-                    
                     attack_peak_indices = set()
                     
-                    i = 0
-                    while i < len(intervals_ns):
-                        if abs(intervals_ns[i] - target_period_ns) <= tolerance_ns:
-                            # Found a potential start of a run
-                            run_start_interval_idx = i
-                            j = i + 1
-                            while j < len(intervals_ns) and abs(intervals_ns[j] - target_period_ns) <= tolerance_ns:
-                                j += 1
+                    # Each peak is a potential start of an attack run.
+                    for i in range(len(peaks)):
+                        run_candidate = [peaks[i]]
+                        last_peak_in_run = peaks[i]
+                        
+                        # Search for subsequent peaks that match the HFR period, allowing for gaps.
+                        for j in range(i + 1, len(peaks)):
+                            time_diff_ns = (peaks[j] - last_peak_in_run) * self.time_resolution_ns
                             
-                            # A run of intervals has ended at index j-1
-                            run_length = j - run_start_interval_idx
-                            if run_length >= min_run_length - 1:
-                                # This is a confirmed attack run. Add all peaks involved.
-                                for k in range(run_start_interval_idx, j + 1):
-                                    attack_peak_indices.add(peaks[k])
-                            i = j # Continue search from the end of the last run
-                        else:
-                            i += 1
+                            if time_diff_ns <= 0:
+                                continue
+
+                            # Check if the time difference is a multiple of the target period.
+                            num_expected_intervals = round(time_diff_ns / target_period_ns)
+
+                            if num_expected_intervals == 0:
+                                continue
+
+                            expected_time_diff = num_expected_intervals * target_period_ns
+                            
+                            # Scale the tolerance by the number of intervals to account for accumulated jitter over longer gaps.
+                            scaled_tolerance = tolerance_ns * num_expected_intervals
+
+                            if abs(time_diff_ns - expected_time_diff) <= scaled_tolerance:
+                                # Matched. Add this peak to the candidate run and update the last peak.
+                                run_candidate.append(peaks[j])
+                                last_peak_in_run = peaks[j]
+                        
+                        # If the candidate run is long enough, add its peaks to the set of attack peaks.
+                        if len(run_candidate) >= min_run_length:
+                            attack_peak_indices.update(run_candidate)
 
                     if not attack_peak_indices:
                         continue
