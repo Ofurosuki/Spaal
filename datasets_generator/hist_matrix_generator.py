@@ -7,6 +7,7 @@ from spaal2.core import (
 from spaal2.core.dummy_lidar.dummy_lidar_vlp16 import DummyLidarVLP16
 from spaal2.core.dummy_lidar.dummy_lidar_vlp16_pcd import PcdLidarVLP16
 from spaal2.core.dummy_spoofer.dummy_spoofer_adaptive_hfr_with_perturbation import DummySpooferAdaptiveHFRWithPerturbation
+from spaal2.core.dummy_spoofer.dummy_spoofer_off import DummySpooferOff
 
 class LidarSignalDatasetGenerator:
     def __init__(self, 
@@ -66,8 +67,9 @@ class LidarSignalDatasetGenerator:
         self.sunlight_mean = sunlight_mean
         self.lidar_amplitude_range = lidar_amplitude_range
         self.spoofer_amplitude_range = spoofer_amplitude_range
+        self.spoofer_type = spoofer_type
 
-        if spoofer_type == "adaptive_hfr_perturbation":
+        if self.spoofer_type == "adaptive_hfr_perturbation":
             self.spoofer = DummySpooferAdaptiveHFRWithPerturbation(
                 frequency=spoofer_frequency,
                 duration=PreciseDuration(milliseconds=spoofer_duration_ms),
@@ -77,8 +79,10 @@ class LidarSignalDatasetGenerator:
                 amplitude=spoofer_amplitude_range[0],
                 time_resolution_ns=self.lidar.time_resolution_ns
             )
+        elif self.spoofer_type == "off":
+            self.spoofer = DummySpooferOff()
         else:
-            raise ValueError(f"Spoofer type {spoofer_type} not implemented for this script yet.")
+            raise ValueError(f"Spoofer type {self.spoofer_type} not implemented for this script yet.")
 
     def generate(self, num_frames: int, filename_prefix: str = "lidar_signal"):
         all_frames_data = np.zeros((num_frames, self.channels, self.horizontal_resolution, self.samples_per_scan), dtype=np.float32)
@@ -93,19 +97,18 @@ class LidarSignalDatasetGenerator:
                     config, signal = current_lidar.scan()
 
                     lidar_amp = np.random.uniform(self.lidar_amplitude_range[0], self.lidar_amplitude_range[1])
-                    spoofer_amp = np.random.uniform(self.spoofer_amplitude_range[0], self.spoofer_amplitude_range[1])
                     current_lidar.set_amplitude(lidar_amp)
-                    self.spoofer.set_amplitude(spoofer_amp)
-
-                    if config.altitude == 900 and config.azimuth == 7000:
-                        self.spoofer.trigger(config, signal)
-
-                    # sunlight_noise = gen_sunlight(len(signal), self.sunlight_mean)
-                    # signal = signal + sunlight_noise
                     
-                    external_signal = apply_noise(self.spoofer.get_range_signal(config.start_timestamp, config.accept_duration), ratio=0.01)
-                    
-                    signal = np.maximum(signal, external_signal)
+                    if self.spoofer_type != "off":
+                        spoofer_amp = np.random.uniform(self.spoofer_amplitude_range[0], self.spoofer_amplitude_range[1])
+                        self.spoofer.set_amplitude(spoofer_amp)
+
+                        if config.altitude == 900 and config.azimuth == 7000:
+                            self.spoofer.trigger(config, signal)
+                        
+                        external_signal = apply_noise(self.spoofer.get_range_signal(config.start_timestamp, config.accept_duration), ratio=0.01)
+                        signal = np.maximum(signal, external_signal)
+
                     signal = np.clip(signal, 0, 9)
 
                     horizontal_index = (current_lidar.index -1) // self.channels
@@ -144,6 +147,8 @@ if __name__ == '__main__':
                         help="Directory to save the generated dataset.")
     parser.add_argument("--time-resolution-ns", type=float, default=1.0,
                         help="Time resolution in nanoseconds for the simulation.")
+    parser.add_argument("--spoofer-type", type=str, default="adaptive_hfr_perturbation", choices=["adaptive_hfr_perturbation", "off"],
+                        help="Type of spoofer to use.")
 
     args = parser.parse_args()
 
@@ -154,6 +159,7 @@ if __name__ == '__main__':
         lidar_type=args.lidar_type,
         pcd_file=args.pcd_file,
         output_dir=args.output_dir,
-        time_resolution_ns=args.time_resolution_ns
+        time_resolution_ns=args.time_resolution_ns,
+        spoofer_type=args.spoofer_type
     )
     generator.generate(num_frames=args.num_frames)
