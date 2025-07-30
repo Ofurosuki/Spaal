@@ -25,7 +25,7 @@ class PeakIntervalReconstructor:
                 filtered_peaks.append(raises[i])
         return np.array(filtered_peaks)
 
-    def reconstruct(self, hfr_freq_mhz: float, tolerance_ns: float = 1.5, min_run_length: int = 3, pulse_width_samples: int = 5):
+    def reconstruct(self, hfr_freq_mhz: float, tolerance_ns: float = 1.5, min_run_length: int = 3, pulse_width_samples: int = 80):
         """
         Reconstructs the signal by identifying and removing peaks that match the HFR period.
         """
@@ -74,9 +74,10 @@ class PeakIntervalReconstructor:
                     # Remove the identified attack peaks by zeroing them out
                     clean_signal = self.reconstructed_signals[frame, v_idx, h_idx, :]
                     for peak_idx in sorted(list(attack_peak_indices)):
-                        start = max(0, peak_idx - 1)
-                        end = min(len(clean_signal), peak_idx + pulse_width_samples)
+                        start = max(0, peak_idx - 20)
+                        end = min(len(clean_signal), peak_idx + pulse_width_samples )
                         clean_signal[start:end] = 0
+
 
         print(f"Peak interval reconstruction applied for {hfr_freq_mhz:.2f} MHz.")
 
