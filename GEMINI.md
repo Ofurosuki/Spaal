@@ -16,3 +16,4 @@ uvを使用しているので、uv run ~~とする。
 
 # coding rules
 - commentは英語で書く。
+- 変数や関数定義時に型を記述する。
