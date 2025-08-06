@@ -86,6 +86,7 @@ class LidarSignalDatasetGenerator:
 
     def generate(self, num_frames: int, filename_prefix: str = "lidar_signal"):
         all_frames_data = np.zeros((num_frames, self.channels, self.horizontal_resolution, self.samples_per_scan), dtype=np.float32)
+        answer_matrix = np.zeros((num_frames, self.channels, self.horizontal_resolution), dtype=np.int32)
 
         for frame_num in range(num_frames):
             print(f"Generating frame {frame_num + 1}/{num_frames}...")
@@ -95,6 +96,24 @@ class LidarSignalDatasetGenerator:
             try:
                 for i in range(current_lidar.max_index):
                     config, signal = current_lidar.scan()
+                    # find candidate peaks in the signal
+                    raises = np.flatnonzero(
+                        (signal[:-1] < 0.01) & (signal[1:] >= 0.01)
+                    ) + 1
+                    
+                    if len(raises) == 0:
+                        true_peak_index = 0
+                    else:
+                        peaks = np.empty_like(raises, dtype=np.float64)
+                        for i in range(len(raises)):
+                            peaks[i] = np.max(
+                                signal[raises[i]:min(len(signal), raises[i] + 50)]
+                            )
+                        highest_peak_index = np.argmax(peaks)
+                        highest_peak = peaks[highest_peak_index]
+                        highest_peak_time = raises[highest_peak_index]
+
+                        true_peak_index = highest_peak_time
 
                     lidar_amp = np.random.uniform(self.lidar_amplitude_range[0], self.lidar_amplitude_range[1])
                     current_lidar.set_amplitude(lidar_amp)
@@ -116,6 +135,7 @@ class LidarSignalDatasetGenerator:
 
                     if horizontal_index < self.horizontal_resolution:
                         frame_data[vertical_index, horizontal_index, :] = signal
+                        answer_matrix[frame_num, vertical_index, horizontal_index] = true_peak_index
 
             except StopIteration:
                 pass
@@ -129,6 +149,7 @@ class LidarSignalDatasetGenerator:
         output_filename = os.path.join(self.output_dir, f"{filename_prefix}.npz")
         np.savez(output_filename, 
                  signals=all_frames_data, 
+                 answer_matrix=answer_matrix,
                  initial_azimuth_offset=initial_azimuth_offset, 
                  vertical_angles=vertical_angles,
                  fov=fov,
