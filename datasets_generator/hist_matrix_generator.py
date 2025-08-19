@@ -6,6 +6,7 @@ from spaal2.core import (
 )
 from spaal2.core.dummy_lidar.dummy_lidar_vlp16 import DummyLidarVLP16
 from spaal2.core.dummy_lidar.dummy_lidar_vlp16_pcd import PcdLidarVLP16
+from spaal2.core.dummy_lidar.dummy_lidar_vlp32_pcd import PcdLidarVLP32c
 from spaal2.core.dummy_spoofer.dummy_spoofer_adaptive_hfr_with_perturbation import DummySpooferAdaptiveHFRWithPerturbation
 from spaal2.core.dummy_spoofer.dummy_spoofer_off import DummySpooferOff
 
@@ -52,6 +53,19 @@ class LidarSignalDatasetGenerator:
                 time_resolution_ns=self.time_resolution_ns
             )
             self.channels = 16
+            self.horizontal_resolution = self.lidar.max_index // self.channels
+        elif self.lidar_type == "PCD_VLP32c":
+            if not self.pcd_file or not os.path.exists(self.pcd_file):
+                raise ValueError(f"PCD file path must be provided and valid for PCD_VLP32c lidar type. Provided: {self.pcd_file}")
+            self.lidar = PcdLidarVLP32c(
+                pcd_file_path=self.pcd_file,
+                lidar_position=np.array([0.0, 0.0, 0.0]),
+                lidar_rotation=np.array([0.0, 0.0, 0.0]),
+                amplitude=lidar_amplitude_range[0],
+                pulse_width=PreciseDuration(nanoseconds=lidar_pulse_width_ns),
+                time_resolution_ns=self.time_resolution_ns
+            )
+            self.channels = 32
             self.horizontal_resolution = self.lidar.max_index // self.channels
         else:
             raise ValueError(f"Unknown LiDAR model: {lidar_type}")
@@ -122,7 +136,9 @@ class LidarSignalDatasetGenerator:
                         spoofer_amp = np.random.uniform(self.spoofer_amplitude_range[0], self.spoofer_amplitude_range[1])
                         self.spoofer.set_amplitude(spoofer_amp)
 
-                        if config.altitude == 900 and config.azimuth == 7000:
+                        #print("Spoofer triggered for azimuth: %s, altitude: %s", config.azimuth, config.altitude)
+                        if config.altitude == 400 and config.azimuth == 7000:
+                            print("Spoofer triggered for azimuth: %s, altitude: %s", config.azimuth, config.altitude)
                             self.spoofer.trigger(config, signal)
                         
                         external_signal = apply_noise(self.spoofer.get_range_signal(config.start_timestamp, config.accept_duration), ratio=0.01)
@@ -158,10 +174,10 @@ class LidarSignalDatasetGenerator:
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Generate LiDAR signal datasets.")
-    parser.add_argument("--lidar-type", type=str, default="VLP16", choices=["VLP16", "PCD_VLP16"],
+    parser.add_argument("--lidar-type", type=str, default="VLP16", choices=["VLP16", "PCD_VLP16", "PCD_VLP32c"],
                         help="Type of LiDAR to use.")
     parser.add_argument("--pcd-file", type=str, default=None,
-                        help="Path to the PCD file, required if lidar-type is PCD_VLP16.")
+                        help="Path to the PCD file, required if lidar-type is PCD_VLP16 or PCD_VLP32c.")
     parser.add_argument("--num-frames", type=int, default=1,
                         help="Number of frames to generate.")
     parser.add_argument("--output-dir", type=str, default="./lidar_datasets",
@@ -173,8 +189,8 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    if args.lidar_type == "PCD_VLP16" and not args.pcd_file:
-        parser.error("--pcd-file is required when --lidar-type is PCD_VLP16")
+    if (args.lidar_type == "PCD_VLP16" or args.lidar_type == "PCD_VLP32c") and not args.pcd_file:
+        parser.error(f"--pcd-file is required when --lidar-type is {args.lidar_type}")
 
     generator = LidarSignalDatasetGenerator(
         lidar_type=args.lidar_type,
