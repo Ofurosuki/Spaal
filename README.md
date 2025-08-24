@@ -43,7 +43,7 @@ uv run datasets_generator/hist_matrix_visualizer.py --pcd-file "C:/Users/nextr/s
       生成されたデータセット（.npzファイル）を保存するディレクトリを指定します。
 
 ```
-uv run python datasets_generator/hist_matrix_generator.py --lidar-type PCD_VLP32c --pcd-directory ./nuscenes_data --num-frames 10 --output-dir ./pcd_datasets
+uv run python datasets_generator/hist_matrix_generator.py --lidar-type PCD_VLP32c --pcd-directory ./nuscenes_data --num-frames 10 --output-dir ./pcd_datasets --spoofer-angle 90 --spoofer-altitude 5
 ```
 
 ## Hist-matrix -> pointcloud 変換方法

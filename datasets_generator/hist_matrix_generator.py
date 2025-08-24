@@ -22,17 +22,21 @@ class LidarSignalDatasetGenerator:
                  spoofer_duration_ms: float = 20,
                  spoofer_distance_m: float = 10.0,
                  spoofer_pulse_width_ns: float = 5,
-                 spoofer_perturbation_ns: float = 0.0,
+                 spoofer_perturbation_ns: float = 20.0,
                  spoofer_amplitude_range: tuple[float, float] = (5.0, 9.0),
                  lidar_amplitude_range: tuple[float, float] = (1.0, 7.0),
                  lidar_pulse_width_ns: float = 5,
                  time_resolution_ns: float = 1.0,
                  noise_ratio: float = 0.1,
-                 sunlight_mean: float = 0.5):
+                 sunlight_mean: float = 0.5,
+                 spoofer_angle_deg: float = 0.0, 
+                 spoofer_altitude_deg: float = 8.0):
 
         self.lidar_type = lidar_type
         self.pcd_directory = pcd_directory
         self.time_resolution_ns = time_resolution_ns
+        self.spoofer_angle_deg = spoofer_angle_deg
+        self.spoofer_altitude_deg = spoofer_altitude_deg
 
         if self.lidar_type == "VLP16":
             self.lidar = DummyLidarVLP16(
@@ -118,6 +122,28 @@ class LidarSignalDatasetGenerator:
                 all_initial_azimuth_offsets.append(current_lidar.initial_azimuth_offset)
             else:
                 all_initial_azimuth_offsets.append(0.0)
+
+            actual_trigger_point = None
+            if self.spoofer_type != "off" and hasattr(current_lidar, 'depth_map'):
+                # Convert user-facing angle (0-front, CCW) to internal angle (0-right, CCW)
+                # by adding 90 degrees. The result is wrapped to [0, 360).
+                internal_angle_deg = (self.spoofer_angle_deg + 90) % 360
+                target_azimuth = internal_angle_deg * 100
+                target_altitude = self.spoofer_altitude_deg * 100
+                target_point = (target_azimuth, target_altitude)
+
+                available_points = list(current_lidar.depth_map.keys())
+                
+                if not available_points:
+                    print("Warning: Cannot determine spoofer trigger point, depth map is empty.")
+                elif target_point in current_lidar.depth_map:
+                    actual_trigger_point = target_point
+                else:
+                    # Find the closest point by Euclidean distance
+                    distances = [np.sqrt((az - target_azimuth)**2 + (alt - target_altitude)**2) for az, alt in available_points]
+                    closest_index = np.argmin(distances)
+                    actual_trigger_point = available_points[closest_index]
+                    print(f"Target spoofer point at {self.spoofer_angle_deg} deg (front=0, ccw) not found. Using closest point: az={actual_trigger_point[0]/100}, alt={actual_trigger_point[1]/100} deg")
             
             frame_data = np.zeros((self.channels, self.horizontal_resolution, self.samples_per_scan), dtype=np.float32)
 
@@ -150,9 +176,9 @@ class LidarSignalDatasetGenerator:
                         spoofer_amp = np.random.uniform(self.spoofer_amplitude_range[0], self.spoofer_amplitude_range[1])
                         self.spoofer.set_amplitude(spoofer_amp)
 
-                        # print(f"azimuth: {config.azimuth}")
-                        if config.altitude == 800 and config.azimuth == 7000: # HFR starts at 260 degrees
-                            print("Spoofer triggered for azimuth: %s, altitude: %s", config.azimuth, config.altitude)
+                        # Check if the current scan config matches the determined trigger point
+                        if actual_trigger_point and config.altitude == actual_trigger_point[1] and config.azimuth == actual_trigger_point[0]:
+                            print(f"Spoofer triggered for azimuth: {config.azimuth}, altitude: {config.altitude}")
                             self.spoofer.trigger(config, signal)
                         
                         external_signal = apply_noise(self.spoofer.get_range_signal(config.start_timestamp, config.accept_duration), ratio=0.01)
@@ -199,6 +225,11 @@ if __name__ == '__main__':
                         help="Time resolution in nanoseconds for the simulation.")
     parser.add_argument("--spoofer-type", type=str, default="adaptive_hfr_perturbation", choices=["adaptive_hfr_perturbation", "off"],
                         help="Type of spoofer to use.")
+    # New arguments for spoofer targeting
+    parser.add_argument("--spoofer-angle", type=float, default=0.0,
+                        help="The angle for the spoofer trigger, in degrees, counter-clockwise with 0 at the front.")
+    parser.add_argument("--spoofer-altitude", type=float, default=8.0,
+                        help="The altitude for the spoofer trigger, in degrees.")
 
     args = parser.parse_args()
 
@@ -210,6 +241,8 @@ if __name__ == '__main__':
         pcd_directory=args.pcd_directory,
         output_dir=args.output_dir,
         time_resolution_ns=args.time_resolution_ns,
-        spoofer_type=args.spoofer_type
+        spoofer_type=args.spoofer_type,
+        spoofer_angle_deg=args.spoofer_angle,
+        spoofer_altitude_deg=args.spoofer_altitude
     )
     generator.generate(num_frames=args.num_frames)

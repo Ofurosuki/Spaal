@@ -17,3 +17,25 @@ uvを使用しているので、uv run ~~とする。
 # coding rules
 - commentは英語で書く。
 - 変数や関数定義時に型を記述する。
+
+# 開発上の注意点 (Development Notes)
+
+## codeの変更時
+変更時は何を変更するのか概要を提示して、実行の可否を訪ねてから変更を実行してください。
+
+### `hist-matrix` (.npz) の仕様
+- **ソース**: 複数のPCDファイル（ディレクトリ単位で指定）を元に、複数フレームを持つ単一の`.npz`ファイルを生成する。
+- **方位角オフセット**:
+    - `.npz`ファイルには、フレームごとの初期方位角オフセットが `initial_azimuth_offsets` というキーのNumpy配列で格納されている。
+    - これは、各フレームの元となったPCDファイルごとに計算されたオフセットのリストである。
+
+### `hist_matrix_visualizer.py` における方位角の再構成
+点群を再構成する際の方位角の計算は、以下の式で行うことが必須である。
+
+```python
+# in datasets_generator/hist_matrix_visualizer.py
+azimuth_deg = (h_idx / horizontal_resolution) * self.fov + current_azimuth_offset
+```
+
+**重要**: `current_azimuth_offset` を **加算(`+`)** するのがこのプロジェクトのパイプラインにおける正しい仕様である。一見、逆変換のために減算(`-`)するように見えるが、それは誤りであり、点群のずれを引き起こす。
+
