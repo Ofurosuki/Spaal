@@ -62,7 +62,7 @@ class HistMatrixVisualizer:
                 distance_m = (highest_peak_time * self.time_resolution_ns) * 0.15
                 
                 altitude_deg = self.vertical_angles[v_idx]
-                azimuth_deg = (h_idx / horizontal_resolution) * self.fov - current_azimuth_offset
+                azimuth_deg = (h_idx / horizontal_resolution) * self.fov + current_azimuth_offset
 
                 alpha = np.deg2rad(azimuth_deg)
                 omega = np.deg2rad(altitude_deg)
