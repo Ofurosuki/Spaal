@@ -1,6 +1,7 @@
 import numpy as np
 import os
 import argparse
+import glob
 from spaal2.core import (
     PreciseDuration, DummyOutdoor, apply_noise, gen_sunlight,
 )
@@ -13,7 +14,7 @@ from spaal2.core.dummy_spoofer.dummy_spoofer_off import DummySpooferOff
 class LidarSignalDatasetGenerator:
     def __init__(self, 
                  lidar_type: str = "VLP16",
-                 pcd_file: str = None,
+                 pcd_directory: str = None,
                  output_dir: str = "./datasets",
                  outdoor_distance: float = 50.0, outdoor_ratio: float = 0.8,
                  spoofer_type: str = "adaptive_hfr_perturbation",
@@ -30,7 +31,7 @@ class LidarSignalDatasetGenerator:
                  sunlight_mean: float = 0.5):
 
         self.lidar_type = lidar_type
-        self.pcd_file = pcd_file
+        self.pcd_directory = pcd_directory
         self.time_resolution_ns = time_resolution_ns
 
         if self.lidar_type == "VLP16":
@@ -41,31 +42,33 @@ class LidarSignalDatasetGenerator:
             )
             self.channels = 16
             self.horizontal_resolution = 1800
-        elif self.lidar_type == "PCD_VLP16":
-            if not self.pcd_file or not os.path.exists(self.pcd_file):
-                raise ValueError(f"PCD file path must be provided and valid for PCD_VLP16 lidar type. Provided: {self.pcd_file}")
-            self.lidar = PcdLidarVLP16(
-                pcd_file_path=self.pcd_file,
+        elif self.lidar_type == "PCD_VLP16" or self.lidar_type == "PCD_VLP32c":
+            if not self.pcd_directory or not os.path.isdir(self.pcd_directory):
+                raise ValueError(f"PCD directory path must be provided and valid for {self.lidar_type} lidar type. Provided: {self.pcd_directory}")
+            
+            self.pcd_files = sorted(glob.glob(os.path.join(self.pcd_directory, '*.pcd')))
+            if not self.pcd_files:
+                raise ValueError(f"No PCD files found in {self.pcd_directory}")
+
+            if self.lidar_type == "PCD_VLP16":
+                lidar_class = PcdLidarVLP16
+                self.channels = 16
+            else:
+                lidar_class = PcdLidarVLP32c
+                self.channels = 32
+
+            self.lidar = lidar_class(
+                pcd_file_path=None, # Initialized without a specific file
                 lidar_position=np.array([0.0, 0.0, 0.0]),
                 lidar_rotation=np.array([0.0, 0.0, 0.0]),
                 amplitude=lidar_amplitude_range[0],
                 pulse_width=PreciseDuration(nanoseconds=lidar_pulse_width_ns),
                 time_resolution_ns=self.time_resolution_ns
             )
-            self.channels = 16
-            self.horizontal_resolution = self.lidar.max_index // self.channels
-        elif self.lidar_type == "PCD_VLP32c":
-            if not self.pcd_file or not os.path.exists(self.pcd_file):
-                raise ValueError(f"PCD file path must be provided and valid for PCD_VLP32c lidar type. Provided: {self.pcd_file}")
-            self.lidar = PcdLidarVLP32c(
-                pcd_file_path=self.pcd_file,
-                lidar_position=np.array([0.0, 0.0, 0.0]),
-                lidar_rotation=np.array([0.0, 0.0, 0.0]),
-                amplitude=lidar_amplitude_range[0],
-                pulse_width=PreciseDuration(nanoseconds=lidar_pulse_width_ns),
-                time_resolution_ns=self.time_resolution_ns
-            )
-            self.channels = 32
+            self.lidar.set_pcd_files(self.pcd_files)
+            
+            # Load the first frame to determine horizontal_resolution
+            self.lidar.new_frame(frame_num=0)
             self.horizontal_resolution = self.lidar.max_index // self.channels
         else:
             raise ValueError(f"Unknown LiDAR model: {lidar_type}")
@@ -104,7 +107,12 @@ class LidarSignalDatasetGenerator:
 
         for frame_num in range(num_frames):
             print(f"Generating frame {frame_num + 1}/{num_frames}...")
-            current_lidar = self.lidar.new_frame(base_timestamp=PreciseDuration(nanoseconds=frame_num * 10**9))
+            
+            if self.lidar_type in ["PCD_VLP16", "PCD_VLP32c"]:
+                current_lidar = self.lidar.new_frame(frame_num=frame_num, base_timestamp=PreciseDuration(nanoseconds=frame_num * 10**9))
+            else:
+                current_lidar = self.lidar.new_frame(base_timestamp=PreciseDuration(nanoseconds=frame_num * 10**9))
+            
             frame_data = np.zeros((self.channels, self.horizontal_resolution, self.samples_per_scan), dtype=np.float32)
 
             try:
@@ -176,8 +184,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Generate LiDAR signal datasets.")
     parser.add_argument("--lidar-type", type=str, default="VLP16", choices=["VLP16", "PCD_VLP16", "PCD_VLP32c"],
                         help="Type of LiDAR to use.")
-    parser.add_argument("--pcd-file", type=str, default=None,
-                        help="Path to the PCD file, required if lidar-type is PCD_VLP16 or PCD_VLP32c.")
+    parser.add_argument("--pcd-directory", type=str, default=None,
+                        help="Path to the directory containing PCD files, required if lidar-type starts with PCD.")
     parser.add_argument("--num-frames", type=int, default=1,
                         help="Number of frames to generate.")
     parser.add_argument("--output-dir", type=str, default="./lidar_datasets",
@@ -189,12 +197,12 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    if (args.lidar_type == "PCD_VLP16" or args.lidar_type == "PCD_VLP32c") and not args.pcd_file:
-        parser.error(f"--pcd-file is required when --lidar-type is {args.lidar_type}")
+    if (args.lidar_type.startswith("PCD")) and not args.pcd_directory:
+        parser.error(f"--pcd-directory is required when --lidar-type is {args.lidar_type}")
 
     generator = LidarSignalDatasetGenerator(
         lidar_type=args.lidar_type,
-        pcd_file=args.pcd_file,
+        pcd_directory=args.pcd_directory,
         output_dir=args.output_dir,
         time_resolution_ns=args.time_resolution_ns,
         spoofer_type=args.spoofer_type

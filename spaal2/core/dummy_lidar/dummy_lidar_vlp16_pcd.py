@@ -9,7 +9,7 @@ from spaal2.core import PreciseDuration, MeasurementConfig, VeloPoint
 class PcdLidarVLP16:
     vertical_angles: list[int] = [-15, 1, -13, 3, -11, 5, -9, 7, -7, 9, -5, 11, -3, 13, -1, 15]
 
-    def __init__(self, pcd_file_path: str, lidar_position: np.ndarray, lidar_rotation: np.ndarray, base_timestamp: PreciseDuration = PreciseDuration(nanoseconds=0), amplitude: float = 1.0, pulse_width: PreciseDuration = PreciseDuration(nanoseconds=10), time_resolution_ns: float = 1.0) -> None:
+    def __init__(self, pcd_file_path: Optional[str], lidar_position: np.ndarray, lidar_rotation: np.ndarray, base_timestamp: PreciseDuration = PreciseDuration(nanoseconds=0), amplitude: float = 1.0, pulse_width: PreciseDuration = PreciseDuration(nanoseconds=10), time_resolution_ns: float = 1.0) -> None:
         self.index: int = 0
         self.max_index: int = int(360 // 0.2 * 16)
         self.accept_window = PreciseDuration(nanoseconds=800)
@@ -19,30 +19,42 @@ class PcdLidarVLP16:
         self.time_resolution_ns = time_resolution_ns
         self.lidar_position = lidar_position
         self.lidar_rotation = lidar_rotation
+        self.pcd_files: list[str] = []
         self.pcd_file_path = pcd_file_path
 
-        if not os.path.exists(pcd_file_path) and pcd_file_path:
-             raise FileNotFoundError(f"PCD file not found at {pcd_file_path}")
-        
-        if os.path.exists(pcd_file_path):
-            self.point_cloud = o3d.io.read_point_cloud(pcd_file_path)
+        if pcd_file_path:
+            if not os.path.exists(pcd_file_path):
+                 raise FileNotFoundError(f"PCD file not found at {pcd_file_path}")
+            self._read_pcd(pcd_file_path)
         else:
-            self.point_cloud = o3d.geometry.PointCloud()
+            # Handle case where no file is provided initially
+            self.points = np.array([])
+            self.all_point_indices = set()
+            self.initial_azimuth_offset = 0
+            self.depth_map = {}
+            self.original_point_indices_map = {}
+            self.no_signal_scan_angles = []
+        
+        self.detected_point_indices = set()
 
+    def _read_pcd(self, file_path: str):
+        self.point_cloud = o3d.io.read_point_cloud(file_path)
         self.points = np.asarray(self.point_cloud.points)
 
         self.all_point_indices = set(range(len(self.points)))
-        self.detected_point_indices = set()
-
+        
         if len(self.points) > 0:
             first_point = self.points[0]
+            # Re-calculate offset for each file
             self.initial_azimuth_offset = np.rad2deg(np.arctan2(first_point[1], first_point[0]))
-            print(f"Initial azimuth offset: {self.initial_azimuth_offset} degrees") 
         else:
             self.initial_azimuth_offset = 0
 
         self.depth_map, self.original_point_indices_map = self._create_depth_map()
         self.no_signal_scan_angles: list[tuple[int, int]] = []
+
+    def set_pcd_files(self, pcd_files: list[str]):
+        self.pcd_files = pcd_files
 
     def _create_depth_map(self):
         depth_map = {}
@@ -75,16 +87,20 @@ class PcdLidarVLP16:
     def set_amplitude(self, amplitude: float):
         self.amplitude = amplitude
 
-    def new_frame(self, base_timestamp: PreciseDuration) -> "PcdLidarVLP16":
-        return PcdLidarVLP16(
-            pcd_file_path=self.pcd_file_path,
-            lidar_position=self.lidar_position, 
-            lidar_rotation=self.lidar_rotation,
-            base_timestamp=base_timestamp, 
-            amplitude=self.amplitude, 
-            pulse_width=self.pulse_width,
-            time_resolution_ns=self.time_resolution_ns
-        )
+    def new_frame(self, frame_num: int = 0, base_timestamp: PreciseDuration = PreciseDuration(nanoseconds=0)) -> "PcdLidarVLP16":
+        if not self.pcd_files:
+            if self.pcd_file_path:
+                self.pcd_files.append(self.pcd_file_path)
+            else:
+                raise ValueError("PCD file list is not set and no initial pcd_file_path was provided.")
+
+        pcd_file_to_load = self.pcd_files[frame_num % len(self.pcd_files)]
+        self._read_pcd(pcd_file_to_load)
+
+        self.index = 0
+        self.base_timestamp = base_timestamp
+        self.detected_point_indices = set()
+        return self
 
     def _get_current_angle(self) -> tuple[int, int]:
         horizontal_index = self.index // 16

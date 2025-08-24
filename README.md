@@ -20,13 +20,30 @@
 # Hist-matrix とは
 Altitude x Azimuth x Histdata の形式でLiDARのHistgramを表現する行列。
 
-## Hist-matrix 生成方法 (例)
+<!-- ## Hist-matrix 生成方法 (例) (obsolete)
 出力される.npzファイルには、hist-data本体、入力の.pcdファイルの先頭行の点群(=LiDARの最初のスキャンとなる点)の世界座標に対する水平Offset角度、LiDARの垂直角の方向のリスト、LiDARのFoV(360°LiDARなら360)、時間分解能(ns)を含む。
 ```
 uv run python datasets_generator/hist_matrix_generator.py --lidar-type PCD_VLP16 --pcd-file "C:/Users/nextr/spaal2-core/example/1464001237.670017000.pcd" --num-frames 1 --output-dir ./pcd_datasets --time-resolution-ns 0.2
-```
+``` -->
 
 ## Hist-matrix -> pointcloud 変換方法
 ```
 uv run datasets_generator/hist_matrix_visualizer.py --pcd-file "C:/Users/nextr/spaal2-core/example/1464001237.670017000.pcd" --npz-file "C:/Users/nextr/spaal2-core/pcd_datasets/lidar_signal.npz"
 ```
+
+## Hist-matrix 生成方法 
+各引数の説明
+   * --lidar-type PCD_VLP32c:
+      使用するLiDARのモデルとしてPCD_VLP32cを指定します。
+   * --pcd-directory ./nuscenes_data:
+      読み込むPCDファイル群が格納されているディレクトリを指定します。この例では、プロジェクトルートにあるnuscenes_dataを指しています。
+   * --num-frames 10:
+      生成するフレーム数を指定します。ディレクトリ内のPCDファイル数より多い数を指定した場合、PCDファイルのリストが循環して使用されます。
+   * --output-dir ./pcd_datasets:
+      生成されたデータセット（.npzファイル）を保存するディレクトリを指定します。
+
+```
+uv run python datasets_generator/hist_matrix_generator.py --lidar-type PCD_VLP32c --pcd-directory ./nuscenes_data --num-frames 10 --output-dir ./pcd_datasets
+```
+
+## Hist-matrix -> pointcloud 変換方法
