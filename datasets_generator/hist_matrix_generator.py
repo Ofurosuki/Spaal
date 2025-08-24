@@ -136,8 +136,8 @@ class LidarSignalDatasetGenerator:
                         spoofer_amp = np.random.uniform(self.spoofer_amplitude_range[0], self.spoofer_amplitude_range[1])
                         self.spoofer.set_amplitude(spoofer_amp)
 
-                        #print("Spoofer triggered for azimuth: %s, altitude: %s", config.azimuth, config.altitude)
-                        if config.altitude == 400 and config.azimuth == 7000:
+                        # print(f"azimuth: {config.azimuth}")
+                        if config.altitude == 800 and config.azimuth == 7000: # HFR starts at 260 degrees
                             print("Spoofer triggered for azimuth: %s, altitude: %s", config.azimuth, config.altitude)
                             self.spoofer.trigger(config, signal)
                         

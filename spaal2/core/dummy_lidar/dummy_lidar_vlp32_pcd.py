@@ -85,6 +85,19 @@ class PcdLidarVLP32c:
         self.depth_map, self.original_point_indices_map = self._create_depth_map()
         self.no_signal_scan_angles: list[tuple[int, int]] = []
 
+    def get_azimuth_index(self, angle_deg: float) -> int:
+        horizontal_resolution = 20
+        absolute_azimuth_deg = angle_deg + self.initial_azimuth_offset
+        if absolute_azimuth_deg < 0:
+            absolute_azimuth_deg += 360
+        elif absolute_azimuth_deg >= 360:
+            absolute_azimuth_deg -= 360
+        azimuth_index = absolute_azimuth_deg * 100
+        if azimuth_index % horizontal_resolution != 0:
+            azimuth_index = azimuth_index - (azimuth_index % horizontal_resolution)
+        #print(f"Azimuth index for angle {angle_deg} degrees: {azimuth_index}")
+        return azimuth_index
+
     def _create_depth_map(self):
         depth_map = {}
         original_point_indices_map = {}
