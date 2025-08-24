@@ -2,12 +2,13 @@
 import numpy as np
 import open3d as o3d
 import argparse
+import os
+import glob
 
 class HistMatrixVisualizer:
-    def __init__(self, npz_file_path: str, pcd_file_path: str = None, time_resolution_ns: float = 1.0):
+    def __init__(self, npz_file_path: str, pcd_directory_path: str = None):
         self.npz_file_path = npz_file_path
-        self.pcd_file_path = pcd_file_path
-        self.time_resolution_ns = time_resolution_ns
+        self.pcd_directory_path = pcd_directory_path
         
         with np.load(npz_file_path) as data:
             self.hist_matrix = data['signals']
@@ -16,9 +17,19 @@ class HistMatrixVisualizer:
             self.fov = data['fov']
             self.time_resolution_ns = data['time_resolution_ns']
 
+        self.pcd_files = []
+        if self.pcd_directory_path:
+            if not os.path.isdir(self.pcd_directory_path):
+                raise ValueError(f"PCD directory path is not a valid directory: {self.pcd_directory_path}")
+            self.pcd_files = sorted(glob.glob(os.path.join(self.pcd_directory_path, '*.pcd')))
+            if not self.pcd_files:
+                print(f"Warning: No PCD files found in {self.pcd_directory_path}")
 
     def _reconstruct_point_cloud(self, frame_index: int = 0):
         points = []
+        if frame_index >= len(self.hist_matrix):
+            raise ValueError(f"Frame index {frame_index} is out of bounds for hist_matrix with {len(self.hist_matrix)} frames.")
+
         frame_data = self.hist_matrix[frame_index]
         channels, horizontal_resolution, samples_per_scan = frame_data.shape
 
@@ -41,14 +52,14 @@ class HistMatrixVisualizer:
                 distance_m = (highest_peak_time * self.time_resolution_ns) * 0.15
                 
                 altitude_deg = self.vertical_angles[v_idx]
-                azimuth_deg = (h_idx / horizontal_resolution) * self.fov + self.initial_azimuth_offset
+                azimuth_deg = (h_idx / horizontal_resolution) * self.fov - self.initial_azimuth_offset
 
                 alpha = np.deg2rad(azimuth_deg)
                 omega = np.deg2rad(altitude_deg)
                 
-                # Standard spherical to cartesian conversion (X-forward)
-                y = distance_m * np.cos(omega) * np.cos(alpha)
+                # Spherical to cartesian conversion (Y-forward, X-right, Z-up)
                 x = distance_m * np.cos(omega) * np.sin(alpha)
+                y = distance_m * np.cos(omega) * np.cos(alpha)
                 z = distance_m * np.sin(omega)
                 
                 points.append([x, y, z])
@@ -60,25 +71,28 @@ class HistMatrixVisualizer:
 
     def visualize(self, frame_index: int = 0):
         reconstructed_pcd = self._reconstruct_point_cloud(frame_index)
-        reconstructed_pcd.paint_uniform_color([1, 0, 0])  # Red
+        reconstructed_pcd.paint_uniform_color([1, 0, 0])  # Red for reconstructed
 
         geometries = [reconstructed_pcd]
 
-        if self.pcd_file_path:
-            original_pcd = o3d.io.read_point_cloud(self.pcd_file_path)
-            original_pcd.paint_uniform_color([0, 0, 1])  # Blue
+        if self.pcd_files and frame_index < len(self.pcd_files):
+            pcd_file_to_load = self.pcd_files[frame_index]
+            print(f"Loading original PCD for comparison: {pcd_file_to_load}")
+            original_pcd = o3d.io.read_point_cloud(pcd_file_to_load)
+            original_pcd.paint_uniform_color([0, 0, 1])  # Blue for original
             geometries.append(original_pcd)
+        elif self.pcd_directory_path:
+             print(f"Warning: Frame index {frame_index} is out of bounds for the number of PCD files found ({len(self.pcd_files)}). Original PCD will not be displayed.")
 
-        o3d.visualization.draw_geometries(geometries)
+        o3d.visualization.draw_geometries(geometries, window_name=f"Frame {frame_index}")
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Visualize LiDAR histogram matrix from .npz file.")
-    parser.add_argument("--npz-file", type=str, help="Path to the .npz histogram matrix file.")
-    parser.add_argument("--pcd-file", type=str, default=None, help="Path to the .pcd file for comparison.")
-    parser.add_argument("--time-resolution-ns", type=float, default=0.2, help="Time resolution in nanoseconds.")
+    parser.add_argument("--npz-file", required=True, type=str, help="Path to the .npz histogram matrix file.")
+    parser.add_argument("--pcd-directory", type=str, default=None, help="Path to the directory with original .pcd files for comparison.")
     parser.add_argument("--frame", type=int, default=0, help="Frame index to visualize.")
     
     args = parser.parse_args()
 
-    visualizer = HistMatrixVisualizer(args.npz_file, args.pcd_file, args.time_resolution_ns)
+    visualizer = HistMatrixVisualizer(args.npz_file, args.pcd_directory)
     visualizer.visualize(args.frame)

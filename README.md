@@ -47,3 +47,7 @@ uv run python datasets_generator/hist_matrix_generator.py --lidar-type PCD_VLP32
 ```
 
 ## Hist-matrix -> pointcloud 変換方法
+元のPCDファイル（nuscenes_dataディレクトリ内にあると仮定）と比較して可視化する場合のコマンド
+```
+uv run python datasets_generator/hist_matrix_visualizer.py --npz-file ./pcd_datasets/lidar_signal.npz --pcd-directory ./nuscenes_data --frame 1
+```
