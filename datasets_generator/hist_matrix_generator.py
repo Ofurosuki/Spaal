@@ -104,6 +104,7 @@ class LidarSignalDatasetGenerator:
     def generate(self, num_frames: int, filename_prefix: str = "lidar_signal"):
         all_frames_data = np.zeros((num_frames, self.channels, self.horizontal_resolution, self.samples_per_scan), dtype=np.float32)
         answer_matrix = np.zeros((num_frames, self.channels, self.horizontal_resolution), dtype=np.int32)
+        all_initial_azimuth_offsets = []
 
         for frame_num in range(num_frames):
             print(f"Generating frame {frame_num + 1}/{num_frames}...")
@@ -112,6 +113,11 @@ class LidarSignalDatasetGenerator:
                 current_lidar = self.lidar.new_frame(frame_num=frame_num, base_timestamp=PreciseDuration(nanoseconds=frame_num * 10**9))
             else:
                 current_lidar = self.lidar.new_frame(base_timestamp=PreciseDuration(nanoseconds=frame_num * 10**9))
+
+            if hasattr(current_lidar, 'initial_azimuth_offset'):
+                all_initial_azimuth_offsets.append(current_lidar.initial_azimuth_offset)
+            else:
+                all_initial_azimuth_offsets.append(0.0)
             
             frame_data = np.zeros((self.channels, self.horizontal_resolution, self.samples_per_scan), dtype=np.float32)
 
@@ -166,7 +172,6 @@ class LidarSignalDatasetGenerator:
 
             all_frames_data[frame_num, :, :, :] = frame_data
 
-        initial_azimuth_offset = self.lidar.initial_azimuth_offset if hasattr(self.lidar, 'initial_azimuth_offset') else 0.0
         vertical_angles = self.lidar.vertical_angles
         fov = 360.0  # FOV for VLP16 is 360 degrees
 
@@ -174,7 +179,7 @@ class LidarSignalDatasetGenerator:
         np.savez(output_filename, 
                  signals=all_frames_data, 
                  answer_matrix=answer_matrix,
-                 initial_azimuth_offset=initial_azimuth_offset, 
+                 initial_azimuth_offsets=np.array(all_initial_azimuth_offsets), 
                  vertical_angles=vertical_angles,
                  fov=fov,
                  time_resolution_ns=self.time_resolution_ns)

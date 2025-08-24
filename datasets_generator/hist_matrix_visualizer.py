@@ -12,7 +12,11 @@ class HistMatrixVisualizer:
         
         with np.load(npz_file_path) as data:
             self.hist_matrix = data['signals']
-            self.initial_azimuth_offset = data['initial_azimuth_offset']
+            if 'initial_azimuth_offsets' in data:
+                self.initial_azimuth_offsets = data['initial_azimuth_offsets']
+            else:
+                print("Warning: 'initial_azimuth_offsets' not found in .npz file. Defaulting to 0.0 for all frames.")
+                self.initial_azimuth_offsets = [data.get('initial_azimuth_offset', 0.0)]
             self.vertical_angles = data['vertical_angles']
             self.fov = data['fov']
             self.time_resolution_ns = data['time_resolution_ns']
@@ -29,6 +33,12 @@ class HistMatrixVisualizer:
         points = []
         if frame_index >= len(self.hist_matrix):
             raise ValueError(f"Frame index {frame_index} is out of bounds for hist_matrix with {len(self.hist_matrix)} frames.")
+
+        if frame_index < len(self.initial_azimuth_offsets):
+            current_azimuth_offset = self.initial_azimuth_offsets[frame_index]
+        else:
+            current_azimuth_offset = self.initial_azimuth_offsets[-1] if self.initial_azimuth_offsets else 0.0
+            print(f"Warning: Frame index {frame_index} is out of bounds for azimuth offsets. Using last available offset.")
 
         frame_data = self.hist_matrix[frame_index]
         channels, horizontal_resolution, samples_per_scan = frame_data.shape
@@ -52,7 +62,7 @@ class HistMatrixVisualizer:
                 distance_m = (highest_peak_time * self.time_resolution_ns) * 0.15
                 
                 altitude_deg = self.vertical_angles[v_idx]
-                azimuth_deg = (h_idx / horizontal_resolution) * self.fov - self.initial_azimuth_offset
+                azimuth_deg = (h_idx / horizontal_resolution) * self.fov - current_azimuth_offset
 
                 alpha = np.deg2rad(azimuth_deg)
                 omega = np.deg2rad(altitude_deg)
