@@ -4,6 +4,7 @@ import open3d as o3d
 import argparse
 import os
 import glob
+from typing import List
 
 class HistMatrixVisualizer:
     def __init__(self, npz_file_path: str, pcd_directory_path: str = None):
@@ -15,11 +16,15 @@ class HistMatrixVisualizer:
             if 'initial_azimuth_offsets' in data:
                 self.initial_azimuth_offsets = data['initial_azimuth_offsets']
             else:
-                print("Warning: 'initial_azimuth_offsets' not found in .npz file. Defaulting to 0.0 for all frames.")
                 self.initial_azimuth_offsets = [data.get('initial_azimuth_offset', 0.0)]
             self.vertical_angles = data['vertical_angles']
             self.fov = data['fov']
             self.time_resolution_ns = data['time_resolution_ns']
+
+        # --- Parameters to match PcdLidarVLP16AmplitudeAuth ---
+        self.auth_amplitude_ratios: List[float] = [1.0, 0.6, 0.3]
+        self.auth_pulse_interval_ns: float = 20.0
+        # -----------------------------------------------------
 
         self.pcd_files = []
         if self.pcd_directory_path:
@@ -34,45 +39,77 @@ class HistMatrixVisualizer:
         if frame_index >= len(self.hist_matrix):
             raise ValueError(f"Frame index {frame_index} is out of bounds for hist_matrix with {len(self.hist_matrix)} frames.")
 
-        if frame_index < len(self.initial_azimuth_offsets):
-            current_azimuth_offset = self.initial_azimuth_offsets[frame_index]
-        else:
-            current_azimuth_offset = self.initial_azimuth_offsets[-1] if self.initial_azimuth_offsets else 0.0
-            print(f"Warning: Frame index {frame_index} is out of bounds for azimuth offsets. Using last available offset.")
-
         frame_data = self.hist_matrix[frame_index]
         channels, horizontal_resolution, samples_per_scan = frame_data.shape
+
+        interval_indices = int(self.auth_pulse_interval_ns / self.time_resolution_ns)
+        tolerance_indices = int(interval_indices * 0.2) # 20% tolerance for timing
 
         for v_idx in range(channels):
             for h_idx in range(horizontal_resolution):
                 signal = frame_data[v_idx, h_idx, :]
                 
+                # --- Start of Amplitude Ratio Verification Logic ---
                 raises = np.flatnonzero((signal[:-1] < 0.01) & (signal[1:] >= 0.01)) + 1
-                if len(raises) == 0:
+                if len(raises) < len(self.auth_amplitude_ratios):
                     continue
 
-                peaks = np.array([np.max(signal[r:min(len(signal), r + 50)]) for r in raises])
+                peaks = {r: np.max(signal[r:min(len(signal), r + 50)]) for r in raises}
+                peak_times = sorted(peaks.keys())
                 
-                if len(peaks) == 0:
-                    continue
+                used_peak_times = set()
 
-                highest_peak_index = np.argmax(peaks)
-                highest_peak_time = raises[highest_peak_index]
+                for i in range(len(peak_times)):
+                    if peak_times[i] in used_peak_times:
+                        continue
 
-                distance_m = (highest_peak_time * self.time_resolution_ns) * 0.15
-                
-                altitude_deg = self.vertical_angles[v_idx]
-                azimuth_deg = (h_idx / horizontal_resolution) * self.fov + current_azimuth_offset
+                    sequence_times = [peak_times[i]]
+                    for j in range(1, len(self.auth_amplitude_ratios)):
+                        expected_next_time = sequence_times[-1] + interval_indices
+                        found_next = False
+                        for k in range(i + 1, len(peak_times)):
+                            if peak_times[k] in used_peak_times:
+                                continue
+                            if abs(peak_times[k] - expected_next_time) <= tolerance_indices:
+                                sequence_times.append(peak_times[k])
+                                found_next = True
+                                break
+                        if not found_next:
+                            break
+                    
+                    if len(sequence_times) == len(self.auth_amplitude_ratios):
+                        base_amplitude = peaks[sequence_times[0]]
+                        if base_amplitude < 0.1: continue
 
-                alpha = np.deg2rad(azimuth_deg)
-                omega = np.deg2rad(altitude_deg)
-                
-                # Spherical to cartesian conversion (Y-forward, X-right, Z-up)
-                x = distance_m * np.cos(omega) * np.sin(alpha)
-                y = distance_m * np.cos(omega) * np.cos(alpha)
-                z = distance_m * np.sin(omega)
-                
-                points.append([x, y, z])
+                        ratios_match = True
+                        for k in range(1, len(self.auth_amplitude_ratios)):
+                            expected_ratio = self.auth_amplitude_ratios[k] / self.auth_amplitude_ratios[0]
+                            actual_ratio = peaks[sequence_times[k]] / base_amplitude
+                            if abs(actual_ratio - expected_ratio) > 0.15:
+                                ratios_match = False
+                                break
+                        
+                        if ratios_match:
+                            for t in sequence_times:
+                                used_peak_times.add(t)
+
+                            # This is a valid point, calculate its coordinates
+                            valid_peak_time = sequence_times[0]
+                            distance_m = (valid_peak_time * self.time_resolution_ns) * 0.15
+                            
+                            altitude_deg = self.vertical_angles[v_idx]
+                            current_azimuth_offset = self.initial_azimuth_offsets[frame_index]
+                            azimuth_deg = (h_idx / horizontal_resolution) * self.fov + current_azimuth_offset
+
+                            alpha = np.deg2rad(azimuth_deg)
+                            omega = np.deg2rad(altitude_deg)
+                            
+                            x = distance_m * np.cos(omega) * np.cos(alpha)
+                            y = distance_m * np.cos(omega) * np.sin(alpha)
+                            z = distance_m * np.sin(omega)
+                            
+                            points.append([x, y, z])
+                # --- End of Amplitude Ratio Verification Logic ---
 
         pcd = o3d.geometry.PointCloud()
         if points:

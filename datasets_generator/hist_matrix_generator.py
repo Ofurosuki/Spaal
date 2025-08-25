@@ -8,6 +8,7 @@ from spaal2.core import (
 from spaal2.core.dummy_lidar.dummy_lidar_vlp16 import DummyLidarVLP16
 from spaal2.core.dummy_lidar.dummy_lidar_vlp16_pcd import PcdLidarVLP16
 from spaal2.core.dummy_lidar.dummy_lidar_vlp32_pcd import PcdLidarVLP32c
+from spaal2.core.dummy_lidar.dummy_lidar_vlp16_pcd_amplitude import PcdLidarVLP16AmplitudeAuth
 from spaal2.core.dummy_spoofer.dummy_spoofer_adaptive_hfr_with_perturbation import DummySpooferAdaptiveHFRWithPerturbation
 from spaal2.core.dummy_spoofer.dummy_spoofer_off import DummySpooferOff
 
@@ -16,15 +17,16 @@ class LidarSignalDatasetGenerator:
                  lidar_type: str = "VLP16",
                  pcd_directory: str = None,
                  output_dir: str = "./datasets",
-                 outdoor_distance: float = 50.0, outdoor_ratio: float = 0.8,
+                 outdoor_distance: float = 50.0, 
+                 outdoor_ratio: float = 0.8,
                  spoofer_type: str = "adaptive_hfr_perturbation",
                  spoofer_frequency: float = 10 * 1e6,
                  spoofer_duration_ms: float = 20,
                  spoofer_distance_m: float = 10.0,
                  spoofer_pulse_width_ns: float = 5,
-                 spoofer_perturbation_ns: float = 20.0,
-                 spoofer_amplitude_range: tuple[float, float] = (5.0, 9.0),
-                 lidar_amplitude_range: tuple[float, float] = (1.0, 7.0),
+                 spoofer_perturbation_ns: float = 0.0,
+                 spoofer_amplitude_range: tuple[float, float] = (5.0, 5.0),
+                 lidar_amplitude_range: tuple[float, float] = (7.0, 7.0),
                  lidar_pulse_width_ns: float = 5,
                  time_resolution_ns: float = 1.0,
                  noise_ratio: float = 0.1,
@@ -46,7 +48,7 @@ class LidarSignalDatasetGenerator:
             )
             self.channels = 16
             self.horizontal_resolution = 1800
-        elif self.lidar_type == "PCD_VLP16" or self.lidar_type == "PCD_VLP32c":
+        elif self.lidar_type in ["PCD_VLP16", "PCD_VLP32c", "PCD_VLP16_AMP_AUTH"]:
             if not self.pcd_directory or not os.path.isdir(self.pcd_directory):
                 raise ValueError(f"PCD directory path must be provided and valid for {self.lidar_type} lidar type. Provided: {self.pcd_directory}")
             
@@ -57,9 +59,12 @@ class LidarSignalDatasetGenerator:
             if self.lidar_type == "PCD_VLP16":
                 lidar_class = PcdLidarVLP16
                 self.channels = 16
-            else:
+            elif self.lidar_type == "PCD_VLP32c":
                 lidar_class = PcdLidarVLP32c
                 self.channels = 32
+            elif self.lidar_type == "PCD_VLP16_AMP_AUTH":
+                lidar_class = PcdLidarVLP16AmplitudeAuth
+                self.channels = 16
 
             self.lidar = lidar_class(
                 pcd_file_path=None, # Initialized without a specific file
@@ -113,7 +118,7 @@ class LidarSignalDatasetGenerator:
         for frame_num in range(num_frames):
             print(f"Generating frame {frame_num + 1}/{num_frames}...")
             
-            if self.lidar_type in ["PCD_VLP16", "PCD_VLP32c"]:
+            if self.lidar_type in ["PCD_VLP16", "PCD_VLP32c", "PCD_VLP16_AMP_AUTH"]:
                 current_lidar = self.lidar.new_frame(frame_num=frame_num, base_timestamp=PreciseDuration(nanoseconds=frame_num * 10**9))
             else:
                 current_lidar = self.lidar.new_frame(base_timestamp=PreciseDuration(nanoseconds=frame_num * 10**9))
@@ -169,8 +174,10 @@ class LidarSignalDatasetGenerator:
 
                         true_peak_index = highest_peak_time
 
-                    lidar_amp = np.random.uniform(self.lidar_amplitude_range[0], self.lidar_amplitude_range[1])
-                    current_lidar.set_amplitude(lidar_amp)
+                    # Only randomize amplitude for non-authentication lidars
+                    if self.lidar_type != "PCD_VLP16_AMP_AUTH":
+                        lidar_amp = np.random.uniform(self.lidar_amplitude_range[0], self.lidar_amplitude_range[1])
+                        current_lidar.set_amplitude(lidar_amp)
                     
                     if self.spoofer_type != "off":
                         spoofer_amp = np.random.uniform(self.spoofer_amplitude_range[0], self.spoofer_amplitude_range[1])
@@ -213,7 +220,7 @@ class LidarSignalDatasetGenerator:
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Generate LiDAR signal datasets.")
-    parser.add_argument("--lidar-type", type=str, default="VLP16", choices=["VLP16", "PCD_VLP16", "PCD_VLP32c"],
+    parser.add_argument("--lidar-type", type=str, default="VLP16", choices=["VLP16", "PCD_VLP16", "PCD_VLP32c", "PCD_VLP16_AMP_AUTH"],
                         help="Type of LiDAR to use.")
     parser.add_argument("--pcd-directory", type=str, default=None,
                         help="Path to the directory containing PCD files, required if lidar-type starts with PCD.")

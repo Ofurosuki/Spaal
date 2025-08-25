@@ -1,0 +1,187 @@
+    def scan(self) -> tuple[MeasurementConfig, npt.NDArray[np.float64]]:
+        """
+        現在のindexについて測距のために射出した信号と、その設定を算出
+        """
+        if self.index >= self.max_index:
+            # indexが最大値に達していたら終了シグナルを出す
+            raise StopIteration()
+        azimuth, altitude = self._get_current_angle()
+        timestamp = self._get_current_timestamp()
+
+        # 射出信号を計算する
+        if self.pulse_num == 1:
+            # Fingerprintなしの場合
+            signal = self.one_scan_base.copy()
+            gt_intervals = []
+        elif self.consider_amp:
+            # Fingerprintあり & 振幅変調あり
+
+            # それぞれのパルス位置を計算
+            # 例えば、pulse_num=3, min_interval=100, max_interval=200の場合
+            # [120, 170] -> [120, 290]
+            gt_intervals = np.random.randint(
+                self.min_interval.in_nanoseconds, 
+                self.max_interval.in_nanoseconds, 
+                self.pulse_num - 1
+            ).cumsum().tolist()
+
+            # それぞれのパルスの振幅比を計算
+            # いずれかのパルスが振幅1.0で、その他のパルスは1-min_diff_ratioと1-max_diff_ratioの間でランダムに決定される
+            # 例えば、pulse_num=3, min_diff_ratio=0.2, max_diff_ratio=0.4の場合
+            # [1.0, 0.65, 0.8] -> [0.65, 1.0, 0.8]
+            gt_amps = self.rng.permutation(
+                np.hstack([
+                    1.0, 
+                    self.rng.random(self.pulse_num-1) * (self.max_amp_diff_ratio - self.min_amp_diff_ratio) + (1 - self.max_amp_diff_ratio)
+                ])
+            )
+
+            # gt_intervalsとgt_ampsから信号を計算
+            signal = self.one_scan_base.copy() * gt_amps[0]
+            for i in range(self.pulse_num-1):
+                mean = self.peak_offset + gt_intervals[i]
+
+                start = mean - self.pulse_shape.size // 2
+                end = start + self.pulse_shape.size
+                signal[start:end] = self.pulse_shape * gt_amps[i+1]
+        else:
+            # Fingerprintあり & 振幅変調なし
+
+            # それぞれのパルスの振幅比を計算
+            # いずれかのパルスが振幅1.0で、その他のパルスは1-min_diff_ratioと1-max_diff_ratioの間でランダムに決定される
+            # 例えば、pulse_num=3, min_diff_ratio=0.2, max_diff_ratio=0.4の場合
+            # [1.0, 0.65, 0.8] -> [0.65, 1.0, 0.8]
+            gt_intervals = np.random.randint(
+                self.min_interval.in_nanoseconds, 
+                self.max_interval.in_nanoseconds, 
+                self.pulse_num - 1
+            ).cumsum().tolist()
+
+            # gt_intervalsから信号を計算
+            signal = self.one_scan_base.copy()
+            for i in range(self.pulse_num-1):
+                mean = self.peak_offset + gt_intervals[i]
+
+                start = mean - self.pulse_shape.size // 2
+                end = start + self.pulse_shape.size
+                signal[start:end] = self.pulse_shape
+
+        self.index += 1
+        return MeasurementConfig(
+            start_timestamp=PreciseDuration(nanoseconds=timestamp),
+            accept_duration=self.accept_window,
+            azimuth=azimuth,
+            altitude=altitude,
+            torelance_error=self.max_torelance_error,
+            gt_intervals=gt_intervals,
+            consider_amp=self.consider_amp,
+            gt_amps_ratio=gt_amps.tolist() if self.consider_amp else [],
+            amp_torelance_error_ratio=self.max_amp_torelance_error,
+            num_accumulation=self.num_accumulation,
+            accumulation_interval=self.acc_interval,
+        ), signal
+
+    def receive(self, config: MeasurementConfig, signal_list: list[npt.NDArray[np.float64]]) -> Tuple[list[VeloPoint], list[EchoGroup]]:
+        """
+        受光した信号からと測距情報から点群を計算
+        """
+        if len(signal_list) == 1:
+            signal = signal_list[0]
+        else:
+            signal = accumulate_signal_list(signal_list)
+        max_height = 9.0 * len(signal_list)
+        effective_echoes = detect_echo(signal, max_height, self.thd_factor, self.use_height_estimation, self.pulse_half_width.in_nanoseconds)
+
+        if len(effective_echoes) == 0:
+            return [],[]
+        
+        start = time.time()
+        pulse_num = len(config.gt_intervals) + 1
+        if pulse_num >= 2:
+            # Fingerprinting搭載の場合
+            certified_echoes: list[EchoGroup] = []
+            error = config.torelance_error.in_nanoseconds
+            peaks = np.array([x.peak_position for x in effective_echoes])
+            for i in range(len(effective_echoes) - pulse_num + 1):
+                min_remain_time = config.gt_intervals[-1] - error
+                if peaks[i] + min_remain_time > len(signal):
+                    # これ以上は認証を突破できないので終了
+                    break
+                certified = True
+                fingerprint_echoes: list[Echo] = [effective_echoes[i]]
+                first_echo_amp = effective_echoes[i].peak_height
+                for pulse_index in range(pulse_num - 1):
+                    base_position = config.gt_intervals[pulse_index]
+                    # 範囲内のエコーを探す
+                    applicable_echoes = np.flatnonzero(
+                        np.abs(base_position + peaks[i] - peaks) <= error
+                    )
+                    if len(applicable_echoes) == 0:
+                        # 該当するエコーがない場合は認証失敗
+                        certified = False
+                        break
+                    elif config.consider_amp:
+                        selected_echo = None
+                        for a_echo in applicable_echoes:
+                            actual_ratio = effective_echoes[a_echo].peak_height / first_echo_amp
+                            ideal_ratio = config.gt_amps_ratio[pulse_index+1] / config.gt_amps_ratio[0]
+                            if abs(actual_ratio - ideal_ratio) <= config.amp_torelance_error_ratio:
+                                selected_echo = a_echo
+                                break
+                        if selected_echo is None:
+                            # 振幅が合わない場合は認証失敗
+                            certified = False
+                            break
+                        fingerprint_echoes.append(effective_echoes[selected_echo])
+                    else:
+                        # 振幅を考慮しない場合、最も近いエコーを選択
+                        selected_echo = applicable_echoes[0]
+                        fingerprint_echoes.append(effective_echoes[selected_echo])
+                if certified:
+                    certified_echoes.append(EchoGroup(fingerprint_echoes))
+
+            effective_echoes_group = certified_echoes
+        else:
+            effective_echoes_group = [EchoGroup([x]) for x in effective_echoes]
+        self.fingerprint_time_accum += time.time() - start
+        
+        if len(effective_echoes_group) == 0:
+            return [],[]
+        
+        # ピークが大きい順、サンプル位置が小さい順にソートして最大10個取得
+        start = time.time()
+        effective_echoes_group.sort(key=lambda x: (-x[0].peak_height, x[0].peak_position))
+        effective_echoes_group = effective_echoes_group[:10] if len(effective_echoes_group) > 10 else effective_echoes_group
+        self.sort_time_accum += time.time() - start
+
+        # Strongest
+        start = time.time()
+        fired_pulse_height = config.gt_amps_ratio[0] * 9 if config.consider_amp else 9
+        highest_peak = effective_echoes_group[0][0].peak_height / fired_pulse_height
+        highest_peak_time = effective_echoes_group[0][0].peak_position - self.peak_offset
+
+        distance_m = highest_peak_time * 0.15
+        # if distance_m < self.min_distance:
+        #     return [],[]
+        intensity = int(min(highest_peak * 255, 255))
+        alpha = np.deg2rad(config.azimuth / 100.0)
+        omega = np.deg2rad(config.altitude / 100.0)
+        x = distance_m * np.cos(alpha) * np.cos(omega)
+        y = - distance_m * np.sin(alpha) * np.cos(omega)
+        z = - distance_m * np.sin(omega)
+
+        self.calc_pcd_time_accum += time.time() - start
+
+        return [
+            VeloPoint(
+                intensity=intensity,
+                channel=0,
+                timestamp=config.start_timestamp.in_nanoseconds,
+                azimuth=config.azimuth,
+                altitude=config.altitude,
+                distance_m=distance_m,
+                x=x,
+                y=y,
+                z=z,
+            )
+        ], effective_echoes_group
