@@ -8,7 +8,7 @@ from spaal2.core import (
 from spaal2.core.dummy_lidar.dummy_lidar_vlp16 import DummyLidarVLP16
 from spaal2.core.dummy_lidar.dummy_lidar_vlp16_pcd import PcdLidarVLP16
 from spaal2.core.dummy_lidar.dummy_lidar_vlp32_pcd import PcdLidarVLP32c
-from spaal2.core.dummy_lidar.dummy_lidar_vlp16_pcd_amplitude import PcdLidarVLP16AmplitudeAuth
+from spaal2.core.dummy_lidar.dummy_lidar_vlp16_pcd_amplitude import PcdLidarVLP16Amplitude
 from spaal2.core.dummy_spoofer.dummy_spoofer_adaptive_hfr_with_perturbation import DummySpooferAdaptiveHFRWithPerturbation
 from spaal2.core.dummy_spoofer.dummy_spoofer_off import DummySpooferOff
 
@@ -26,7 +26,7 @@ class LidarSignalDatasetGenerator:
                  spoofer_pulse_width_ns: float = 5,
                  spoofer_perturbation_ns: float = 0.0,
                  spoofer_amplitude_range: tuple[float, float] = (5.0, 5.0),
-                 lidar_amplitude_range: tuple[float, float] = (7.0, 7.0),
+                 lidar_amplitude_range: tuple[float, float] = (4.0, 4.0),
                  lidar_pulse_width_ns: float = 5,
                  time_resolution_ns: float = 1.0,
                  noise_ratio: float = 0.1,
@@ -56,24 +56,41 @@ class LidarSignalDatasetGenerator:
             if not self.pcd_files:
                 raise ValueError(f"No PCD files found in {self.pcd_directory}")
 
-            if self.lidar_type == "PCD_VLP16":
-                lidar_class = PcdLidarVLP16
+            if self.lidar_type == "PCD_VLP16_AMP_AUTH":
                 self.channels = 16
-            elif self.lidar_type == "PCD_VLP32c":
-                lidar_class = PcdLidarVLP32c
-                self.channels = 32
-            elif self.lidar_type == "PCD_VLP16_AMP_AUTH":
-                lidar_class = PcdLidarVLP16AmplitudeAuth
-                self.channels = 16
+                # Define fixed fingerprint parameters
+                fixed_gt_intervals_ns = [20] # e.g., 2 additional pulses at 50ns and 100ns after the first
+                fixed_gt_amps_ratio = [1.0, 0.7] # e.g., first pulse is strongest, then 70%, then 40%
+                pulse_num = len(fixed_gt_amps_ratio)
 
-            self.lidar = lidar_class(
-                pcd_file_path=None, # Initialized without a specific file
-                lidar_position=np.array([0.0, 0.0, 0.0]),
-                lidar_rotation=np.array([0.0, 0.0, 0.0]),
-                amplitude=lidar_amplitude_range[0],
-                pulse_width=PreciseDuration(nanoseconds=lidar_pulse_width_ns),
-                time_resolution_ns=self.time_resolution_ns
-            )
+                self.lidar = PcdLidarVLP16Amplitude(
+                    pcd_file_path=None, # Initialized without a specific file
+                    lidar_position=np.array([0.0, 0.0, 0.0]),
+                    lidar_rotation=np.array([0.0, 0.0, 0.0]),
+                    amplitude=lidar_amplitude_range[0],
+                    pulse_width=PreciseDuration(nanoseconds=lidar_pulse_width_ns),
+                    time_resolution_ns=self.time_resolution_ns,
+                    pulse_num=pulse_num,
+                    consider_amp=True, # Enable amplitude authentication
+                    gt_intervals_ns=fixed_gt_intervals_ns,
+                    gt_amps_ratio=fixed_gt_amps_ratio
+                )
+            else:
+                if self.lidar_type == "PCD_VLP16":
+                    lidar_class = PcdLidarVLP16
+                    self.channels = 16
+                elif self.lidar_type == "PCD_VLP32c":
+                    lidar_class = PcdLidarVLP32c
+                    self.channels = 32
+                
+                self.lidar = lidar_class(
+                    pcd_file_path=None, # Initialized without a specific file
+                    lidar_position=np.array([0.0, 0.0, 0.0]),
+                    lidar_rotation=np.array([0.0, 0.0, 0.0]),
+                    amplitude=lidar_amplitude_range[0],
+                    pulse_width=PreciseDuration(nanoseconds=lidar_pulse_width_ns),
+                    time_resolution_ns=self.time_resolution_ns
+                )
             self.lidar.set_pcd_files(self.pcd_files)
             
             # Load the first frame to determine horizontal_resolution
@@ -208,14 +225,34 @@ class LidarSignalDatasetGenerator:
         vertical_angles = self.lidar.vertical_angles
         fov = 360.0  # FOV for VLP16 is 360 degrees
 
+        # Prepare a dictionary of parameters to save
+        save_params = {
+            'signals': all_frames_data, 
+            'answer_matrix': answer_matrix,
+            'initial_azimuth_offsets': np.array(all_initial_azimuth_offsets), 
+            'vertical_angles': vertical_angles,
+            'fov': fov,
+            'time_resolution_ns': self.time_resolution_ns
+        }
+
+        # Add auth parameters if the lidar type is the one with auth capabilities
+        if self.lidar_type == "PCD_VLP16_AMP_AUTH":
+            auth_params = {
+                'pulse_num': self.lidar.pulse_num,
+                'consider_amp': self.lidar.consider_amp,
+                'gt_intervals_ns': self.lidar.gt_intervals_ns,
+                'gt_amps_ratio': self.lidar.gt_amps_ratio,
+                'max_torelance_error_ns': self.lidar.max_torelance_error.in_nanoseconds,
+                'amplitude': self.lidar.amplitude,
+                'pulse_half_width_ns': self.lidar.pulse_half_width.in_nanoseconds,
+                'thd_factor': self.lidar.thd_factor,
+                'use_height_estimation': self.lidar.use_height_estimation,
+                'max_amp_torelance_error': self.lidar.max_amp_torelance_error
+            }
+            save_params.update(auth_params)
+
         output_filename = os.path.join(self.output_dir, f"{filename_prefix}.npz")
-        np.savez(output_filename, 
-                 signals=all_frames_data, 
-                 answer_matrix=answer_matrix,
-                 initial_azimuth_offsets=np.array(all_initial_azimuth_offsets), 
-                 vertical_angles=vertical_angles,
-                 fov=fov,
-                 time_resolution_ns=self.time_resolution_ns)
+        np.savez(output_filename, **save_params)
         print(f"Saved all frames to {output_filename}")
 
 if __name__ == '__main__':

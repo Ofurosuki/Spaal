@@ -1,0 +1,16 @@
+def accumulate_signal_list(signal_list: list[npt.NDArray[np.float64]]) -> npt.NDArray[np.float64]:
+    """
+    複数の信号を積算する
+
+    Args:
+        signal_list (list[npt.NDArray[np.float64]]): 
+            信号のリスト
+
+    Returns:
+        npt.NDArray[np.float64]: 
+            積算された信号
+    """
+    if len(signal_list) == 1:
+        return signal_list[0]
+    else:
+        return np.sum(signal_list, axis=0)
