@@ -55,7 +55,7 @@ class HistMatrixVisualizer:
                 signal = frame_data[v_idx, h_idx, :]
                 
                 max_height = self.amplitude
-                effective_echoes = detect_echo(signal, max_height, self.thd_factor, self.use_height_estimation, self.pulse_half_width_ns)
+                effective_echoes = detect_echo(signal, max_height, self.thd_factor, self.use_height_estimation, self.pulse_half_width_ns, time_resolution_ns=self.time_resolution_ns)
 
                 if not effective_echoes: continue
 

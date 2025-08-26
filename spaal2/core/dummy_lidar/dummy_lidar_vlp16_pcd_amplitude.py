@@ -238,7 +238,7 @@ class PcdLidarVLP16Amplitude:
             signal = accumulate_signal_list(signal_list)
         
         max_height = self.amplitude * len(signal_list)
-        effective_echoes = detect_echo(signal, max_height, self.thd_factor, self.use_height_estimation, self.pulse_half_width.in_nanoseconds)
+        effective_echoes = detect_echo(signal, max_height, self.thd_factor, self.use_height_estimation, self.pulse_half_width.in_nanoseconds, time_resolution_ns=self.time_resolution_ns)
 
         if not effective_echoes: return [], []
 
