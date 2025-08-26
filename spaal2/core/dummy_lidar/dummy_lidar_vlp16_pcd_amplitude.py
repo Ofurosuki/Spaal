@@ -247,11 +247,15 @@ class PcdLidarVLP16Amplitude:
             effective_echoes_group = [EchoGroup([x]) for x in effective_echoes]
         else:
             certified_echoes: list[EchoGroup] = []
-            error = config.torelance_error.in_nanoseconds
+            # Convert intervals and tolerance from ns to samples
+            error_samples = config.torelance_error.in_nanoseconds / self.time_resolution_ns
+            intervals_samples = np.array(config.gt_intervals) / self.time_resolution_ns
+
             peaks = np.array([x.peak_position for x in effective_echoes])
             
             for i in range(len(effective_echoes) - pulse_num + 1):
-                if peaks[i] + config.gt_intervals[-1] - error > len(signal):
+                # Check if the remaining signal is long enough for the fingerprint
+                if peaks[i] + intervals_samples[-1] - error_samples > len(signal):
                     break
                 
                 certified = True
@@ -260,8 +264,9 @@ class PcdLidarVLP16Amplitude:
                 if first_echo_amp == 0: continue
 
                 for pulse_index in range(pulse_num - 1):
-                    base_position = config.gt_intervals[pulse_index]
-                    applicable_echoes_indices = np.flatnonzero(np.abs((peaks - peaks[i]) - base_position) <= error)
+                    base_position_samples = intervals_samples[pulse_index]
+                    # Compare peak position differences in SAMPLES
+                    applicable_echoes_indices = np.flatnonzero(np.abs((peaks - peaks[i]) - base_position_samples) <= error_samples)
                     applicable_echoes_indices = applicable_echoes_indices[applicable_echoes_indices != i]
 
                     if len(applicable_echoes_indices) == 0:
@@ -270,6 +275,10 @@ class PcdLidarVLP16Amplitude:
                     
                     selected_echo_idx = -1
                     if config.consider_amp:
+                        # Amplitude ratio check
+                        if not config.gt_amps_ratio or len(config.gt_amps_ratio) < pulse_num:
+                            certified = False # Should not happen if config is correct
+                            break
                         for a_echo_idx in applicable_echoes_indices:
                             actual_ratio = effective_echoes[a_echo_idx].peak_height / first_echo_amp
                             ideal_ratio = config.gt_amps_ratio[pulse_index + 1] / config.gt_amps_ratio[0]
@@ -280,6 +289,7 @@ class PcdLidarVLP16Amplitude:
                             certified = False
                             break
                     else:
+                        # If not considering amplitude, just take the first applicable one
                         selected_echo_idx = applicable_echoes_indices[0]
 
                     fingerprint_echoes.append(effective_echoes[selected_echo_idx])

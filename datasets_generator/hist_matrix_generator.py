@@ -59,7 +59,7 @@ class LidarSignalDatasetGenerator:
             if self.lidar_type == "PCD_VLP16_AMP_AUTH":
                 self.channels = 16
                 # Define fixed fingerprint parameters
-                fixed_gt_intervals_ns = [20] # e.g., 2 additional pulses at 50ns and 100ns after the first
+                fixed_gt_intervals_ns = [90] # e.g., 2 additional pulses at 50ns and 100ns after the first
                 fixed_gt_amps_ratio = [1.0, 0.7] # e.g., first pulse is strongest, then 70%, then 40%
                 pulse_num = len(fixed_gt_amps_ratio)
 
