@@ -18,10 +18,13 @@
 3. `uv run example/ahfr.py`
 
 # Hist-matrix とは
-Altitude x Azimuth x Histdata の形式でLiDARのHistgramを表現する行列。
+Altitude x Azimuth x Histdata の形式でLiDARのHistgramを表現する行列。 
+
+出力される.npzファイルには、hist-data本体、入力の.pcdファイルの先頭行の点群(=LiDARの最初のスキャンとなる点)の世界座標に対する水平Offset角度、LiDARの垂直角の方向のリスト、LiDARのFoV(360°LiDARなら360)、時間分解能(ns)などを含む。
+
+signals, answer_matrix, initial_azimuth_offests, vertical_angles, fov, time_resolution_ns
 
 <!-- ## Hist-matrix 生成方法 (例) (obsolete)
-出力される.npzファイルには、hist-data本体、入力の.pcdファイルの先頭行の点群(=LiDARの最初のスキャンとなる点)の世界座標に対する水平Offset角度、LiDARの垂直角の方向のリスト、LiDARのFoV(360°LiDARなら360)、時間分解能(ns)を含む。
 ```
 uv run python datasets_generator/hist_matrix_generator.py --lidar-type PCD_VLP16 --pcd-file "C:/Users/nextr/spaal2-core/example/1464001237.670017000.pcd" --num-frames 1 --output-dir ./pcd_datasets --time-resolution-ns 0.2
 ``` -->
