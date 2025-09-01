@@ -114,6 +114,8 @@ class LidarSignalDatasetGenerator:
             print(f"Generating frame {frame_num + 1}/{num_frames}...")
             
             if self.lidar_type in ["PCD_VLP16", "PCD_VLP32c"]:
+                pcd_file_path = self.pcd_files[frame_num]
+                print(f"  - Using PCD file: {os.path.basename(pcd_file_path)}")
                 current_lidar = self.lidar.new_frame(frame_num=frame_num, base_timestamp=PreciseDuration(nanoseconds=frame_num * 10**9))
             else:
                 current_lidar = self.lidar.new_frame(base_timestamp=PreciseDuration(nanoseconds=frame_num * 10**9))

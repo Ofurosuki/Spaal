@@ -9,9 +9,14 @@ class HistMatrixVisualizer:
     def __init__(self, npz_file_path: str, pcd_directory_path: str = None):
         self.npz_file_path = npz_file_path
         self.pcd_directory_path = pcd_directory_path
-        
+        self.is_prediction = False 
         with np.load(npz_file_path) as data:
-            self.hist_matrix = data['signals']
+            if 'signals' not in data and 'prediction':
+                self.is_prediction = True
+                self.hist_matrix = data['prediction']
+            else:
+                self.hist_matrix = data['signals']
+
             if 'initial_azimuth_offsets' in data:
                 self.initial_azimuth_offsets = data['initial_azimuth_offsets']
             else:
@@ -33,7 +38,7 @@ class HistMatrixVisualizer:
         points = []
         if frame_index >= len(self.hist_matrix):
             raise ValueError(f"Frame index {frame_index} is out of bounds for hist_matrix with {len(self.hist_matrix)} frames.")
-
+        print(f"type: {type(self.initial_azimuth_offsets)},")
         if frame_index < len(self.initial_azimuth_offsets):
             current_azimuth_offset = self.initial_azimuth_offsets[frame_index]
         else:
@@ -45,19 +50,23 @@ class HistMatrixVisualizer:
 
         for v_idx in range(channels):
             for h_idx in range(horizontal_resolution):
-                signal = frame_data[v_idx, h_idx, :]
-                
-                raises = np.flatnonzero((signal[:-1] < 0.01) & (signal[1:] >= 0.01)) + 1
-                if len(raises) == 0:
-                    continue
+                if not self.is_prediction:
+                    signal = frame_data[v_idx, h_idx, :]
+                    
+                    raises = np.flatnonzero((signal[:-1] < 0.01) & (signal[1:] >= 0.01)) + 1
+                    if len(raises) == 0:
+                        continue
 
-                peaks = np.array([np.max(signal[r:min(len(signal), r + 50)]) for r in raises])
-                
-                if len(peaks) == 0:
-                    continue
+                    peaks = np.array([np.max(signal[r:min(len(signal), r + 50)]) for r in raises])
+                    
+                    if len(peaks) == 0:
+                        continue
 
-                highest_peak_index = np.argmax(peaks)
-                highest_peak_time = raises[highest_peak_index]
+                    highest_peak_index = np.argmax(peaks)
+                    highest_peak_time = raises[highest_peak_index]
+                else:
+                    highest_peak_time = frame_data[v_idx, h_idx, 0]
+
 
                 distance_m = (highest_peak_time * self.time_resolution_ns) * 0.15
                 
