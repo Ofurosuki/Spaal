@@ -30,13 +30,15 @@ class LidarSignalDatasetGenerator:
                  noise_ratio: float = 0.1,
                  sunlight_mean: float = 0.5,
                  spoofer_angle_deg: float = 0.0, 
-                 spoofer_altitude_deg: float = 8.0):
+                 spoofer_altitude_deg: float = 8.0,
+                 clip_180_deg: bool = False):
 
         self.lidar_type = lidar_type
         self.pcd_directory = pcd_directory
         self.time_resolution_ns = time_resolution_ns
         self.spoofer_angle_deg = spoofer_angle_deg
         self.spoofer_altitude_deg = spoofer_altitude_deg
+        self.clip_180_deg = clip_180_deg
 
         if self.lidar_type == "VLP16":
             self.lidar = DummyLidarVLP16(
@@ -203,6 +205,29 @@ class LidarSignalDatasetGenerator:
         vertical_angles = self.lidar.vertical_angles
         fov = 360.0  # FOV for VLP16 is 360 degrees
 
+        if self.clip_180_deg:
+            print("Clipping hist-matrix to 180 degrees...")
+            
+            internal_center_deg = (self.spoofer_angle_deg + 90) % 360
+            center_idx = int((internal_center_deg / 360.0) * self.horizontal_resolution)
+            
+            clip_horizontal_resolution = self.horizontal_resolution // 2
+            half_clip_size = clip_horizontal_resolution // 2
+            
+            start_idx = center_idx - half_clip_size
+            end_idx = center_idx + half_clip_size
+            
+            indices = np.arange(start_idx, end_idx)
+            wrapped_indices = indices % self.horizontal_resolution
+            
+            all_frames_data = all_frames_data.take(wrapped_indices, axis=2)
+            answer_matrix = answer_matrix.take(wrapped_indices, axis=2)
+            
+            fov = 180.0
+            
+            clip_start_angle_deg = (start_idx / self.horizontal_resolution) * 360.0
+            all_initial_azimuth_offsets = (np.array(all_initial_azimuth_offsets) + clip_start_angle_deg) % 360.0
+
         output_filename = os.path.join(self.output_dir, f"{filename_prefix}.npz")
         np.savez(output_filename, 
                  signals=all_frames_data, 
@@ -227,6 +252,8 @@ if __name__ == '__main__':
                         help="Time resolution in nanoseconds for the simulation.")
     parser.add_argument("--spoofer-type", type=str, default="adaptive_hfr_perturbation", choices=["adaptive_hfr_perturbation", "off"],
                         help="Type of spoofer to use.")
+    parser.add_argument("--clip-180-deg", action="store_true",
+                        help="Clip the output hist-matrix to a 180-degree view centered on the spoofer angle.")
     # New arguments for spoofer targeting
     parser.add_argument("--spoofer-angle", type=float, default=0.0,
                         help="The angle for the spoofer trigger, in degrees, counter-clockwise with 0 at the front.")
@@ -245,6 +272,7 @@ if __name__ == '__main__':
         time_resolution_ns=args.time_resolution_ns,
         spoofer_type=args.spoofer_type,
         spoofer_angle_deg=args.spoofer_angle,
-        spoofer_altitude_deg=args.spoofer_altitude
+        spoofer_altitude_deg=args.spoofer_altitude,
+        clip_180_deg=args.clip_180_deg
     )
     generator.generate(num_frames=args.num_frames)
