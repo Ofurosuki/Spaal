@@ -13,7 +13,7 @@ from spaal2.core.dummy_spoofer.dummy_spoofer_off import DummySpooferOff
 
 class LidarSignalDatasetGenerator:
     def __init__(self, 
-                 lidar_type: str = "VLP16",
+                 lidar_type: str = "PCD_VLP32c",
                  pcd_directory: str = None,
                  output_dir: str = "./datasets",
                  outdoor_distance: float = 50.0, outdoor_ratio: float = 0.8,
@@ -107,6 +107,7 @@ class LidarSignalDatasetGenerator:
 
     def generate(self, num_frames: int, filename_prefix: str = "lidar_signal"):
         all_frames_data = np.zeros((num_frames, self.channels, self.horizontal_resolution, self.samples_per_scan), dtype=np.float32)
+        all_labels_data = np.zeros((num_frames, self.channels, self.horizontal_resolution, self.samples_per_scan), dtype=np.uint8)
         answer_matrix = np.zeros((num_frames, self.channels, self.horizontal_resolution), dtype=np.int32)
         all_initial_azimuth_offsets = []
 
@@ -148,6 +149,7 @@ class LidarSignalDatasetGenerator:
                     print(f"Target spoofer point at {self.spoofer_angle_deg} deg (front=0, ccw) not found. Using closest point: az={actual_trigger_point[0]/100}, alt={actual_trigger_point[1]/100} deg")
             
             frame_data = np.zeros((self.channels, self.horizontal_resolution, self.samples_per_scan), dtype=np.float32)
+            frame_labels = np.zeros((self.channels, self.horizontal_resolution, self.samples_per_scan), dtype=np.uint8)
 
             try:
                 for i in range(current_lidar.max_index):
@@ -174,6 +176,12 @@ class LidarSignalDatasetGenerator:
                     lidar_amp = np.random.uniform(self.lidar_amplitude_range[0], self.lidar_amplitude_range[1])
                     current_lidar.set_amplitude(lidar_amp)
                     
+                    # labeling: 0 = no return, 1 = legitimate return, 2 = HFR return
+                    LEGITIMATE_PULSE = 1
+                    HFR_PULSE = 2
+                    current_labels = np.zeros_like(signal, dtype=np.uint8)
+                    current_labels[signal > 0.01] = LEGITIMATE_PULSE   # legitimate bin = 1
+
                     if self.spoofer_type != "off":
                         spoofer_amp = np.random.uniform(self.spoofer_amplitude_range[0], self.spoofer_amplitude_range[1])
                         self.spoofer.set_amplitude(spoofer_amp)
@@ -184,6 +192,7 @@ class LidarSignalDatasetGenerator:
                             self.spoofer.trigger(config, signal)
                         
                         external_signal = apply_noise(self.spoofer.get_range_signal(config.start_timestamp, config.accept_duration), ratio=0.01)
+                        #current_labels = np.where(external_signal > signal, HFR_PULSE, current_labels)
                         signal = np.maximum(signal, external_signal)
 
                     signal = np.clip(signal, 0, 9)
@@ -193,12 +202,14 @@ class LidarSignalDatasetGenerator:
 
                     if horizontal_index < self.horizontal_resolution:
                         frame_data[vertical_index, horizontal_index, :] = signal
+                        frame_labels[vertical_index, horizontal_index, :] = current_labels
                         answer_matrix[frame_num, vertical_index, horizontal_index] = true_peak_index
 
             except StopIteration:
                 pass
 
             all_frames_data[frame_num, :, :, :] = frame_data
+            all_labels_data[frame_num, :, :, :] = frame_labels
 
         vertical_angles = self.lidar.vertical_angles
         fov = 360.0  # FOV for VLP16 is 360 degrees
@@ -206,6 +217,7 @@ class LidarSignalDatasetGenerator:
         output_filename = os.path.join(self.output_dir, f"{filename_prefix}.npz")
         np.savez(output_filename, 
                  signals=all_frames_data, 
+                 labels=all_labels_data,
                  answer_matrix=answer_matrix,
                  initial_azimuth_offsets=np.array(all_initial_azimuth_offsets), 
                  vertical_angles=vertical_angles,

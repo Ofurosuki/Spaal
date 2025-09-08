@@ -12,8 +12,10 @@ def visualize_interactive(npz_file_path: str):
     try:
         with np.load(npz_file_path) as data:
             # Use the first frame [0] for visualization
-            hist_matrix = data['signals'][0]
+            hist_matrix = data['signals'][1]
             vertical_angles = data['vertical_angles']
+            # Try to load labels, but don't fail if they don't exist
+            label_matrix = data.get('labels', [None])[0]
     except FileNotFoundError:
         print(f"Error: File not found at {npz_file_path}")
         return
@@ -35,12 +37,39 @@ def visualize_interactive(npz_file_path: str):
     # Create x-axis for the histogram plot (representing time samples)
     time_axis = np.arange(num_samples)
 
-    # Plot the initial histogram
-    line, = ax.plot(time_axis, hist_matrix[initial_altitude_idx, initial_azimuth_idx, :])
-    ax.set_xlabel("Time Sample Index")
-    ax.set_ylabel("Intensity")
-    ax.set_ylim(0, 10)  # Assuming intensity is clipped at 9
-    ax.grid(True)
+    # Create x-axis for the histogram plot (representing time samples)
+    time_axis = np.arange(num_samples)
+
+    def draw_histogram(alt_idx, azi_idx):
+        """Clears the axes and redraws the histogram with colored labels."""
+        ax.clear()
+        
+        signal = hist_matrix[alt_idx, azi_idx, :]
+        
+        # Check if label_matrix exists and has the correct shape
+        if label_matrix is not None and label_matrix.shape == hist_matrix.shape:
+            labels = label_matrix[alt_idx, azi_idx, :]
+            if (alt_idx == 18 and azi_idx == 1759) or (alt_idx == 5 and azi_idx == 328):
+                print(labels)
+            # Plot genuine signals in sky blue
+            ax.fill_between(time_axis, 0, signal, where=labels == 1, 
+                            color='skyblue', alpha=0.8, label='Genuine (1)')
+            # Plot HFR signals in pink
+            ax.fill_between(time_axis, 0, signal, where=labels == 2, 
+                            color='pink', alpha=0.8, label='HFR (2)')
+        
+        # Plot the signal outline for clarity
+        ax.plot(time_axis, signal, color='black', linewidth=0.75)
+        
+        ax.set_xlabel("Time Sample Index")
+        ax.set_ylabel("Intensity")
+        ax.set_ylim(0, 10)
+        ax.grid(True)
+        ax.legend(loc='upper right')
+        
+        # Update the title to show current indices and angle
+        altitude_deg = vertical_angles[alt_idx]
+        fig.suptitle(f'Altitude Idx: {alt_idx} (~{altitude_deg:.2f} deg), Azimuth Idx: {azi_idx}')
 
     # 4. Create axes for the sliders
     ax_altitude = plt.axes([0.25, 0.15, 0.65, 0.03])
@@ -53,7 +82,7 @@ def visualize_interactive(npz_file_path: str):
         valmin=0,
         valmax=num_channels - 1,
         valinit=initial_altitude_idx,
-        valstep=1  # Force integer steps
+        valstep=1
     )
 
     slider_azimuth = Slider(
@@ -62,26 +91,18 @@ def visualize_interactive(npz_file_path: str):
         valmin=0,
         valmax=num_horizontal_steps - 1,
         valinit=initial_azimuth_idx,
-        valstep=1  # Force integer steps
+        valstep=1
     )
 
-    # 6. Define the function to be called when a slider value changes
+    # 6. Define the update function to be called by sliders
     def update(val):
         alt_idx = int(slider_altitude.val)
         azi_idx = int(slider_azimuth.val)
-
-        # Update the y-data of the plot with the new histogram
-        line.set_ydata(hist_matrix[alt_idx, azi_idx, :])
-
-        # Update the title to show current indices and angle
-        altitude_deg = vertical_angles[alt_idx]
-        fig.suptitle(f'Altitude Idx: {alt_idx} (~{altitude_deg:.2f} deg), Azimuth Idx: {azi_idx}')
-
-        # Redraw the plot
+        draw_histogram(alt_idx, azi_idx)
         fig.canvas.draw_idle()
 
-    # Initialize title
-    update(None)
+    # Initial draw
+    draw_histogram(initial_altitude_idx, initial_azimuth_idx)
 
     # 7. Register the update function with the sliders
     slider_altitude.on_changed(update)
