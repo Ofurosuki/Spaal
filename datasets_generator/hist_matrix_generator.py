@@ -179,7 +179,7 @@ class LidarSignalDatasetGenerator:
                     # labeling: 0 = no return, 1 = legitimate return, 2 = HFR return
                     LEGITIMATE_PULSE = 1
                     HFR_PULSE = 2
-                    current_labels = np.zeros_like(signal, dtype=np.uint8)
+                    current_labels = np.zeros_like(signal, dtype=np.uint8)              
                     current_labels[signal > 0.01] = LEGITIMATE_PULSE   # legitimate bin = 1
 
                     if self.spoofer_type != "off":
@@ -192,7 +192,7 @@ class LidarSignalDatasetGenerator:
                             self.spoofer.trigger(config, signal)
                         
                         external_signal = apply_noise(self.spoofer.get_range_signal(config.start_timestamp, config.accept_duration), ratio=0.01)
-                        #current_labels = np.where(external_signal > signal, HFR_PULSE, current_labels)
+                        current_labels = np.where(external_signal > signal, HFR_PULSE, current_labels)
                         signal = np.maximum(signal, external_signal)
 
                     signal = np.clip(signal, 0, 9)

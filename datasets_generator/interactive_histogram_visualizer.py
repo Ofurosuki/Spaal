@@ -12,7 +12,7 @@ def visualize_interactive(npz_file_path: str):
     try:
         with np.load(npz_file_path) as data:
             # Use the first frame [0] for visualization
-            hist_matrix = data['signals'][1]
+            hist_matrix = data['signals'][0]
             vertical_angles = data['vertical_angles']
             # Try to load labels, but don't fail if they don't exist
             label_matrix = data.get('labels', [None])[0]
@@ -46,24 +46,24 @@ def visualize_interactive(npz_file_path: str):
         
         signal = hist_matrix[alt_idx, azi_idx, :]
         
+        # Plot the signal outline for clarity
+        ax.plot(time_axis, signal, color='black', linewidth=0.75, label="Signal")
+
         # Check if label_matrix exists and has the correct shape
         if label_matrix is not None and label_matrix.shape == hist_matrix.shape:
             labels = label_matrix[alt_idx, azi_idx, :]
-            if (alt_idx == 18 and azi_idx == 1759) or (alt_idx == 5 and azi_idx == 328):
-                print(labels)
-            # Plot genuine signals in sky blue
-            ax.fill_between(time_axis, 0, signal, where=labels == 1, 
+            bar_height = 10  # A small height for the color bar on the x-axis
+
+            # Draw a colored bar on the x-axis for genuine signals
+            ax.fill_between(time_axis, 0, bar_height, where=labels == 1, 
                             color='skyblue', alpha=0.8, label='Genuine (1)')
-            # Plot HFR signals in pink
-            ax.fill_between(time_axis, 0, signal, where=labels == 2, 
+            # Draw a colored bar on the x-axis for HFR signals
+            ax.fill_between(time_axis, 0, bar_height, where=labels == 2, 
                             color='pink', alpha=0.8, label='HFR (2)')
-        
-        # Plot the signal outline for clarity
-        ax.plot(time_axis, signal, color='black', linewidth=0.75)
         
         ax.set_xlabel("Time Sample Index")
         ax.set_ylabel("Intensity")
-        ax.set_ylim(0, 10)
+        ax.set_ylim(0, bar_height)
         ax.grid(True)
         ax.legend(loc='upper right')
         
