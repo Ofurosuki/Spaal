@@ -183,10 +183,32 @@ class PcdLidarVLP32c:
             time_of_flight_index = int(depth / (0.15 * self.time_resolution_ns))
             if time_of_flight_index < signal_length:
                 pulse_width_indices = int(self.pulse_width.in_nanoseconds / self.time_resolution_ns)
-                signal[time_of_flight_index:time_of_flight_index + pulse_width_indices] = self.amplitude
+                if pulse_width_indices > 0:
+                    # The peak of the pulse is at the time of flight
+                    mu = time_of_flight_index
+
+                    # Calculate sigma so the FWHM matches the configured pulse_width
+                    fwhm = pulse_width_indices
+                    sigma = fwhm / (2 * np.sqrt(2 * np.log(2)))
+
+                    # Define the window to generate the pulse over
+                    start_idx = max(0, int(mu - fwhm))
+                    end_idx = min(signal_length, int(mu + fwhm))
+                    
+                    if start_idx < end_idx:
+                        pulse_indices = np.arange(start_idx, end_idx)
+                        
+                        # Generate the Gaussian pulse
+                        gaussian_pulse = self.amplitude * np.exp(-((pulse_indices - mu)**2) / (2 * (sigma**2)))
+                        
+                        # Use += in case of future overlapping effects
+                        signal[pulse_indices] += gaussian_pulse
+                elif time_of_flight_index < signal_length:
+                    # Fallback for zero pulse width
+                    signal[time_of_flight_index] += self.amplitude
         else:
             self.no_signal_scan_angles.append((azimuth, altitude))
-
+ 
         self.index += 1
         return MeasurementConfig(
             start_timestamp=PreciseDuration(nanoseconds=timestamp),
