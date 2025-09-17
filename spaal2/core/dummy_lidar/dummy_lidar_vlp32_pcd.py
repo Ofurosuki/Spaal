@@ -141,8 +141,15 @@ class PcdLidarVLP32c:
         return self
 
     def _get_current_angle(self) -> tuple[int, int]:
-        horizontal_index = self.index // 32
-        vertical_index = self.index % 32
+        horizontal_steps = self.max_index // 32
+        
+        # Horizontal scan: Iterate through all horizontal steps for one vertical channel, then move to the next channel.
+        vertical_index = self.index // horizontal_steps
+        horizontal_index = self.index % horizontal_steps
+
+        if vertical_index >= len(self.fire_angles):
+            vertical_index = len(self.fire_angles) - 1
+
         fire_angle = self.fire_angles[vertical_index]
         
         lidar_azimuth_deg = horizontal_index * 0.2 + fire_angle.h_offset
@@ -160,9 +167,21 @@ class PcdLidarVLP32c:
         return lookup_key, altitude
 
     def _get_current_timestamp(self) -> int:
-        horizontal_index = self.index // 32
-        vertical_index = int((self.index % 32) // 2)
-        return horizontal_index * 55296 + vertical_index * 2304 + self.base_timestamp.in_nanoseconds
+        # This timing model corresponds to the new HORIZONTAL scan pattern.
+        # All points on the same horizontal line will have the same timestamp.
+        horizontal_steps = self.max_index // 32
+        time_per_horizontal_step_ns = 55296 # Time for one firing sequence
+
+        # The vertical channel index determines which horizontal line is being scanned.
+        vertical_channel_index = self.index // horizontal_steps
+
+        # The time to complete one full horizontal scan.
+        time_for_one_revolution_ns = horizontal_steps * time_per_horizontal_step_ns
+        
+        # Timestamp only depends on which horizontal line is being scanned.
+        timestamp = vertical_channel_index * time_for_one_revolution_ns
+
+        return timestamp + self.base_timestamp.in_nanoseconds
 
     def scan(self) -> tuple[MeasurementConfig, npt.NDArray[np.float64]]:
         if self.index >= self.max_index:

@@ -30,13 +30,15 @@ class LidarSignalDatasetGenerator:
                  noise_ratio: float = 0.1,
                  sunlight_mean: float = 0.5,
                  spoofer_angle_deg: float = 0.0, 
-                 spoofer_altitude_deg: float = 8.0):
+                 spoofer_altitude_deg: float = 8.0,
+                 spoofer_width_deg: float = 90.0):
 
         self.lidar_type = lidar_type
         self.pcd_directory = pcd_directory
         self.time_resolution_ns = time_resolution_ns
         self.spoofer_angle_deg = spoofer_angle_deg
         self.spoofer_altitude_deg = spoofer_altitude_deg
+        self.spoofer_width_deg = spoofer_width_deg
 
         if self.lidar_type == "VLP16":
             self.lidar = DummyLidarVLP16(
@@ -110,6 +112,14 @@ class LidarSignalDatasetGenerator:
         all_labels_data = np.zeros((num_frames, self.channels, self.horizontal_resolution, self.samples_per_scan), dtype=np.uint8)
         answer_matrix = np.zeros((num_frames, self.channels, self.horizontal_resolution), dtype=np.int32)
         all_initial_azimuth_offsets = []
+
+        # Define Spoofer's attack angle characteristics using internal angle representation
+        internal_angle_deg = (self.spoofer_angle_deg + 90) % 360
+        spoofer_attack_center_az = internal_angle_deg * 100
+        spoofer_attack_width_az = self.spoofer_width_deg * 100 # Convert to 0.01 deg units
+        spoofer_attack_start_az = spoofer_attack_center_az - spoofer_attack_width_az / 2
+        spoofer_attack_end_az = spoofer_attack_center_az + spoofer_attack_width_az / 2
+        print(f"Spoofer attack cone is centered at {spoofer_attack_center_az/100} deg with width {self.spoofer_width_deg} deg (internal angle system).")
 
         for frame_num in range(num_frames):
             print(f"Generating frame {frame_num + 1}/{num_frames}...")
@@ -191,14 +201,21 @@ class LidarSignalDatasetGenerator:
                             print(f"Spoofer triggered for azimuth: {config.azimuth}, altitude: {config.altitude}")
                             self.spoofer.trigger(config, signal)
                         
-                        external_signal = apply_noise(self.spoofer.get_range_signal(config.start_timestamp, config.accept_duration), ratio=0.01)
+                        # Default to no attack signal
+                        external_signal = np.zeros_like(signal)
+
+                        # Check if spoofer is active and the current angle is within the attack cone
+                        is_in_attack_angle = (spoofer_attack_start_az <= config.azimuth <= spoofer_attack_end_az)
+                        if self.spoofer.trigger_time is not None and is_in_attack_angle:
+                            external_signal = apply_noise(self.spoofer.get_range_signal(config.start_timestamp, config.accept_duration), ratio=0.01)
+
                         current_labels = np.where(external_signal > signal, HFR_PULSE, current_labels)
                         signal = np.maximum(signal, external_signal)
 
                     signal = np.clip(signal, 0, 9)
 
-                    horizontal_index = (current_lidar.index -1) // self.channels
-                    vertical_index = (current_lidar.index - 1) % self.channels
+                    horizontal_index = (current_lidar.index -1) % self.channels
+                    vertical_index = (current_lidar.index - 1) // self.channels
 
                     if horizontal_index < self.horizontal_resolution:
                         frame_data[vertical_index, horizontal_index, :] = signal
@@ -244,6 +261,8 @@ if __name__ == '__main__':
                         help="The angle for the spoofer trigger, in degrees, counter-clockwise with 0 at the front.")
     parser.add_argument("--spoofer-altitude", type=float, default=8.0,
                         help="The altitude for the spoofer trigger, in degrees.")
+    parser.add_argument("--spoofer-width-deg", type=float, default=90.0,
+                        help="The angular width of the spoofer's attack cone in degrees.")
 
     args = parser.parse_args()
 
@@ -257,6 +276,7 @@ if __name__ == '__main__':
         time_resolution_ns=args.time_resolution_ns,
         spoofer_type=args.spoofer_type,
         spoofer_angle_deg=args.spoofer_angle,
-        spoofer_altitude_deg=args.spoofer_altitude
+        spoofer_altitude_deg=args.spoofer_altitude,
+        spoofer_width_deg=args.spoofer_width_deg
     )
     generator.generate(num_frames=args.num_frames)
