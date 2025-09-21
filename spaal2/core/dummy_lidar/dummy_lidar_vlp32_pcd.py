@@ -51,6 +51,10 @@ class PcdLidarVLP32c:
         self.sorted_vertical_angles = sorted(self.vertical_angles, reverse=True)
         self.horizontal_steps = self.max_index // 32  # Should be 1800 for VLP-32c
 
+        # Azimuth-based time perturbation settings
+        self.perturbation_azimuth_threshold_deg: Optional[float] = 90.0
+        self.perturbation_time_ns: float = 20.0
+
         if pcd_file_path:
             if not os.path.exists(pcd_file_path):
                  raise FileNotFoundError(f"PCD file not found at {pcd_file_path}")
@@ -84,6 +88,20 @@ class PcdLidarVLP32c:
 
     def set_pcd_files(self, pcd_files: list[str]):
         self.pcd_files = pcd_files
+
+    def set_azimuth_time_perturbation(self, threshold_deg: float, time_ns: float):
+        """
+        Sets a time perturbation for all scans after a specific azimuth angle.
+
+        Parameters
+        ----------
+        threshold_deg : float
+            The azimuth angle (in degrees, relative to lidar's 0) after which the delay is applied.
+        time_ns : float
+            The delay time in nanoseconds to add to the timestamp.
+        """
+        self.perturbation_azimuth_threshold_deg = threshold_deg
+        self.perturbation_time_ns = time_ns
 
     def get_azimuth_index(self, angle_deg: float) -> int:
         horizontal_resolution = 20
@@ -184,9 +202,18 @@ class PcdLidarVLP32c:
 
         # 同じ高度リング内では、方位角ステップごとに僅かな時間を加算する
         # これにより、同じ高度の点は非常に近いが、同一ではないタイムスタンプを持つ
-        timestamp += azimuth_step_index * 0  # 1方位角ステップあたり50 ns
+        # timestamp += azimuth_step_index * 50  # 1方位角ステップあたり50 ns
+
+        # Check for azimuth-based time perturbation
+        if self.perturbation_azimuth_threshold_deg is not None:
+            # Calculate the corresponding azimuth in degrees (relative to lidar's 0)
+            current_azimuth_deg = azimuth_step_index * 0.2
+            
+            # If the current azimuth is past the threshold, add the delay
+            if current_azimuth_deg >= self.perturbation_azimuth_threshold_deg:
+                timestamp += self.perturbation_time_ns
         
-        return timestamp + self.base_timestamp.in_nanoseconds
+        return int(timestamp) + self.base_timestamp.in_nanoseconds
 
     def scan(self) -> tuple[MeasurementConfig, npt.NDArray[np.float64]]:
         if self.index >= self.max_index:
