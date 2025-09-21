@@ -19,7 +19,7 @@ class LidarSignalDatasetGenerator:
                  outdoor_distance: float = 50.0, outdoor_ratio: float = 0.8,
                  spoofer_type: str = "adaptive_hfr_perturbation",
                  spoofer_frequency: float = 10 * 1e6,
-                 spoofer_duration_ms: float = 20,
+                 spoofer_duration_ms: float = 200,
                  spoofer_distance_m: float = 10.0,
                  spoofer_pulse_width_ns: float = 5,
                  spoofer_perturbation_ns: float = 0.0,
@@ -78,6 +78,8 @@ class LidarSignalDatasetGenerator:
             self.horizontal_resolution = self.lidar.max_index // self.channels
         else:
             raise ValueError(f"Unknown LiDAR model: {lidar_type}")
+
+        self.altitude_to_v_idx_map = {int(angle * 100): i for i, angle in enumerate(self.lidar.vertical_angles)}
 
         self.samples_per_scan = int(self.lidar.accept_window.in_nanoseconds / self.lidar.time_resolution_ns)
         
@@ -214,8 +216,17 @@ class LidarSignalDatasetGenerator:
 
                     signal = np.clip(signal, 0, 9)
 
-                    horizontal_index = (current_lidar.index -1) % self.channels
-                    vertical_index = (current_lidar.index - 1) // self.channels
+                    # Convert config.azimuth (0-35999) to degrees (0-359.99)
+                    azimuth_deg = config.azimuth / 100.0
+                    
+                    # Normalize azimuth by subtracting the initial offset to get the 'base' angle for this frame
+                    # This correctly maps the angle to the horizontal index, counteracting the visualizer's addition of the offset.
+                    normalized_azimuth = (azimuth_deg - current_lidar.initial_azimuth_offset + 360) % 360
+                    
+                    # Calculate horizontal_index based on the normalized angle
+                    horizontal_index = int(normalized_azimuth / 360.0 * self.horizontal_resolution)
+
+                    vertical_index = self.altitude_to_v_idx_map.get(config.altitude)
 
                     if horizontal_index < self.horizontal_resolution:
                         frame_data[vertical_index, horizontal_index, :] = signal
