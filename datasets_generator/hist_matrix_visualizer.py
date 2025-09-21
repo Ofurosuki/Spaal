@@ -16,6 +16,7 @@ class HistMatrixVisualizer:
                 self.hist_matrix = data['prediction']
             else:
                 self.hist_matrix = data['signals']
+                print(f"Loaded hist_matrix with shape: {self.hist_matrix.shape}")
 
             if 'initial_azimuth_offsets' in data:
                 self.initial_azimuth_offsets = data['initial_azimuth_offsets']

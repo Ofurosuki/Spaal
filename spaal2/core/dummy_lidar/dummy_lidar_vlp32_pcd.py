@@ -36,7 +36,7 @@ class PcdLidarVLP32c:
 
     def __init__(self, pcd_file_path: Optional[str], lidar_position: np.ndarray, lidar_rotation: np.ndarray, base_timestamp: PreciseDuration = PreciseDuration(nanoseconds=0), amplitude: float = 1.0, pulse_width: PreciseDuration = PreciseDuration(nanoseconds=10), time_resolution_ns: float = 1.0) -> None:
         self.index: int = 0
-        self.max_index: int = int(360 // 0.2 * 32)
+        self.max_index: int = int(360 / 0.2 * 32)
         self.accept_window = PreciseDuration(nanoseconds=800)
         self.base_timestamp = base_timestamp
         self.amplitude = amplitude
