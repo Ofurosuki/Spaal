@@ -19,7 +19,7 @@ class LidarSignalDatasetGenerator:
                  outdoor_distance: float = 50.0, outdoor_ratio: float = 0.8,
                  spoofer_type: str = "adaptive_hfr_perturbation",
                  spoofer_frequency: float = 10 * 1e6,
-                 spoofer_duration_ms: float = 200,
+                 spoofer_duration_ms: float = 200000,
                  spoofer_distance_m: float = 10.0,
                  spoofer_pulse_width_ns: float = 5,
                  spoofer_perturbation_ns: float = 0.0,

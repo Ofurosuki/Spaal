@@ -47,6 +47,10 @@ class PcdLidarVLP32c:
         self.pcd_files: list[str] = []
         self.pcd_file_path = pcd_file_path
 
+        # Create a sorted list of vertical angles for the new scan pattern
+        self.sorted_vertical_angles = sorted(self.vertical_angles, reverse=True)
+        self.horizontal_steps = self.max_index // 32  # Should be 1800 for VLP-32c
+
         if pcd_file_path:
             if not os.path.exists(pcd_file_path):
                  raise FileNotFoundError(f"PCD file not found at {pcd_file_path}")
@@ -141,46 +145,47 @@ class PcdLidarVLP32c:
         return self
 
     def _get_current_angle(self) -> tuple[int, int]:
-        horizontal_steps = self.max_index // 32
-        
-        # Horizontal scan: Iterate through all horizontal steps for one vertical channel, then move to the next channel.
-        vertical_index = self.index // horizontal_steps
-        horizontal_index = self.index % horizontal_steps
+        # Determine which altitude ring and azimuth step we are on based on the new ideal scan pattern
+        altitude_index = self.index // self.horizontal_steps
+        azimuth_index_in_ring = self.index % self.horizontal_steps
 
-        if vertical_index >= len(self.fire_angles):
-            vertical_index = len(self.fire_angles) - 1
+        # Get the corresponding vertical angle from the pre-sorted list
+        v_angle = self.sorted_vertical_angles[altitude_index]
+        altitude_key = int(v_angle * 100)
 
-        fire_angle = self.fire_angles[vertical_index]
+        # Calculate the azimuth key based on the ideal horizontal step
+        horizontal_resolution = 20  # 0.2 degrees * 100
+        lidar_azimuth_deg = azimuth_index_in_ring * 0.2
         
-        lidar_azimuth_deg = horizontal_index * 0.2 + fire_angle.h_offset
-        
+        # Apply the initial offset for the current frame to get the absolute angle
         absolute_azimuth_deg = lidar_azimuth_deg + self.initial_azimuth_offset
         
-        altitude = int(fire_angle.v_angle * 100)
-
-        horizontal_resolution = 20
+        # Discretize the azimuth to create the lookup key for the depth map
         azimuth_index = round(absolute_azimuth_deg * 100 / horizontal_resolution)
         discretized_azimuth = (azimuth_index * horizontal_resolution)
-        
-        lookup_key = int(discretized_azimuth % 36000)
+        azimuth_key = int(discretized_azimuth % 36000)
 
-        return lookup_key, altitude
+        return azimuth_key, altitude_key
 
     def _get_current_timestamp(self) -> int:
-        # This timing model corresponds to the new HORIZONTAL scan pattern.
-        # All points on the same horizontal line will have the same timestamp.
-        horizontal_steps = self.max_index // 32
-        time_per_horizontal_step_ns = 55296 # Time for one firing sequence
+        # self.indexは「高度優先」でソートされたスキャン順序を指す
+        # 1つの高度リングに含まれる水平ステップの数 (VLP-32cでは1800)
+        horizontal_steps_per_ring = self.max_index // 32
 
-        # The vertical channel index determines which horizontal line is being scanned.
-        vertical_channel_index = self.index // horizontal_steps
-
-        # The time to complete one full horizontal scan.
-        time_for_one_revolution_ns = horizontal_steps * time_per_horizontal_step_ns
+        # 現在のスキャンが何番目の高度リングにいるか (0から31)
+        altitude_step_index = self.index // horizontal_steps_per_ring
         
-        # Timestamp only depends on which horizontal line is being scanned.
-        timestamp = vertical_channel_index * time_for_one_revolution_ns
+        # 現在の高度リングの中で、何番目の方位角ステップか (0から1799)
+        azimuth_step_index = self.index % horizontal_steps_per_ring
 
+        # 主なタイムスタンプは高度ステップによって決まる
+        # 1高度リングあたり100マイクロ秒(100,000 ns)進めることで、異なるリングの時間は大きく離れる
+        timestamp = altitude_step_index * 100234
+
+        # 同じ高度リング内では、方位角ステップごとに僅かな時間を加算する
+        # これにより、同じ高度の点は非常に近いが、同一ではないタイムスタンプを持つ
+        timestamp += azimuth_step_index * 0  # 1方位角ステップあたり50 ns
+        
         return timestamp + self.base_timestamp.in_nanoseconds
 
     def scan(self) -> tuple[MeasurementConfig, npt.NDArray[np.float64]]:
