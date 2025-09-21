@@ -57,13 +57,35 @@ class HistMatrixVisualizer:
                     if len(raises) == 0:
                         continue
 
-                    peaks = np.array([np.max(signal[r:min(len(signal), r + 50)]) for r in raises])
-                    
-                    if len(peaks) == 0:
+                    # Find the pulse with the highest peak
+                    peak_values = np.array([np.max(signal[r:min(len(signal), r + 50)]) for r in raises])
+                    if len(peak_values) == 0:
                         continue
+                    
+                    # Determine the region of the highest pulse
+                    highest_pulse_start_index = raises[np.argmax(peak_values)]
+                    pulse_region = signal[highest_pulse_start_index:min(len(signal), highest_pulse_start_index + 50)]
+                    
+                    # Find the integer index of the peak within that pulse region
+                    if len(pulse_region) == 0:
+                        continue
+                    peak_idx_in_region = np.argmax(pulse_region)
+                    peak_idx_global = highest_pulse_start_index + peak_idx_in_region
 
-                    highest_peak_index = np.argmax(peaks)
-                    highest_peak_time = raises[highest_peak_index]
+                    # Perform parabolic interpolation for sub-sample precision
+                    if 0 < peak_idx_global < len(signal) - 1:
+                        y0 = signal[peak_idx_global - 1]
+                        y1 = signal[peak_idx_global]
+                        y2 = signal[peak_idx_global + 1]
+                        
+                        denominator = (y0 - 2 * y1 + y2)
+                        if abs(denominator) > 1e-6: # Avoid division by zero for flat peaks
+                            offset = (y0 - y2) / (2 * denominator)
+                            highest_peak_time = peak_idx_global + offset
+                        else:
+                            highest_peak_time = float(peak_idx_global) # Fallback for flat peak
+                    else:
+                        highest_peak_time = float(peak_idx_global) # Fallback for peaks at signal boundary
                 else:
                     highest_peak_time = frame_data[v_idx, h_idx, 0]
 
