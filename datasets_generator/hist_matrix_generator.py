@@ -19,7 +19,7 @@ class LidarSignalDatasetGenerator:
                  outdoor_distance: float = 50.0, outdoor_ratio: float = 0.8,
                  spoofer_type: str = "adaptive_hfr_perturbation",
                  spoofer_frequency: float = 10 * 1e6,
-                 spoofer_duration_ms: float = 200000,
+                 spoofer_duration_ms: float = 7000,
                  spoofer_distance_m: float = 10.0,
                  spoofer_pulse_width_ns: float = 5,
                  spoofer_perturbation_ns: float = 20.0,
@@ -101,9 +101,9 @@ class LidarSignalDatasetGenerator:
                 spoofer_distance_m=spoofer_distance_m,
                 pulse_width=PreciseDuration(nanoseconds=spoofer_pulse_width_ns),
                 perturbation_ns=spoofer_perturbation_ns,
-                amplitude=spoofer_amplitude_range[0],
                 time_resolution_ns=self.lidar.time_resolution_ns
             )
+            self.spoofer.set_amplitude_range(spoofer_amplitude_range)
         elif self.spoofer_type == "off":
             self.spoofer = DummySpooferOff()
         else:
@@ -195,12 +195,9 @@ class LidarSignalDatasetGenerator:
                     current_labels[signal > 0.01] = LEGITIMATE_PULSE   # legitimate bin = 1
 
                     if self.spoofer_type != "off":
-                        spoofer_amp = np.random.uniform(self.spoofer_amplitude_range[0], self.spoofer_amplitude_range[1])
-                        self.spoofer.set_amplitude(spoofer_amp)
-
                         # Check if the current scan config matches the determined trigger point
                         if actual_trigger_point and config.altitude == actual_trigger_point[1] and config.azimuth == actual_trigger_point[0]:
-                            print(f"Spoofer triggered for azimuth: {config.azimuth}, altitude: {config.altitude}")
+                            # The spoofer now handles its own amplitude sequence upon trigger
                             self.spoofer.trigger(config, signal)
                         
                         # Default to no attack signal
