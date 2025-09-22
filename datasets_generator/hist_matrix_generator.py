@@ -79,7 +79,9 @@ class LidarSignalDatasetGenerator:
         else:
             raise ValueError(f"Unknown LiDAR model: {lidar_type}")
 
-        self.altitude_to_v_idx_map = {int(angle * 100): i for i, angle in enumerate(self.lidar.vertical_angles)}
+        # Create a spatially sorted list of vertical angles for the output matrix
+        self.sorted_vertical_angles = sorted(self.lidar.vertical_angles, reverse=True)
+        self.altitude_to_sorted_v_idx_map = {int(angle * 100): i for i, angle in enumerate(self.sorted_vertical_angles)}
 
         self.samples_per_scan = int(self.lidar.accept_window.in_nanoseconds / self.lidar.time_resolution_ns)
         
@@ -223,7 +225,7 @@ class LidarSignalDatasetGenerator:
                     # Calculate horizontal_index based on the normalized angle
                     horizontal_index = int(normalized_azimuth / 360.0 * self.horizontal_resolution)
 
-                    vertical_index = self.altitude_to_v_idx_map.get(config.altitude)
+                    vertical_index = self.altitude_to_sorted_v_idx_map.get(config.altitude)
 
                     if horizontal_index < self.horizontal_resolution:
                         frame_data[vertical_index, horizontal_index, :] = signal
@@ -236,7 +238,7 @@ class LidarSignalDatasetGenerator:
             all_frames_data[frame_num, :, :, :] = frame_data
             all_labels_data[frame_num, :, :, :] = frame_labels
 
-        vertical_angles = self.lidar.vertical_angles
+        vertical_angles = self.sorted_vertical_angles
         fov = 360.0  # FOV for VLP16 is 360 degrees
 
         output_filename = os.path.join(self.output_dir, f"{filename_prefix}.npz")
