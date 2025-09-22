@@ -78,10 +78,21 @@ class DummySpooferAdaptiveHFRWithPerturbation(DummySpooferInterface):
         raises = np.flatnonzero(
             (signal[:-1] < 0.5) & (signal[1:] >= 0.5)
         ) + 1
-        if raises.size == 0:
-            return
-        peak_index = raises[0]
-        peak_time_ns = peak_index * self.time_resolution_ns
+        
+        peak_time_ns: float
+        if raises.size > 0:
+            # 基準パルスが見つかった場合：その時刻を同期に使う
+            peak_index = raises[0]
+            peak_time_ns = peak_index * self.time_resolution_ns
+        else:
+            # 基準パルスが見つからない場合：spoofer自身の距離からToFを計算して代替する
+            print("Spoofer trigger: No valid pulse found. Using spoofer's own distance for fallback timing.")
+            # 光速 (m/ns)
+            SPEED_OF_LIGHT_M_PER_NS = 0.299792458 
+            # ToF(往復時間) = 2 * 距離 / 光速
+            time_of_flight_ns = (self.distance_m * 2) / SPEED_OF_LIGHT_M_PER_NS
+            peak_time_ns = time_of_flight_ns
+
         self.trigger_time = config.start_timestamp + PreciseDuration(nanoseconds=peak_time_ns)
         
         # Reset state for the new attack

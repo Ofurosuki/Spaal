@@ -197,10 +197,29 @@ class LidarSignalDatasetGenerator:
                     current_labels[signal > 0.01] = LEGITIMATE_PULSE   # legitimate bin = 1
 
                     if self.spoofer_type != "off":
-                        # Check if the current scan config matches the determined trigger point
-                        if actual_trigger_point and config.altitude == actual_trigger_point[1] and config.azimuth == actual_trigger_point[0]:
-                            # The spoofer now handles its own amplitude sequence upon trigger
-                            self.spoofer.trigger(config, signal)
+                        # Proximity-based trigger logic
+                        if actual_trigger_point is not None and self.spoofer.trigger_time is None:
+                            az_key_ideal = config.azimuth
+                            alt_key_ideal = config.altitude
+                            
+                            az_key_target = actual_trigger_point[0]
+                            alt_key_target = actual_trigger_point[1]
+
+                            # Check if the current ideal scan angle is 'close' to the target trigger angle
+                            # Tolerance is roughly half the step size. Azimuth step is 20 (0.2 deg).
+                            azimuth_tolerance = 100
+                            # Vertical steps vary, but 100 (1 deg) is a reasonable tolerance.
+                            altitude_tolerance = 200
+
+                            # Handle azimuth wraparound at 360 degrees (36000 units)
+                            azimuth_diff = abs(az_key_ideal - az_key_target)
+                            azimuth_diff = min(azimuth_diff, 36000 - azimuth_diff)
+
+                            altitude_diff = abs(alt_key_ideal - alt_key_target)
+
+                            if azimuth_diff <= azimuth_tolerance and altitude_diff <= altitude_tolerance:
+                                # Trigger only once per attack.
+                                self.spoofer.trigger(config, signal)
                         
                         # Default to no attack signal
                         external_signal = np.zeros_like(signal)
