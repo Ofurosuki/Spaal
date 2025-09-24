@@ -195,33 +195,27 @@ class PcdLidarVLP32c:
         return azimuth_key, altitude_key
 
     def _get_current_timestamp(self) -> int:
-        # self.indexは「高度優先」でソートされたスキャン順序を指す
-        # 1つの高度リングに含まれる水平ステップの数 (VLP-32cでは1800)
         horizontal_steps_per_ring = self.max_index // 32
-
-        # 現在のスキャンが何番目の高度リングにいるか (0から31)
-        altitude_step_index = self.index // horizontal_steps_per_ring
-        
-        # 現在の高度リングの中で、何番目の方位角ステップか (0から1799)
         azimuth_step_index = self.index % horizontal_steps_per_ring
+        current_azimuth_deg = azimuth_step_index * 0.2
+        altitude_step_index = self.index // horizontal_steps_per_ring
 
-        # 主なタイムスタンプは高度ステップによって決まる
-        # 1高度リングあたり100マイクロ秒(100,000 ns)進めることで、異なるリングの時間は大きく離れる
-        timestamp = altitude_step_index * 50234
+        # 水平角が20度増加するごとにタイムスタンプを20ns増加させる
+        angle_step = 22 # degrees
+        time_increase_per_step = 20  # ns
+        timestamp = (current_azimuth_deg // angle_step) * time_increase_per_step
 
-        # 同じ高度リング内では、方位角ステップごとに僅かな時間を加算する
-        # これにより、同じ高度の点は非常に近いが、同一ではないタイムスタンプを持つ
-        # timestamp += azimuth_step_index * 50  # 1方位角ステップあたり50 ns
+        # 高度リングが変わるごとに5060nsの時間を追加
+        timestamp += altitude_step_index * 50234
 
         # Check for azimuth-based time perturbation
-        current_azimuth_deg = azimuth_step_index * 0.2
-        time_perturbation = 0.0
-        if self.perturbation_azimuth_thresholds_deg:
-            for i in range(len(self.perturbation_azimuth_thresholds_deg)):
-                if current_azimuth_deg >= self.perturbation_azimuth_thresholds_deg[i]:
-                    time_perturbation = self.perturbation_times_ns[i]
+        # time_perturbation = 0.0
+        # if self.perturbation_azimuth_thresholds_deg:
+        #     for i in range(len(self.perturbation_azimuth_thresholds_deg)):
+        #         if current_azimuth_deg >= self.perturbation_azimuth_thresholds_deg[i]:
+        #             time_perturbation = self.perturbation_times_ns[i]
         
-        timestamp += time_perturbation
+        # timestamp += time_perturbation
         
         return int(timestamp) + self.base_timestamp.in_nanoseconds
 

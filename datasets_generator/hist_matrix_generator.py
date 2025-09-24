@@ -71,8 +71,9 @@ class LidarSignalDatasetGenerator:
                 pulse_width=PreciseDuration(nanoseconds=lidar_pulse_width_ns),
                 time_resolution_ns=self.time_resolution_ns
             )
-            if lidar_class == PcdLidarVLP32c:
-                self.lidar.set_azimuth_time_perturbation([78,90,112],[20,20,20])
+            if self.lidar_type == "PCD_VLP32c":
+                print("Applying azimuth time perturbation for VLP32c model.")
+                #self.lidar.set_azimuth_time_perturbation([78,90,112],[20,20,20])
             self.lidar.set_pcd_files(self.pcd_files)
             
             # Load the first frame to determine horizontal_resolution
