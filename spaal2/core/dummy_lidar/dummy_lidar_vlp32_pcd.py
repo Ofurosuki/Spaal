@@ -52,8 +52,8 @@ class PcdLidarVLP32c:
         self.horizontal_steps = self.max_index // 32  # Should be 1800 for VLP-32c
 
         # Azimuth-based time perturbation settings
-        self.perturbation_azimuth_threshold_deg: Optional[float] = 90.0
-        self.perturbation_time_ns: float = 20.0
+        self.perturbation_azimuth_thresholds_deg: list[float] = []
+        self.perturbation_times_ns: list[float] = []
 
         if pcd_file_path:
             if not os.path.exists(pcd_file_path):
@@ -89,19 +89,28 @@ class PcdLidarVLP32c:
     def set_pcd_files(self, pcd_files: list[str]):
         self.pcd_files = pcd_files
 
-    def set_azimuth_time_perturbation(self, threshold_deg: float, time_ns: float):
+    def set_azimuth_time_perturbation(self, thresholds_deg: list[float], times_ns: list[float]):
         """
-        Sets a time perturbation for all scans after a specific azimuth angle.
+        Sets multiple time perturbations based on azimuth angles. The perturbations are step-wise.
+        For example, if thresholds_deg=[90, 180] and times_ns=[20, 40], then for an azimuth `a`:
+        - if a < 90, no perturbation is added.
+        - if 90 <= a < 180, 20ns is added.
+        - if a >= 180, 40ns is added.
 
         Parameters
         ----------
-        threshold_deg : float
-            The azimuth angle (in degrees, relative to lidar's 0) after which the delay is applied.
-        time_ns : float
-            The delay time in nanoseconds to add to the timestamp.
+        thresholds_deg : list[float]
+            A list of azimuth angle thresholds (in degrees).
+        times_ns : list[float]
+            A list of delay times in nanoseconds to add. Must have the same length as thresholds_deg.
         """
-        self.perturbation_azimuth_threshold_deg = threshold_deg
-        self.perturbation_time_ns = time_ns
+        if len(thresholds_deg) != len(times_ns):
+            raise ValueError("thresholds_deg and times_ns must have the same length.")
+        
+        # Sort by threshold to ensure correct application
+        sorted_pairs = sorted(zip(thresholds_deg, times_ns))
+        self.perturbation_azimuth_thresholds_deg = [p[0] for p in sorted_pairs]
+        self.perturbation_times_ns = [p[1] for p in sorted_pairs]
 
     def get_azimuth_index(self, angle_deg: float) -> int:
         horizontal_resolution = 20
@@ -205,13 +214,14 @@ class PcdLidarVLP32c:
         # timestamp += azimuth_step_index * 50  # 1方位角ステップあたり50 ns
 
         # Check for azimuth-based time perturbation
-        if self.perturbation_azimuth_threshold_deg is not None:
-            # Calculate the corresponding azimuth in degrees (relative to lidar's 0)
-            current_azimuth_deg = azimuth_step_index * 0.2
-            
-            # If the current azimuth is past the threshold, add the delay
-            if current_azimuth_deg >= self.perturbation_azimuth_threshold_deg:
-                timestamp += self.perturbation_time_ns
+        current_azimuth_deg = azimuth_step_index * 0.2
+        time_perturbation = 0.0
+        if self.perturbation_azimuth_thresholds_deg:
+            for i in range(len(self.perturbation_azimuth_thresholds_deg)):
+                if current_azimuth_deg >= self.perturbation_azimuth_thresholds_deg[i]:
+                    time_perturbation = self.perturbation_times_ns[i]
+        
+        timestamp += time_perturbation
         
         return int(timestamp) + self.base_timestamp.in_nanoseconds
 
