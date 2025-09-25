@@ -29,10 +29,10 @@ signals, answer_matrix, initial_azimuth_offests, vertical_angles, fov, time_reso
 uv run python datasets_generator/hist_matrix_generator.py --lidar-type PCD_VLP16 --pcd-file "C:/Users/nextr/spaal2-core/example/1464001237.670017000.pcd" --num-frames 1 --output-dir ./pcd_datasets --time-resolution-ns 0.2
 ``` -->
 
-## Hist-matrix -> pointcloud 変換方法
+<!-- ## Hist-matrix -> pointcloud 変換方法
 ```
 uv run datasets_generator/hist_matrix_visualizer.py --pcd-file "C:/Users/nextr/spaal2-core/example/1464001237.670017000.pcd" --npz-file "C:/Users/nextr/spaal2-core/pcd_datasets/lidar_signal.npz"
-```
+``` -->
 
 ## Hist-matrix 生成方法 
 各引数の説明

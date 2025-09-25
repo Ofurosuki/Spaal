@@ -11,6 +11,8 @@ class HistMatrixVisualizer:
         self.pcd_directory_path = pcd_directory_path
         self.is_prediction = False 
         with np.load(npz_file_path) as data:
+            print(f"Loading data from {npz_file_path}")
+            print(f"shape of signals: {data['signals'].shape if 'signals' in data else 'N/A'}")
             if 'signals' not in data and 'prediction':
                 self.is_prediction = True
                 self.hist_matrix = data['prediction']

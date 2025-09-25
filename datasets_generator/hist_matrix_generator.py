@@ -264,7 +264,7 @@ class LidarSignalDatasetGenerator:
         fov = 360.0  # FOV for VLP16 is 360 degrees
 
         output_filename = os.path.join(self.output_dir, f"{filename_prefix}.npz")
-        np.savez(output_filename, 
+        np.savez_compressed(output_filename, 
                  signals=all_frames_data, 
                  labels=all_labels_data,
                  answer_matrix=answer_matrix,
