@@ -11,6 +11,7 @@ class HistMatrixVisualizer:
         self.pcd_directory_path = pcd_directory_path
         self.is_prediction = False 
         with np.load(npz_file_path) as data:
+            print(f"signals shape: {data['signals'].shape}")
             if 'signals' not in data and 'prediction':
                 self.is_prediction = True
                 self.hist_matrix = data['prediction']
@@ -23,9 +24,25 @@ class HistMatrixVisualizer:
             else:
                 print("Warning: 'initial_azimuth_offsets' not found in .npz file. Defaulting to 0.0 for all frames.")
                 self.initial_azimuth_offsets = [data.get('initial_azimuth_offset', 0.0)]
-            self.vertical_angles = data['vertical_angles']
-            self.fov = data['fov']
-            self.time_resolution_ns = data['time_resolution_ns']
+            if 'vertical_angles' in data:
+                self.vertical_angles = data['vertical_angles']
+                print(self.vertical_angles)
+            else:
+                self.vertical_angles = [10.67,   9.33,   8. ,    6.67  , 5.33 ,  4. ,    2.67,  1.33 , 0.   , -1.33,
+                -2.67 , -4.  ,  -5.33 , -6.66 , -8.  ,  -9.33 ,-10.67, -12. ,  -13.33, -14.67,
+                -16.  , -17.33 ,-18.67 ,-20. ,  -21.33 ,-22.67 ,-24.  , -25.33, -26.66, -28.,
+                -29.33 ,-30.67]
+                print("Warning: 'vertical_angles' not found in .npz file. Using default VLP-32c angles.")
+            if 'fov' in data:
+                self.fov = data['fov']
+            else:
+                self.fov = 360.0
+                print("Warning: 'fov' not found in .npz file. Defaulting to 360.0 degrees.")
+            if 'time_resolution_ns' in data:
+                self.time_resolution_ns = data['time_resolution_ns']
+            else:
+                self.time_resolution_ns = 1.0
+                print("Warning: 'time_resolution_ns' not found in .npz file. Defaulting to 1.0 ns.")
 
         self.pcd_files = []
         if self.pcd_directory_path:
