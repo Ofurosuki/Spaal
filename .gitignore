@@ -13,3 +13,4 @@ example/*.pcd
 **.npy
 .vscode/
 **.npz
+pcd_data_test/
