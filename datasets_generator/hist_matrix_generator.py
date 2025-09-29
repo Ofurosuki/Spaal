@@ -3,6 +3,7 @@ import os
 import argparse
 import glob
 import h5py
+# import hdf5plugin  # Ensure hdf5plugin is imported to enable compression filters
 from spaal2.core import (
     PreciseDuration, DummyOutdoor, apply_noise, gen_sunlight,
 )
@@ -20,7 +21,7 @@ class LidarSignalDatasetGenerator:
                  outdoor_distance: float = 50.0, outdoor_ratio: float = 0.8,
                  spoofer_type: str = "adaptive_hfr_perturbation",
                  spoofer_frequency: float = 10 * 1e6,
-                 spoofer_duration_ms: float = 7000,
+                 spoofer_duration_ms: float = 5,
                  spoofer_distance_m: float = 10.0,
                  spoofer_pulse_width_ns: float = 5,
                  spoofer_perturbation_ns: float = 20.0,
@@ -124,6 +125,11 @@ class LidarSignalDatasetGenerator:
         output_filename = os.path.join(self.output_dir, f"{filename_prefix}.h5")
         all_initial_azimuth_offsets = []
 
+        chunk_size = 100
+        signals_chunk = []
+        labels_chunk = []
+        answers_chunk = []
+
         with h5py.File(output_filename, 'w') as f:
             # Create resizable datasets on disk with compression
             signals_dset = f.create_dataset('signals', 
@@ -139,13 +145,13 @@ class LidarSignalDatasetGenerator:
                                            maxshape=(None, self.channels, self.horizontal_resolution),
                                            dtype='i4', compression='gzip')
 
-            print(f"Generating {num_frames} frames and saving to {output_filename}...")
+            print(f"Generating {num_frames} frames and saving to {output_filename} in chunks of {chunk_size}...")
 
             for frame_num in range(num_frames):
-                print(f"Generating frame {frame_num + 1}/{num_frames}...")
+                print(f"\nGenerating frame {frame_num + 1}/{num_frames}...")
                 
                 if self.lidar_type in ["PCD_VLP16", "PCD_VLP32c"]:
-                    pcd_file_path = self.pcd_files[frame_num]
+                    pcd_file_path = self.pcd_files[frame_num % len(self.pcd_files)] # Use modulo for safety
                     print(f"  - Using PCD file: {os.path.basename(pcd_file_path)}")
                     current_lidar = self.lidar.new_frame(frame_num=frame_num, base_timestamp=PreciseDuration(nanoseconds=frame_num * 10**9))
                 else:
@@ -156,7 +162,6 @@ class LidarSignalDatasetGenerator:
                 else:
                     all_initial_azimuth_offsets.append(0.0)
 
-                # Select spoofer angle for the current frame and define attack cone
                 current_spoofer_angle = self.spoofer_angles_deg[frame_num % len(self.spoofer_angles_deg)]
                 print(f"  - Using spoofer angle: {current_spoofer_angle} deg")
                 internal_angle_deg = (current_spoofer_angle + 90) % 360
@@ -167,25 +172,20 @@ class LidarSignalDatasetGenerator:
 
                 actual_trigger_point = None
                 if self.spoofer_type != "off" and hasattr(current_lidar, 'depth_map'):
-                    # Use the frame-specific angle to determine the target point
                     target_azimuth = internal_angle_deg * 100
                     target_altitude = self.spoofer_altitude_deg * 100
                     target_point = (target_azimuth, target_altitude)
-
                     available_points = list(current_lidar.depth_map.keys())
-                    
                     if not available_points:
                         print("Warning: Cannot determine spoofer trigger point, depth map is empty.")
                     elif target_point in current_lidar.depth_map:
                         actual_trigger_point = target_point
                     else:
-                        # Find the closest point by Euclidean distance
                         distances = [np.sqrt((az - target_azimuth)**2 + (alt - target_altitude)**2) for az, alt in available_points]
                         closest_index = np.argmin(distances)
                         actual_trigger_point = available_points[closest_index]
                         print(f"Target spoofer point at {current_spoofer_angle} deg (front=0, ccw) not found. Using closest point: az={actual_trigger_point[0]/100}, alt={actual_trigger_point[1]/100} deg")
                 
-                # Allocate memory for just one frame
                 frame_data = np.zeros((self.channels, self.horizontal_resolution, self.samples_per_scan), dtype=np.float32)
                 frame_labels = np.zeros((self.channels, self.horizontal_resolution, self.samples_per_scan), dtype=np.uint8)
                 frame_answer = np.zeros((self.channels, self.horizontal_resolution), dtype=np.int32)
@@ -193,43 +193,27 @@ class LidarSignalDatasetGenerator:
                 try:
                     for i in range(current_lidar.max_index):
                         config, signal = current_lidar.scan()
-                        # find candidate peaks in the signal
-                        raises = np.flatnonzero(
-                            (signal[:-1] < 0.01) & (signal[1:] >= 0.01)
-                        ) + 1
-                        
-                        if len(raises) == 0:
-                            true_peak_index = 0
-                        else:
-                            peaks = np.empty_like(raises, dtype=np.float64)
-                            for peak_i in range(len(raises)):
-                                peaks[peak_i] = np.max(
-                                    signal[raises[peak_i]:min(len(signal), raises[peak_i] + 50)]
-                                )
-                            highest_peak_index = np.argmax(peaks)
-                            highest_peak_time = raises[highest_peak_index]
-                            true_peak_index = highest_peak_time
+                        raises = np.flatnonzero((signal[:-1] < 0.01) & (signal[1:] >= 0.01)) + 1
+                        true_peak_index = 0
+                        if len(raises) > 0:
+                            peaks = np.array([np.max(signal[r:min(len(signal), r + 50)]) for r in raises])
+                            if len(peaks) > 0:
+                                true_peak_index = raises[np.argmax(peaks)]
 
                         lidar_amp = np.random.uniform(self.lidar_amplitude_range[0], self.lidar_amplitude_range[1])
                         current_lidar.set_amplitude(lidar_amp)
                         
-                        LEGITIMATE_PULSE = 1
-                        HFR_PULSE = 2
-                        current_labels = np.zeros_like(signal, dtype=np.uint8)              
+                        LEGITIMATE_PULSE, HFR_PULSE = 1, 2
+                        current_labels = np.zeros_like(signal, dtype=np.uint8)
                         current_labels[signal > 0.01] = LEGITIMATE_PULSE
 
                         if self.spoofer_type != "off":
                             if actual_trigger_point is not None and self.spoofer.trigger_time is None:
-                                az_key_ideal = config.azimuth
-                                alt_key_ideal = config.altitude
-                                az_key_target = actual_trigger_point[0]
-                                alt_key_target = actual_trigger_point[1]
-                                azimuth_tolerance = 10
-                                altitude_tolerance = 100
-                                azimuth_diff = abs(az_key_ideal - az_key_target)
-                                azimuth_diff = min(azimuth_diff, 36000 - azimuth_diff)
-                                altitude_diff = abs(alt_key_ideal - alt_key_target)
-                                if azimuth_diff <= azimuth_tolerance and altitude_diff <= altitude_tolerance:
+                                az_key_ideal, alt_key_ideal = config.azimuth, config.altitude
+                                az_key_target, alt_key_target = actual_trigger_point[0], actual_trigger_point[1]
+                                azimuth_tolerance, altitude_tolerance = 10, 100
+                                azimuth_diff = min(abs(az_key_ideal - az_key_target), 36000 - abs(az_key_ideal - az_key_target))
+                                if azimuth_diff <= azimuth_tolerance and abs(alt_key_ideal - alt_key_target) <= altitude_tolerance:
                                     self.spoofer.trigger(config, signal)
                             
                             external_signal = np.zeros_like(signal)
@@ -241,7 +225,6 @@ class LidarSignalDatasetGenerator:
                             signal = np.maximum(signal, external_signal)
 
                         signal = np.clip(signal, 0, 9)
-
                         azimuth_deg = config.azimuth / 100.0
                         normalized_azimuth = (azimuth_deg - current_lidar.initial_azimuth_offset + 360) % 360
                         horizontal_index = int(normalized_azimuth / 360.0 * self.horizontal_resolution)
@@ -251,16 +234,23 @@ class LidarSignalDatasetGenerator:
                             frame_data[vertical_index, horizontal_index, :] = signal
                             frame_labels[vertical_index, horizontal_index, :] = current_labels
                             frame_answer[vertical_index, horizontal_index] = true_peak_index
-
                 except StopIteration:
                     pass
 
-                # Write the completed frame directly to the HDF5 file
-                signals_dset[frame_num, :, :, :] = frame_data
-                labels_dset[frame_num, :, :, :] = frame_labels
-                answer_dset[frame_num, :, :] = frame_answer
+                signals_chunk.append(frame_data)
+                labels_chunk.append(frame_labels)
+                answers_chunk.append(frame_answer)
 
-            # After the loop, save the remaining metadata
+                is_last_frame = (frame_num + 1) == num_frames
+                if (len(signals_chunk) == chunk_size) or (is_last_frame and len(signals_chunk) > 0):
+                    start_idx = frame_num - (len(signals_chunk) - 1)
+                    end_idx = frame_num + 1
+                    print(f"  - Writing chunk of {len(signals_chunk)} frames to disk (frames {start_idx}-{frame_num})...")
+                    signals_dset[start_idx:end_idx] = np.array(signals_chunk, dtype=np.float32)
+                    labels_dset[start_idx:end_idx] = np.array(labels_chunk, dtype=np.uint8)
+                    answer_dset[start_idx:end_idx] = np.array(answers_chunk, dtype=np.int32)
+                    signals_chunk, labels_chunk, answers_chunk = [], [], []
+
             f.create_dataset('initial_azimuth_offsets', data=np.array(all_initial_azimuth_offsets))
             f.create_dataset('vertical_angles', data=self.sorted_vertical_angles)
             f.create_dataset('fov', data=360.0)

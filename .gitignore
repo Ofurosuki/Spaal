@@ -14,3 +14,4 @@ example/*.pcd
 .vscode/
 **.npz
 pcd_data_test/
+**.h5
