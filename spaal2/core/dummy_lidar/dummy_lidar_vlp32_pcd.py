@@ -201,7 +201,7 @@ class PcdLidarVLP32c:
         altitude_step_index = self.index // horizontal_steps_per_ring
 
         # 水平角が20度増加するごとにタイムスタンプを20ns増加させる
-        angle_step = 11 # degrees
+        angle_step = 0.2 # degrees
         time_increase_per_step = 20  # ns
         timestamp = (current_azimuth_deg // angle_step) * time_increase_per_step
 

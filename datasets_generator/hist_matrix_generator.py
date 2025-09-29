@@ -29,14 +29,19 @@ class LidarSignalDatasetGenerator:
                  time_resolution_ns: float = 1.0,
                  noise_ratio: float = 0.1,
                  sunlight_mean: float = 0.5,
-                 spoofer_angle_deg: float = 0.0, 
+                 spoofer_angles_deg: list[float] = [0.0], 
                  spoofer_altitude_deg: float = 8.0,
                  spoofer_width_deg: float = 90.0):
 
         self.lidar_type = lidar_type
         self.pcd_directory = pcd_directory
         self.time_resolution_ns = time_resolution_ns
-        self.spoofer_angle_deg = spoofer_angle_deg
+        
+        # Ensure spoofer_angles_deg is a list for frame-specific angles
+        if not isinstance(spoofer_angles_deg, list):
+            spoofer_angles_deg = [spoofer_angles_deg]
+        self.spoofer_angles_deg = spoofer_angles_deg
+
         self.spoofer_altitude_deg = spoofer_altitude_deg
         self.spoofer_width_deg = spoofer_width_deg
 
@@ -119,14 +124,7 @@ class LidarSignalDatasetGenerator:
         all_labels_data = np.zeros((num_frames, self.channels, self.horizontal_resolution, self.samples_per_scan), dtype=np.uint8)
         answer_matrix = np.zeros((num_frames, self.channels, self.horizontal_resolution), dtype=np.int32)
         all_initial_azimuth_offsets = []
-
-        # Define Spoofer's attack angle characteristics using internal angle representation
-        internal_angle_deg = (self.spoofer_angle_deg + 90) % 360
-        spoofer_attack_center_az = internal_angle_deg * 100
-        spoofer_attack_width_az = self.spoofer_width_deg * 100 # Convert to 0.01 deg units
-        spoofer_attack_start_az = spoofer_attack_center_az - spoofer_attack_width_az / 2
-        spoofer_attack_end_az = spoofer_attack_center_az + spoofer_attack_width_az / 2
-        print(f"Spoofer attack cone is centered at {spoofer_attack_center_az/100} deg with width {self.spoofer_width_deg} deg (internal angle system).")
+        #print(f"Attack azimuth range: {spoofer_attack_start_az}  to {spoofer_attack_end_az} az.")
 
         for frame_num in range(num_frames):
             print(f"Generating frame {frame_num + 1}/{num_frames}...")
@@ -143,11 +141,18 @@ class LidarSignalDatasetGenerator:
             else:
                 all_initial_azimuth_offsets.append(0.0)
 
+            # Select spoofer angle for the current frame and define attack cone
+            current_spoofer_angle = self.spoofer_angles_deg[frame_num % len(self.spoofer_angles_deg)]
+            print(f"  - Using spoofer angle: {current_spoofer_angle} deg")
+            internal_angle_deg = (current_spoofer_angle + 90) % 360
+            spoofer_attack_center_az = internal_angle_deg * 100
+            spoofer_attack_width_az = self.spoofer_width_deg * 100
+            spoofer_attack_start_az = spoofer_attack_center_az - spoofer_attack_width_az / 2
+            spoofer_attack_end_az = spoofer_attack_center_az + spoofer_attack_width_az / 2
+
             actual_trigger_point = None
             if self.spoofer_type != "off" and hasattr(current_lidar, 'depth_map'):
-                # Convert user-facing angle (0-front, CCW) to internal angle (0-right, CCW)
-                # by adding 90 degrees. The result is wrapped to [0, 360).
-                internal_angle_deg = (self.spoofer_angle_deg + 90) % 360
+                # Use the frame-specific angle to determine the target point
                 target_azimuth = internal_angle_deg * 100
                 target_altitude = self.spoofer_altitude_deg * 100
                 target_point = (target_azimuth, target_altitude)
@@ -163,7 +168,7 @@ class LidarSignalDatasetGenerator:
                     distances = [np.sqrt((az - target_azimuth)**2 + (alt - target_altitude)**2) for az, alt in available_points]
                     closest_index = np.argmin(distances)
                     actual_trigger_point = available_points[closest_index]
-                    print(f"Target spoofer point at {self.spoofer_angle_deg} deg (front=0, ccw) not found. Using closest point: az={actual_trigger_point[0]/100}, alt={actual_trigger_point[1]/100} deg")
+                    print(f"Target spoofer point at {current_spoofer_angle} deg (front=0, ccw) not found. Using closest point: az={actual_trigger_point[0]/100}, alt={actual_trigger_point[1]/100} deg")
             
             frame_data = np.zeros((self.channels, self.horizontal_resolution, self.samples_per_scan), dtype=np.float32)
             frame_labels = np.zeros((self.channels, self.horizontal_resolution, self.samples_per_scan), dtype=np.uint8)
@@ -289,8 +294,8 @@ if __name__ == '__main__':
     parser.add_argument("--spoofer-type", type=str, default="adaptive_hfr_perturbation", choices=["adaptive_hfr_perturbation", "off"],
                         help="Type of spoofer to use.")
     # New arguments for spoofer targeting
-    parser.add_argument("--spoofer-angle", type=float, default=0.0,
-                        help="The angle for the spoofer trigger, in degrees, counter-clockwise with 0 at the front.")
+    parser.add_argument("--spoofer-angle", type=float, nargs='+', default=[0.0],
+                        help="The angle(s) for the spoofer trigger, in degrees, counter-clockwise with 0 at the front. Can provide multiple values for frame-specific angles.")
     parser.add_argument("--spoofer-altitude", type=float, default=8.0,
                         help="The altitude for the spoofer trigger, in degrees.")
     parser.add_argument("--spoofer-width-deg", type=float, default=90.0,
@@ -307,7 +312,7 @@ if __name__ == '__main__':
         output_dir=args.output_dir,
         time_resolution_ns=args.time_resolution_ns,
         spoofer_type=args.spoofer_type,
-        spoofer_angle_deg=args.spoofer_angle,
+        spoofer_angles_deg=args.spoofer_angle,
         spoofer_altitude_deg=args.spoofer_altitude,
         spoofer_width_deg=args.spoofer_width_deg
     )
