@@ -2,25 +2,29 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.widgets import Slider
 import argparse
+import h5py
 
-def visualize_interactive(npz_file_path: str):
+def visualize_interactive(h5_file_path: str):
     """
-    Loads a hist-matrix .npz file and provides an interactive plot
+    Loads a hist-matrix .h5 file and provides an interactive plot
     with sliders to select and view individual histograms.
     """
-    # 1. Load data from the .npz file
+    # 1. Load data from the .h5 file
     try:
-        with np.load(npz_file_path) as data:
+        with h5py.File(h5_file_path, 'r') as data:
             # Use the first frame [0] for visualization
             hist_matrix = data['signals'][0]
-            vertical_angles = data['vertical_angles']
+            vertical_angles = data['vertical_angles'][:]
             # Try to load labels, but don't fail if they don't exist
-            label_matrix = data.get('labels', [None])[0]
+            if 'labels' in data:
+                label_matrix = data['labels'][0]
+            else:
+                label_matrix = None
     except FileNotFoundError:
-        print(f"Error: File not found at {npz_file_path}")
+        print(f"Error: File not found at {h5_file_path}")
         return
     except Exception as e:
-        print(f"Error loading .npz file: {e}")
+        print(f"Error loading .h5 file: {e}")
         return
 
     # 2. Get dimensions from the loaded data
@@ -113,8 +117,8 @@ def visualize_interactive(npz_file_path: str):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description="Interactively visualize histograms from a .npz file.")
-    parser.add_argument("--npz-file", required=True, help="Path to the .npz histogram matrix file.")
+    parser = argparse.ArgumentParser(description="Interactively visualize histograms from a .h5 file.")
+    parser.add_argument("--h5-file", required=True, help="Path to the .h5 histogram matrix file.")
     args = parser.parse_args()
 
-    visualize_interactive(args.npz_file)
+    visualize_interactive(args.h5_file)

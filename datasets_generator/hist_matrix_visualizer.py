@@ -4,30 +4,30 @@ import open3d as o3d
 import argparse
 import os
 import glob
+import h5py
 
 class HistMatrixVisualizer:
-    def __init__(self, npz_file_path: str, pcd_directory_path: str = None):
-        self.npz_file_path = npz_file_path
+    def __init__(self, h5_file_path: str, pcd_directory_path: str = None):
+        self.h5_file_path = h5_file_path
         self.pcd_directory_path = pcd_directory_path
         self.is_prediction = False 
-        with np.load(npz_file_path) as data:
-            print(f"Loading data from {npz_file_path}")
-            print(f"shape of signals: {data['signals'].shape if 'signals' in data else 'N/A'}")
-            if 'signals' not in data and 'prediction':
+        with h5py.File(h5_file_path, 'r') as data:
+            print(f"Loading data from {h5_file_path}")
+            if 'signals' not in data and 'prediction' in data:
                 self.is_prediction = True
-                self.hist_matrix = data['prediction']
+                self.hist_matrix = data['prediction'][:]
             else:
-                self.hist_matrix = data['signals']
-                print(f"Loaded hist_matrix with shape: {self.hist_matrix.shape}")
+                self.hist_matrix = data['signals'][:]
+            print(f"Loaded hist_matrix with shape: {self.hist_matrix.shape}")
 
             if 'initial_azimuth_offsets' in data:
-                self.initial_azimuth_offsets = data['initial_azimuth_offsets']
+                self.initial_azimuth_offsets = data['initial_azimuth_offsets'][:]
             else:
-                print("Warning: 'initial_azimuth_offsets' not found in .npz file. Defaulting to 0.0 for all frames.")
-                self.initial_azimuth_offsets = [data.get('initial_azimuth_offset', 0.0)]
-            self.vertical_angles = data['vertical_angles']
-            self.fov = data['fov']
-            self.time_resolution_ns = data['time_resolution_ns']
+                print("Warning: 'initial_azimuth_offsets' not found in .h5 file. Defaulting to 0.0 for all frames.")
+                self.initial_azimuth_offsets = [0.0]
+            self.vertical_angles = data['vertical_angles'][:]
+            self.fov = data['fov'][()]
+            self.time_resolution_ns = data['time_resolution_ns'][()]
 
         self.pcd_files = []
         if self.pcd_directory_path:
@@ -131,12 +131,12 @@ class HistMatrixVisualizer:
         o3d.visualization.draw_geometries(geometries, window_name=f"Frame {frame_index}")
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description="Visualize LiDAR histogram matrix from .npz file.")
-    parser.add_argument("--npz-file", required=True, type=str, help="Path to the .npz histogram matrix file.")
+    parser = argparse.ArgumentParser(description="Visualize LiDAR histogram matrix from .h5 file.")
+    parser.add_argument("--h5-file", required=True, type=str, help="Path to the .h5 histogram matrix file.")
     parser.add_argument("--pcd-directory", type=str, default=None, help="Path to the directory with original .pcd files for comparison.")
     parser.add_argument("--frame", type=int, default=0, help="Frame index to visualize.")
     
     args = parser.parse_args()
 
-    visualizer = HistMatrixVisualizer(args.npz_file, args.pcd_directory)
+    visualizer = HistMatrixVisualizer(args.h5_file, args.pcd_directory)
     visualizer.visualize(args.frame)

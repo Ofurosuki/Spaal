@@ -2,6 +2,7 @@ import numpy as np
 import os
 import argparse
 import glob
+import h5py
 from spaal2.core import (
     PreciseDuration, DummyOutdoor, apply_noise, gen_sunlight,
 )
@@ -120,163 +121,151 @@ class LidarSignalDatasetGenerator:
             raise ValueError(f"Spoofer type {self.spoofer_type} not implemented for this script yet.")
 
     def generate(self, num_frames: int, filename_prefix: str = "lidar_signal"):
-        all_frames_data = np.zeros((num_frames, self.channels, self.horizontal_resolution, self.samples_per_scan), dtype=np.float32)
-        all_labels_data = np.zeros((num_frames, self.channels, self.horizontal_resolution, self.samples_per_scan), dtype=np.uint8)
-        answer_matrix = np.zeros((num_frames, self.channels, self.horizontal_resolution), dtype=np.int32)
+        output_filename = os.path.join(self.output_dir, f"{filename_prefix}.h5")
         all_initial_azimuth_offsets = []
-        #print(f"Attack azimuth range: {spoofer_attack_start_az}  to {spoofer_attack_end_az} az.")
 
-        for frame_num in range(num_frames):
-            print(f"Generating frame {frame_num + 1}/{num_frames}...")
-            
-            if self.lidar_type in ["PCD_VLP16", "PCD_VLP32c"]:
-                pcd_file_path = self.pcd_files[frame_num]
-                print(f"  - Using PCD file: {os.path.basename(pcd_file_path)}")
-                current_lidar = self.lidar.new_frame(frame_num=frame_num, base_timestamp=PreciseDuration(nanoseconds=frame_num * 10**9))
-            else:
-                current_lidar = self.lidar.new_frame(base_timestamp=PreciseDuration(nanoseconds=frame_num * 10**9))
+        with h5py.File(output_filename, 'w') as f:
+            # Create resizable datasets on disk with compression
+            signals_dset = f.create_dataset('signals', 
+                                            (num_frames, self.channels, self.horizontal_resolution, self.samples_per_scan), 
+                                            maxshape=(None, self.channels, self.horizontal_resolution, self.samples_per_scan),
+                                            dtype='f4', compression='gzip')
+            labels_dset = f.create_dataset('labels', 
+                                           (num_frames, self.channels, self.horizontal_resolution, self.samples_per_scan), 
+                                           maxshape=(None, self.channels, self.horizontal_resolution, self.samples_per_scan),
+                                           dtype='u1', compression='gzip')
+            answer_dset = f.create_dataset('answer_matrix', 
+                                           (num_frames, self.channels, self.horizontal_resolution), 
+                                           maxshape=(None, self.channels, self.horizontal_resolution),
+                                           dtype='i4', compression='gzip')
 
-            if hasattr(current_lidar, 'initial_azimuth_offset'):
-                all_initial_azimuth_offsets.append(current_lidar.initial_azimuth_offset)
-            else:
-                all_initial_azimuth_offsets.append(0.0)
+            print(f"Generating {num_frames} frames and saving to {output_filename}...")
 
-            # Select spoofer angle for the current frame and define attack cone
-            current_spoofer_angle = self.spoofer_angles_deg[frame_num % len(self.spoofer_angles_deg)]
-            print(f"  - Using spoofer angle: {current_spoofer_angle} deg")
-            internal_angle_deg = (current_spoofer_angle + 90) % 360
-            spoofer_attack_center_az = internal_angle_deg * 100
-            spoofer_attack_width_az = self.spoofer_width_deg * 100
-            spoofer_attack_start_az = spoofer_attack_center_az - spoofer_attack_width_az / 2
-            spoofer_attack_end_az = spoofer_attack_center_az + spoofer_attack_width_az / 2
-
-            actual_trigger_point = None
-            if self.spoofer_type != "off" and hasattr(current_lidar, 'depth_map'):
-                # Use the frame-specific angle to determine the target point
-                target_azimuth = internal_angle_deg * 100
-                target_altitude = self.spoofer_altitude_deg * 100
-                target_point = (target_azimuth, target_altitude)
-
-                available_points = list(current_lidar.depth_map.keys())
+            for frame_num in range(num_frames):
+                print(f"Generating frame {frame_num + 1}/{num_frames}...")
                 
-                if not available_points:
-                    print("Warning: Cannot determine spoofer trigger point, depth map is empty.")
-                elif target_point in current_lidar.depth_map:
-                    actual_trigger_point = target_point
+                if self.lidar_type in ["PCD_VLP16", "PCD_VLP32c"]:
+                    pcd_file_path = self.pcd_files[frame_num]
+                    print(f"  - Using PCD file: {os.path.basename(pcd_file_path)}")
+                    current_lidar = self.lidar.new_frame(frame_num=frame_num, base_timestamp=PreciseDuration(nanoseconds=frame_num * 10**9))
                 else:
-                    # Find the closest point by Euclidean distance
-                    distances = [np.sqrt((az - target_azimuth)**2 + (alt - target_altitude)**2) for az, alt in available_points]
-                    closest_index = np.argmin(distances)
-                    actual_trigger_point = available_points[closest_index]
-                    print(f"Target spoofer point at {current_spoofer_angle} deg (front=0, ccw) not found. Using closest point: az={actual_trigger_point[0]/100}, alt={actual_trigger_point[1]/100} deg")
-            
-            frame_data = np.zeros((self.channels, self.horizontal_resolution, self.samples_per_scan), dtype=np.float32)
-            frame_labels = np.zeros((self.channels, self.horizontal_resolution, self.samples_per_scan), dtype=np.uint8)
+                    current_lidar = self.lidar.new_frame(base_timestamp=PreciseDuration(nanoseconds=frame_num * 10**9))
 
-            try:
-                for i in range(current_lidar.max_index):
-                    config, signal = current_lidar.scan()
-                    # find candidate peaks in the signal
-                    raises = np.flatnonzero(
-                        (signal[:-1] < 0.01) & (signal[1:] >= 0.01)
-                    ) + 1
+                if hasattr(current_lidar, 'initial_azimuth_offset'):
+                    all_initial_azimuth_offsets.append(current_lidar.initial_azimuth_offset)
+                else:
+                    all_initial_azimuth_offsets.append(0.0)
+
+                # Select spoofer angle for the current frame and define attack cone
+                current_spoofer_angle = self.spoofer_angles_deg[frame_num % len(self.spoofer_angles_deg)]
+                print(f"  - Using spoofer angle: {current_spoofer_angle} deg")
+                internal_angle_deg = (current_spoofer_angle + 90) % 360
+                spoofer_attack_center_az = internal_angle_deg * 100
+                spoofer_attack_width_az = self.spoofer_width_deg * 100
+                spoofer_attack_start_az = spoofer_attack_center_az - spoofer_attack_width_az / 2
+                spoofer_attack_end_az = spoofer_attack_center_az + spoofer_attack_width_az / 2
+
+                actual_trigger_point = None
+                if self.spoofer_type != "off" and hasattr(current_lidar, 'depth_map'):
+                    # Use the frame-specific angle to determine the target point
+                    target_azimuth = internal_angle_deg * 100
+                    target_altitude = self.spoofer_altitude_deg * 100
+                    target_point = (target_azimuth, target_altitude)
+
+                    available_points = list(current_lidar.depth_map.keys())
                     
-                    if len(raises) == 0:
-                        true_peak_index = 0
+                    if not available_points:
+                        print("Warning: Cannot determine spoofer trigger point, depth map is empty.")
+                    elif target_point in current_lidar.depth_map:
+                        actual_trigger_point = target_point
                     else:
-                        peaks = np.empty_like(raises, dtype=np.float64)
-                        for i in range(len(raises)):
-                            peaks[i] = np.max(
-                                signal[raises[i]:min(len(signal), raises[i] + 50)]
-                            )
-                        highest_peak_index = np.argmax(peaks)
-                        highest_peak = peaks[highest_peak_index]
-                        highest_peak_time = raises[highest_peak_index]
+                        # Find the closest point by Euclidean distance
+                        distances = [np.sqrt((az - target_azimuth)**2 + (alt - target_altitude)**2) for az, alt in available_points]
+                        closest_index = np.argmin(distances)
+                        actual_trigger_point = available_points[closest_index]
+                        print(f"Target spoofer point at {current_spoofer_angle} deg (front=0, ccw) not found. Using closest point: az={actual_trigger_point[0]/100}, alt={actual_trigger_point[1]/100} deg")
+                
+                # Allocate memory for just one frame
+                frame_data = np.zeros((self.channels, self.horizontal_resolution, self.samples_per_scan), dtype=np.float32)
+                frame_labels = np.zeros((self.channels, self.horizontal_resolution, self.samples_per_scan), dtype=np.uint8)
+                frame_answer = np.zeros((self.channels, self.horizontal_resolution), dtype=np.int32)
 
-                        true_peak_index = highest_peak_time
-
-                    lidar_amp = np.random.uniform(self.lidar_amplitude_range[0], self.lidar_amplitude_range[1])
-                    current_lidar.set_amplitude(lidar_amp)
-                    
-                    # labeling: 0 = no return, 1 = legitimate return, 2 = HFR return
-                    LEGITIMATE_PULSE = 1
-                    HFR_PULSE = 2
-                    current_labels = np.zeros_like(signal, dtype=np.uint8)              
-                    current_labels[signal > 0.01] = LEGITIMATE_PULSE   # legitimate bin = 1
-
-                    if self.spoofer_type != "off":
-                        # Proximity-based trigger logic
-                        if actual_trigger_point is not None and self.spoofer.trigger_time is None:
-                            az_key_ideal = config.azimuth
-                            alt_key_ideal = config.altitude
-                            
-                            az_key_target = actual_trigger_point[0]
-                            alt_key_target = actual_trigger_point[1]
-
-                            # Check if the current ideal scan angle is 'close' to the target trigger angle
-                            # Tolerance is roughly half the step size. Azimuth step is 20 (0.2 deg).
-                            azimuth_tolerance = 100
-                            # Vertical steps vary, but 100 (1 deg) is a reasonable tolerance.
-                            altitude_tolerance = 200
-
-                            # Handle azimuth wraparound at 360 degrees (36000 units)
-                            azimuth_diff = abs(az_key_ideal - az_key_target)
-                            azimuth_diff = min(azimuth_diff, 36000 - azimuth_diff)
-
-                            altitude_diff = abs(alt_key_ideal - alt_key_target)
-
-                            if azimuth_diff <= azimuth_tolerance and altitude_diff <= altitude_tolerance:
-                                # Trigger only once per attack.
-                                self.spoofer.trigger(config, signal)
+                try:
+                    for i in range(current_lidar.max_index):
+                        config, signal = current_lidar.scan()
+                        # find candidate peaks in the signal
+                        raises = np.flatnonzero(
+                            (signal[:-1] < 0.01) & (signal[1:] >= 0.01)
+                        ) + 1
                         
-                        # Default to no attack signal
-                        external_signal = np.zeros_like(signal)
+                        if len(raises) == 0:
+                            true_peak_index = 0
+                        else:
+                            peaks = np.empty_like(raises, dtype=np.float64)
+                            for peak_i in range(len(raises)):
+                                peaks[peak_i] = np.max(
+                                    signal[raises[peak_i]:min(len(signal), raises[peak_i] + 50)]
+                                )
+                            highest_peak_index = np.argmax(peaks)
+                            highest_peak_time = raises[highest_peak_index]
+                            true_peak_index = highest_peak_time
 
-                        # Check if spoofer is active and the current angle is within the attack cone
-                        is_in_attack_angle = (spoofer_attack_start_az <= config.azimuth <= spoofer_attack_end_az)
-                        if self.spoofer.trigger_time is not None and is_in_attack_angle:
-                            external_signal = apply_noise(self.spoofer.get_range_signal(config.start_timestamp, config.accept_duration), ratio=0.01)
+                        lidar_amp = np.random.uniform(self.lidar_amplitude_range[0], self.lidar_amplitude_range[1])
+                        current_lidar.set_amplitude(lidar_amp)
+                        
+                        LEGITIMATE_PULSE = 1
+                        HFR_PULSE = 2
+                        current_labels = np.zeros_like(signal, dtype=np.uint8)              
+                        current_labels[signal > 0.01] = LEGITIMATE_PULSE
 
-                        current_labels = np.where(external_signal > signal, HFR_PULSE, current_labels)
-                        signal = np.maximum(signal, external_signal)
+                        if self.spoofer_type != "off":
+                            if actual_trigger_point is not None and self.spoofer.trigger_time is None:
+                                az_key_ideal = config.azimuth
+                                alt_key_ideal = config.altitude
+                                az_key_target = actual_trigger_point[0]
+                                alt_key_target = actual_trigger_point[1]
+                                azimuth_tolerance = 10
+                                altitude_tolerance = 100
+                                azimuth_diff = abs(az_key_ideal - az_key_target)
+                                azimuth_diff = min(azimuth_diff, 36000 - azimuth_diff)
+                                altitude_diff = abs(alt_key_ideal - alt_key_target)
+                                if azimuth_diff <= azimuth_tolerance and altitude_diff <= altitude_tolerance:
+                                    self.spoofer.trigger(config, signal)
+                            
+                            external_signal = np.zeros_like(signal)
+                            is_in_attack_angle = (spoofer_attack_start_az <= config.azimuth <= spoofer_attack_end_az)
+                            if self.spoofer.trigger_time is not None and is_in_attack_angle:
+                                external_signal = apply_noise(self.spoofer.get_range_signal(config.start_timestamp, config.accept_duration), ratio=0.01)
 
-                    signal = np.clip(signal, 0, 9)
+                            current_labels = np.where(external_signal > signal, HFR_PULSE, current_labels)
+                            signal = np.maximum(signal, external_signal)
 
-                    # Convert config.azimuth (0-35999) to degrees (0-359.99)
-                    azimuth_deg = config.azimuth / 100.0
-                    
-                    # Normalize azimuth by subtracting the initial offset to get the 'base' angle for this frame
-                    # This correctly maps the angle to the horizontal index, counteracting the visualizer's addition of the offset.
-                    normalized_azimuth = (azimuth_deg - current_lidar.initial_azimuth_offset + 360) % 360
-                    
-                    # Calculate horizontal_index based on the normalized angle
-                    horizontal_index = int(normalized_azimuth / 360.0 * self.horizontal_resolution)
+                        signal = np.clip(signal, 0, 9)
 
-                    vertical_index = self.altitude_to_sorted_v_idx_map.get(config.altitude)
+                        azimuth_deg = config.azimuth / 100.0
+                        normalized_azimuth = (azimuth_deg - current_lidar.initial_azimuth_offset + 360) % 360
+                        horizontal_index = int(normalized_azimuth / 360.0 * self.horizontal_resolution)
+                        vertical_index = self.altitude_to_sorted_v_idx_map.get(config.altitude)
 
-                    if horizontal_index < self.horizontal_resolution:
-                        frame_data[vertical_index, horizontal_index, :] = signal
-                        frame_labels[vertical_index, horizontal_index, :] = current_labels
-                        answer_matrix[frame_num, vertical_index, horizontal_index] = true_peak_index
+                        if horizontal_index < self.horizontal_resolution and vertical_index is not None:
+                            frame_data[vertical_index, horizontal_index, :] = signal
+                            frame_labels[vertical_index, horizontal_index, :] = current_labels
+                            frame_answer[vertical_index, horizontal_index] = true_peak_index
 
-            except StopIteration:
-                pass
+                except StopIteration:
+                    pass
 
-            all_frames_data[frame_num, :, :, :] = frame_data
-            all_labels_data[frame_num, :, :, :] = frame_labels
+                # Write the completed frame directly to the HDF5 file
+                signals_dset[frame_num, :, :, :] = frame_data
+                labels_dset[frame_num, :, :, :] = frame_labels
+                answer_dset[frame_num, :, :] = frame_answer
 
-        vertical_angles = self.sorted_vertical_angles
-        fov = 360.0  # FOV for VLP16 is 360 degrees
-
-        output_filename = os.path.join(self.output_dir, f"{filename_prefix}.npz")
-        np.savez_compressed(output_filename, 
-                 signals=all_frames_data, 
-                 labels=all_labels_data,
-                 answer_matrix=answer_matrix,
-                 initial_azimuth_offsets=np.array(all_initial_azimuth_offsets), 
-                 vertical_angles=vertical_angles,
-                 fov=fov,
-                 time_resolution_ns=self.time_resolution_ns)
+            # After the loop, save the remaining metadata
+            f.create_dataset('initial_azimuth_offsets', data=np.array(all_initial_azimuth_offsets))
+            f.create_dataset('vertical_angles', data=self.sorted_vertical_angles)
+            f.create_dataset('fov', data=360.0)
+            f.create_dataset('time_resolution_ns', data=self.time_resolution_ns)
+            
         print(f"Saved all frames to {output_filename}")
 
 if __name__ == '__main__':
