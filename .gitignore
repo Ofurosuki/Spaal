@@ -13,3 +13,6 @@ example/*.pcd
 **.npy
 .vscode/
 **.npz
+original_bin/*
+pcd_ascii/*
+pcd_reconstructed_11/*

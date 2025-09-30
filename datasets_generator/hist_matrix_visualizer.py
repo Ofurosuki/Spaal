@@ -6,30 +6,36 @@ import os
 import glob
 
 class HistMatrixVisualizer:
-    def __init__(self, npz_file_path: str, pcd_directory_path: str = None):
+    def __init__(self, npz_file_path: str = None, pcd_directory_path: str = None, data: dict = None):
         self.npz_file_path = npz_file_path
         self.pcd_directory_path = pcd_directory_path
-        self.is_prediction = False 
-        with np.load(npz_file_path) as data:
-            print(f"Loading data from {npz_file_path}")
-            print(f"shape of signals: {data['signals'].shape if 'signals' in data else 'N/A'}")
-            if 'signals' not in data and 'prediction' in data:
-                self.is_prediction = True
-                self.hist_matrix = data['prediction']
-            else:
-                self.hist_matrix = data['signals']
-                print(f"Loaded hist_matrix with shape: {self.hist_matrix.shape}")
+        self.is_prediction = False
 
-            if 'initial_azimuth_offsets' in data:
-                self.initial_azimuth_offsets = data['initial_azimuth_offsets']
-            else:
-                print("Warning: 'initial_azimuth_offsets' not found in .npz file. Defaulting to 0.0 for all frames.")
-                self.initial_azimuth_offsets = [data.get('initial_azimuth_offset', 0.0)] * len(self.hist_matrix)
-            
-            v_angles_default = sorted([-30.67, -9.33, -29.33, -8.0, -28.0, -6.66, -26.66, -5.33, -25.33, -4.0, -24.0, -2.67, -22.67, -1.33, -21.33, 0.0, -20.0, 1.33, -18.67, 2.67, -17.33, 4.0, -16.0, 5.33, -14.67, 6.67, -13.33, 8.0, -12.0, 9.33, -10.67, 10.67], reverse=True)
-            self.vertical_angles = data.get('vertical_angles', v_angles_default)
-            self.fov = data.get('fov', 360.0)
-            self.time_resolution_ns = data.get('time_resolution_ns', 1.0)
+        if data is None and npz_file_path:
+            print(f"Loading data from {npz_file_path}")
+            with np.load(npz_file_path) as loaded_data:
+                data = {key: loaded_data[key] for key in loaded_data}
+        elif data is None:
+            raise ValueError("Either 'npz_file_path' or 'data' dictionary must be provided.")
+
+        print(f"shape of signals: {data['signals'].shape if 'signals' in data else 'N/A'}")
+        if 'signals' not in data and 'prediction' in data:
+            self.is_prediction = True
+            self.hist_matrix = data['prediction']
+        else:
+            self.hist_matrix = data['signals']
+        print(f"Loaded hist_matrix with shape: {self.hist_matrix.shape}")
+
+        if 'initial_azimuth_offsets' in data:
+            self.initial_azimuth_offsets = data['initial_azimuth_offsets']
+        else:
+            print("Warning: 'initial_azimuth_offsets' not found. Defaulting to 0.0 for all frames.")
+            self.initial_azimuth_offsets = [data.get('initial_azimuth_offset', 0.0)] * len(self.hist_matrix)
+        
+        v_angles_default = sorted([-30.67, -9.33, -29.33, -8.0, -28.0, -6.66, -26.66, -5.33, -25.33, -4.0, -24.0, -2.67, -22.67, -1.33, -21.33, 0.0, -20.0, 1.33, -18.67, 2.67, -17.33, 4.0, -16.0, 5.33, -14.67, 6.67, -13.33, 8.0, -12.0, 9.33, -10.67, 10.67], reverse=True)
+        self.vertical_angles = data.get('vertical_angles', v_angles_default)
+        self.fov = data.get('fov', 360.0)
+        self.time_resolution_ns = data.get('time_resolution_ns', 1.0)
 
         self.pcd_files = []
         if self.pcd_directory_path:
@@ -165,7 +171,7 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    visualizer = HistMatrixVisualizer(args.npz_file, args.pcd_directory)
+    visualizer = HistMatrixVisualizer(npz_file_path=args.npz_file, pcd_directory_path=args.pcd_directory)
     if args.output_pcd_dir:
         visualizer.save_reconstructed_pcds(args.output_pcd_dir)
     else:

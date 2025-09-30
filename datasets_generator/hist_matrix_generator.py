@@ -116,12 +116,12 @@ class LidarSignalDatasetGenerator:
         else:
             raise ValueError(f"Spoofer type {self.spoofer_type} not implemented for this script yet.")
 
-    def generate(self, num_frames: int, start_frame: int = 0, filename_prefix: str = "lidar_signal"):
+    def generate(self, num_frames: int, start_frame: int = 0, filename_prefix: str = "lidar_signal", save_to_file: bool = True):
         if self.pcd_directory:
             total_pcd_files = len(self.pcd_files)
             if start_frame >= total_pcd_files:
                 print(f"Start frame {start_frame} is out of bounds. No files to process.")
-                return
+                return None
             if start_frame + num_frames > total_pcd_files:
                 print(f"Warning: Requested frames ({num_frames} from {start_frame}) exceeds available PCD files ({total_pcd_files}).")
                 num_frames = total_pcd_files - start_frame
@@ -276,19 +276,25 @@ class LidarSignalDatasetGenerator:
         vertical_angles = self.sorted_vertical_angles
         fov = 360.0  # FOV for VLP16 is 360 degrees
 
-        end_frame = start_frame + num_frames - 1
-        output_filename_with_batch = f"{filename_prefix}_{start_frame}_to_{end_frame}.npz"
-        output_filename = os.path.join(self.output_dir, output_filename_with_batch)
+        data_payload = {
+            'signals': all_frames_data,
+            'labels': all_labels_data,
+            'answer_matrix': answer_matrix,
+            'initial_azimuth_offsets': np.array(all_initial_azimuth_offsets),
+            'vertical_angles': vertical_angles,
+            'fov': fov,
+            'time_resolution_ns': self.time_resolution_ns
+        }
 
-        np.savez_compressed(output_filename, 
-                 signals=all_frames_data, 
-                 labels=all_labels_data,
-                 answer_matrix=answer_matrix,
-                 initial_azimuth_offsets=np.array(all_initial_azimuth_offsets), 
-                 vertical_angles=vertical_angles,
-                 fov=fov,
-                 time_resolution_ns=self.time_resolution_ns)
-        print(f"Saved all frames to {output_filename}")
+        if save_to_file:
+            end_frame = start_frame + num_frames - 1
+            output_filename_with_batch = f"{filename_prefix}_{start_frame}_to_{end_frame}.npz"
+            output_filename = os.path.join(self.output_dir, output_filename_with_batch)
+
+            np.savez_compressed(output_filename, **data_payload)
+            print(f"Saved all frames to {output_filename}")
+        
+        return data_payload
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Generate LiDAR signal datasets.")
@@ -334,5 +340,6 @@ if __name__ == '__main__':
     generator.generate(
         num_frames=args.num_frames,
         start_frame=args.start_frame,
-        filename_prefix=args.output_filename
+        filename_prefix=args.output_filename,
+        save_to_file=True
     )
