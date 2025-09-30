@@ -47,6 +47,8 @@ class PcdLidarVLP32c:
         self.pcd_files: list[str] = []
         self.pcd_file_path = pcd_file_path
 
+        self.sync_angle_step = 0.2  # degrees
+
         # Create a sorted list of vertical angles for the new scan pattern
         self.sorted_vertical_angles = sorted(self.vertical_angles, reverse=True)
         self.horizontal_steps = self.max_index // 32  # Should be 1800 for VLP-32c
@@ -88,6 +90,9 @@ class PcdLidarVLP32c:
 
     def set_pcd_files(self, pcd_files: list[str]):
         self.pcd_files = pcd_files
+    
+    def set_sync_angle_step(self, angle_step: float):
+        self.sync_angle_step = angle_step
 
     def set_azimuth_time_perturbation(self, thresholds_deg: list[float], times_ns: list[float]):
         """
@@ -201,9 +206,9 @@ class PcdLidarVLP32c:
         altitude_step_index = self.index // horizontal_steps_per_ring
 
         # 水平角が20度増加するごとにタイムスタンプを20ns増加させる
-        angle_step = 11 # degrees
+        self.sync_angle_step = 5 # degrees
         time_increase_per_step = 20  # ns
-        timestamp = (current_azimuth_deg // angle_step) * time_increase_per_step
+        timestamp = (current_azimuth_deg // self.sync_angle_step) * time_increase_per_step
 
         # 高度リングが変わるごとに5060nsの時間を追加
         timestamp += altitude_step_index * 50234

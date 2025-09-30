@@ -19,7 +19,7 @@ class LidarSignalDatasetGenerator:
                  outdoor_distance: float = 50.0, outdoor_ratio: float = 0.8,
                  spoofer_type: str = "adaptive_hfr_perturbation",
                  spoofer_frequency: float = 10 * 1e6,
-                 spoofer_duration_ms: float = 7000,
+                 spoofer_duration_ms: float = 10,
                  spoofer_distance_m: float = 10.0,
                  spoofer_pulse_width_ns: float = 5,
                  spoofer_perturbation_ns: float = 20.0,
@@ -72,7 +72,9 @@ class LidarSignalDatasetGenerator:
                 time_resolution_ns=self.time_resolution_ns
             )
             if self.lidar_type == "PCD_VLP32c":
-                print("Applying azimuth time perturbation for VLP32c model.")
+                angle = 2
+                self.lidar.set_sync_angle_step(angle)  # Set sync angle step to 0.2 degrees for VLP32c
+                print(f"Set VLP32c sync angle step to {angle} degrees.")
                 #self.lidar.set_azimuth_time_perturbation([78,90,112],[20,20,20])
             self.lidar.set_pcd_files(self.pcd_files)
             
@@ -114,7 +116,17 @@ class LidarSignalDatasetGenerator:
         else:
             raise ValueError(f"Spoofer type {self.spoofer_type} not implemented for this script yet.")
 
-    def generate(self, num_frames: int, filename_prefix: str = "lidar_signal"):
+    def generate(self, num_frames: int, start_frame: int = 0, filename_prefix: str = "lidar_signal"):
+        if self.pcd_directory:
+            total_pcd_files = len(self.pcd_files)
+            if start_frame >= total_pcd_files:
+                print(f"Start frame {start_frame} is out of bounds. No files to process.")
+                return
+            if start_frame + num_frames > total_pcd_files:
+                print(f"Warning: Requested frames ({num_frames} from {start_frame}) exceeds available PCD files ({total_pcd_files}).")
+                num_frames = total_pcd_files - start_frame
+                print(f"Adjusting to process {num_frames} frames.")
+
         all_frames_data = np.zeros((num_frames, self.channels, self.horizontal_resolution, self.samples_per_scan), dtype=np.float32)
         all_labels_data = np.zeros((num_frames, self.channels, self.horizontal_resolution, self.samples_per_scan), dtype=np.uint8)
         answer_matrix = np.zeros((num_frames, self.channels, self.horizontal_resolution), dtype=np.int32)
@@ -128,15 +140,16 @@ class LidarSignalDatasetGenerator:
         spoofer_attack_end_az = spoofer_attack_center_az + spoofer_attack_width_az / 2
         print(f"Spoofer attack cone is centered at {spoofer_attack_center_az/100} deg with width {self.spoofer_width_deg} deg (internal angle system).")
 
-        for frame_num in range(num_frames):
-            print(f"Generating frame {frame_num + 1}/{num_frames}...")
+        for i in range(num_frames):
+            frame_idx = start_frame + i
+            print(f"Generating frame {i + 1}/{num_frames} (PCD index: {frame_idx})...")
             
             if self.lidar_type in ["PCD_VLP16", "PCD_VLP32c"]:
-                pcd_file_path = self.pcd_files[frame_num]
+                pcd_file_path = self.pcd_files[frame_idx]
                 print(f"  - Using PCD file: {os.path.basename(pcd_file_path)}")
-                current_lidar = self.lidar.new_frame(frame_num=frame_num, base_timestamp=PreciseDuration(nanoseconds=frame_num * 10**9))
+                current_lidar = self.lidar.new_frame(frame_num=frame_idx, base_timestamp=PreciseDuration(nanoseconds=frame_idx * 10**9))
             else:
-                current_lidar = self.lidar.new_frame(base_timestamp=PreciseDuration(nanoseconds=frame_num * 10**9))
+                current_lidar = self.lidar.new_frame(base_timestamp=PreciseDuration(nanoseconds=frame_idx * 10**9))
 
             if hasattr(current_lidar, 'initial_azimuth_offset'):
                 all_initial_azimuth_offsets.append(current_lidar.initial_azimuth_offset)
@@ -169,7 +182,7 @@ class LidarSignalDatasetGenerator:
             frame_labels = np.zeros((self.channels, self.horizontal_resolution, self.samples_per_scan), dtype=np.uint8)
 
             try:
-                for i in range(current_lidar.max_index):
+                for scan_idx in range(current_lidar.max_index):
                     config, signal = current_lidar.scan()
                     # find candidate peaks in the signal
                     raises = np.flatnonzero(
@@ -180,9 +193,9 @@ class LidarSignalDatasetGenerator:
                         true_peak_index = 0
                     else:
                         peaks = np.empty_like(raises, dtype=np.float64)
-                        for i in range(len(raises)):
-                            peaks[i] = np.max(
-                                signal[raises[i]:min(len(signal), raises[i] + 50)]
+                        for peak_i in range(len(raises)):
+                            peaks[peak_i] = np.max(
+                                signal[raises[peak_i]:min(len(signal), raises[peak_i] + 50)]
                             )
                         highest_peak_index = np.argmax(peaks)
                         highest_peak = peaks[highest_peak_index]
@@ -252,18 +265,21 @@ class LidarSignalDatasetGenerator:
                     if horizontal_index < self.horizontal_resolution:
                         frame_data[vertical_index, horizontal_index, :] = signal
                         frame_labels[vertical_index, horizontal_index, :] = current_labels
-                        answer_matrix[frame_num, vertical_index, horizontal_index] = true_peak_index
+                        answer_matrix[i, vertical_index, horizontal_index] = true_peak_index
 
             except StopIteration:
                 pass
 
-            all_frames_data[frame_num, :, :, :] = frame_data
-            all_labels_data[frame_num, :, :, :] = frame_labels
+            all_frames_data[i, :, :, :] = frame_data
+            all_labels_data[i, :, :, :] = frame_labels
 
         vertical_angles = self.sorted_vertical_angles
         fov = 360.0  # FOV for VLP16 is 360 degrees
 
-        output_filename = os.path.join(self.output_dir, f"{filename_prefix}.npz")
+        end_frame = start_frame + num_frames - 1
+        output_filename_with_batch = f"{filename_prefix}_{start_frame}_to_{end_frame}.npz"
+        output_filename = os.path.join(self.output_dir, output_filename_with_batch)
+
         np.savez_compressed(output_filename, 
                  signals=all_frames_data, 
                  labels=all_labels_data,
@@ -295,6 +311,10 @@ if __name__ == '__main__':
                         help="The altitude for the spoofer trigger, in degrees.")
     parser.add_argument("--spoofer-width-deg", type=float, default=90.0,
                         help="The angular width of the spoofer's attack cone in degrees.")
+    parser.add_argument("--output-filename", type=str, default="lidar_signal",
+                        help="Base name for the output .npz file.")
+    parser.add_argument("--start-frame", type=int, default=0,
+                        help="Starting frame index (0-indexed) for processing PCD files.")
 
     args = parser.parse_args()
 
@@ -311,4 +331,8 @@ if __name__ == '__main__':
         spoofer_altitude_deg=args.spoofer_altitude,
         spoofer_width_deg=args.spoofer_width_deg
     )
-    generator.generate(num_frames=args.num_frames)
+    generator.generate(
+        num_frames=args.num_frames,
+        start_frame=args.start_frame,
+        filename_prefix=args.output_filename
+    )
