@@ -82,18 +82,26 @@ class HistMatrixVisualizer:
                     peak_idx_in_region = np.argmax(pulse_region)
                     peak_idx_global = highest_pulse_start_index + peak_idx_in_region
 
-                    # Perform parabolic interpolation for sub-sample precision
+                    # Perform Gaussian interpolation (parabolic on log values) for better accuracy
                     if 0 < peak_idx_global < len(signal) - 1:
                         y0 = signal[peak_idx_global - 1]
                         y1 = signal[peak_idx_global]
                         y2 = signal[peak_idx_global + 1]
-                        
-                        denominator = (y0 - 2 * y1 + y2)
-                        if abs(denominator) > 1e-6: # Avoid division by zero for flat peaks
-                            offset = (y0 - y2) / (2 * denominator)
-                            highest_peak_time = peak_idx_global + offset
+
+                        # Ensure values are positive for log
+                        if y0 > 0 and y1 > 0 and y2 > 0:
+                            ln_y0 = np.log(y0)
+                            ln_y1 = np.log(y1)
+                            ln_y2 = np.log(y2)
+                            
+                            denominator = (ln_y0 - 2 * ln_y1 + ln_y2)
+                            if abs(denominator) > 1e-9:
+                                offset = (ln_y0 - ln_y2) / (2 * denominator)
+                                highest_peak_time = peak_idx_global + offset
+                            else:
+                                highest_peak_time = float(peak_idx_global) # Fallback for flat log-parabola
                         else:
-                            highest_peak_time = float(peak_idx_global) # Fallback for flat peak
+                            highest_peak_time = float(peak_idx_global) # Fallback if values are not suitable for log
                     else:
                         highest_peak_time = float(peak_idx_global) # Fallback for peaks at signal boundary
                 else:

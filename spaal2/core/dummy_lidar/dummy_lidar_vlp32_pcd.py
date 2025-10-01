@@ -206,7 +206,7 @@ class PcdLidarVLP32c:
         altitude_step_index = self.index // horizontal_steps_per_ring
 
         # 水平角が20度増加するごとにタイムスタンプを20ns増加させる
-        self.sync_angle_step = 11 # degrees
+        self.sync_angle_step = 5 # degrees
         time_increase_per_step = 20  # ns
         timestamp = (current_azimuth_deg // self.sync_angle_step) * time_increase_per_step
 
@@ -241,11 +241,13 @@ class PcdLidarVLP32c:
                 self.detected_point_indices.add(point_idx)
             
             time_of_flight_index = int(depth / (0.15 * self.time_resolution_ns))
+            time_of_flight = depth / (0.15 * self.time_resolution_ns) 
             if time_of_flight_index < signal_length:
                 pulse_width_indices = int(self.pulse_width.in_nanoseconds / self.time_resolution_ns)
                 if pulse_width_indices > 0:
                     # The peak of the pulse is at the time of flight
-                    mu = time_of_flight_index
+                    #mu = time_of_flight_index
+                    mu = time_of_flight
 
                     # Calculate sigma so the FWHM matches the configured pulse_width
                     fwhm = pulse_width_indices
