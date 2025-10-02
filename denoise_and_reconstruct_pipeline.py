@@ -111,9 +111,10 @@ def main():
         if points.shape[0] > 0:
             if reconstructed_pcd.has_colors():
                 # Intensity is stored as grayscale color (r=g=b) normalized to [0, 1].
-                # Extract from the red channel and scale to [0, 255] for the .bin format.
+                # Extract from the red channel, scale to [0, 255], and round to nearest integer.
                 colors = np.asarray(reconstructed_pcd.colors)
-                intensity = (colors[:, 0] * 255.0).astype(np.float32).reshape(-1, 1)
+                intensity = np.round(colors[:, 0]).astype(np.float32).reshape(-1, 1)
+                #intensity = np.full((points.shape[0], 1), 10.0, dtype=np.float32)
             else:
                 # Fallback to a dummy intensity if no color info is present
                 intensity = np.full((points.shape[0], 1), 10.0, dtype=np.float32)

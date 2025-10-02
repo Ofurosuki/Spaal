@@ -203,7 +203,7 @@ class LidarSignalDatasetGenerator:
 
                         true_peak_index = highest_peak_time
 
-                    lidar_amp = np.random.uniform(self.lidar_amplitude_range[0], self.lidar_amplitude_range[1])
+                    #lidar_amp = np.random.uniform(self.lidar_amplitude_range[0], self.lidar_amplitude_range[1])
                     #current_lidar.set_amplitude(lidar_amp)
                     
                     # labeling: 0 = no return, 1 = legitimate return, 2 = HFR return
