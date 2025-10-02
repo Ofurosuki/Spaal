@@ -109,7 +109,15 @@ def main():
         # Save .pcd.bin file
         points = np.asarray(reconstructed_pcd.points)
         if points.shape[0] > 0:
-            intensity = np.full((points.shape[0], 1), 10.0, dtype=np.float32)
+            if reconstructed_pcd.has_colors():
+                # Intensity is stored as grayscale color (r=g=b) normalized to [0, 1].
+                # Extract from the red channel and scale to [0, 255] for the .bin format.
+                colors = np.asarray(reconstructed_pcd.colors)
+                intensity = (colors[:, 0] * 255.0).astype(np.float32).reshape(-1, 1)
+            else:
+                # Fallback to a dummy intensity if no color info is present
+                intensity = np.full((points.shape[0], 1), 10.0, dtype=np.float32)
+
             ring_index = np.zeros((points.shape[0], 1), dtype=np.float32)
             nuscenes_points = np.hstack((points, intensity, ring_index)).astype(np.float32)
             

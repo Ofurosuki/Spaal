@@ -34,7 +34,7 @@ class PcdLidarVLP32c:
     vertical_angles: list[float] = [fa.v_angle for fa in fire_angles]
 
 
-    def __init__(self, pcd_file_path: Optional[str], lidar_position: np.ndarray, lidar_rotation: np.ndarray, base_timestamp: PreciseDuration = PreciseDuration(nanoseconds=0), amplitude: float = 1.0, pulse_width: PreciseDuration = PreciseDuration(nanoseconds=10), time_resolution_ns: float = 1.0) -> None:
+    def __init__(self, pcd_file_path: Optional[str], lidar_position: np.ndarray, lidar_rotation: np.ndarray, base_timestamp: PreciseDuration = PreciseDuration(nanoseconds=0), amplitude: float = 1.0, pulse_width: PreciseDuration = PreciseDuration(nanoseconds=10), time_resolution_ns: float = 1.0, intensity_to_amplitude_ratio: float = 10.0/255.0) -> None:
         self.index: int = 0
         self.max_index: int = int(360 / 0.2 * 32)
         self.accept_window = PreciseDuration(nanoseconds=800)
@@ -46,6 +46,8 @@ class PcdLidarVLP32c:
         self.lidar_rotation = lidar_rotation
         self.pcd_files: list[str] = []
         self.pcd_file_path = pcd_file_path
+        self.intensity_to_amplitude_ratio = intensity_to_amplitude_ratio
+        self.intensities: Optional[np.ndarray] = None
 
         self.sync_angle_step = 0.2  # degrees
 
@@ -72,9 +74,82 @@ class PcdLidarVLP32c:
         
         self.detected_point_indices = set()
 
+    def _parse_pcd_file(self, file_path: str):
+        with open(file_path, 'r') as f:
+            lines = f.readlines()
+
+        header_end_idx = 0
+        fields = []
+        data_type = ''
+        num_points = 0
+        for i, line in enumerate(lines):
+            line_s = line.strip()
+            if line_s.startswith('FIELDS'):
+                fields = line_s.split(' ')[1:]
+            elif line_s.startswith('POINTS'):
+                num_points = int(line_s.split(' ')[1])
+            elif line_s.startswith('DATA'):
+                data_type = line_s.split(' ')[1]
+                header_end_idx = i + 1
+                break
+        
+        if data_type != 'ascii':
+            # For binary, fallback to open3d and no intensity
+            pcd = o3d.io.read_point_cloud(file_path)
+            return np.asarray(pcd.points), None
+
+        if not fields:
+            raise ValueError("Could not find FIELDS in PCD header")
+
+        try:
+            x_idx = fields.index('x')
+            y_idx = fields.index('y')
+            z_idx = fields.index('z')
+            intensity_idx = fields.index('intensity')
+            has_intensity = True
+        except ValueError:
+            has_intensity = False
+
+        # Pre-allocate numpy arrays
+        points = np.zeros((num_points, 3), dtype=np.float32)
+        intensities = np.zeros(num_points, dtype=np.float32) if has_intensity else None
+
+        point_idx = 0
+        for i in range(header_end_idx, len(lines)):
+            line = lines[i].strip()
+            if not line:
+                continue
+            
+            vals = line.split(' ')
+            if point_idx < num_points:
+                points[point_idx] = [float(vals[x_idx]), float(vals[y_idx]), float(vals[z_idx])]
+                if has_intensity:
+                    intensities[point_idx] = float(vals[intensity_idx])
+                point_idx += 1
+        
+        # Trim if num_points was an overestimate (e.g. from a dense but filtered cloud)
+        if point_idx < num_points:
+            points = points[:point_idx]
+            if has_intensity:
+                intensities = intensities[:point_idx]
+
+        # if has_intensity and intensities.max() > 1.0:
+        #     intensities = intensities / 255.0
+            
+        return points, intensities
+
     def _read_pcd(self, file_path: str):
-        self.point_cloud = o3d.io.read_point_cloud(file_path)
-        self.points = np.asarray(self.point_cloud.points)
+        try:
+            self.points, self.intensities = self._parse_pcd_file(file_path)
+            print(f"showing 20 intensities: {self.intensities[:20]}")
+        except Exception as e:
+            print(f"Failed to parse PCD with custom parser: {e}. Falling back to open3d.")
+            pcd = o3d.io.read_point_cloud(file_path)
+            self.points = np.asarray(pcd.points)
+            self.intensities = None
+
+        if self.points is None:
+            raise ValueError(f"Could not read points from {file_path}")
 
         self.all_point_indices = set(range(len(self.points)))
         
@@ -152,11 +227,15 @@ class PcdLidarVLP32c:
             azimuth_key = int(discretized_azimuth % 36000)
             altitude_key = int(closest_vertical_angle * 100)
 
-            if (azimuth_key, altitude_key) not in depth_map or depth < depth_map[(azimuth_key, altitude_key)]:
-                depth_map[(azimuth_key, altitude_key)] = depth
+            if (azimuth_key, altitude_key) not in depth_map or depth < depth_map.get((azimuth_key, altitude_key), (float('inf'), None))[0]:
+                pcd_intensity = self.intensities[i] if self.intensities is not None else None
+                depth_map[(azimuth_key, altitude_key)] = (depth, pcd_intensity)
                 original_point_indices_map[(azimuth_key, altitude_key)] = i
                 
         return depth_map, original_point_indices_map
+
+    def set_intensity_to_amplitude_ratio(self, ratio: float):
+        self.intensity_to_amplitude_ratio = ratio
 
     def set_amplitude(self, amplitude: float):
         self.amplitude = amplitude
@@ -230,12 +309,13 @@ class PcdLidarVLP32c:
         azimuth, altitude = self._get_current_angle()
         timestamp = self._get_current_timestamp()
 
-        depth = self.depth_map.get((azimuth, altitude))
+        depth_info = self.depth_map.get((azimuth, altitude))
         
         signal_length = int(self.accept_window.in_nanoseconds / self.time_resolution_ns)
         signal = np.zeros((signal_length, ))
 
-        if depth is not None:
+        if depth_info is not None:
+            depth, pcd_intensity = depth_info
             point_idx = self.original_point_indices_map.get((azimuth, altitude))
             if point_idx is not None:
                 self.detected_point_indices.add(point_idx)
@@ -260,14 +340,23 @@ class PcdLidarVLP32c:
                     if start_idx < end_idx:
                         pulse_indices = np.arange(start_idx, end_idx)
                         
+                        pulse_amplitude = self.amplitude
+                        if pcd_intensity is not None:
+                            pulse_amplitude = pcd_intensity * self.intensity_to_amplitude_ratio
+                        else:
+                            print("No intensity data for this point; using default amplitude.")
+                        
                         # Generate the Gaussian pulse
-                        gaussian_pulse = self.amplitude * np.exp(-((pulse_indices - mu)**2) / (2 * (sigma**2)))
+                        gaussian_pulse = pulse_amplitude * np.exp(-((pulse_indices - mu)**2) / (2 * (sigma**2)))
                         
                         # Use += in case of future overlapping effects
                         signal[pulse_indices] += gaussian_pulse
                 elif time_of_flight_index < signal_length:
                     # Fallback for zero pulse width
-                    signal[time_of_flight_index] += self.amplitude
+                    pulse_amplitude = self.amplitude
+                    if pcd_intensity is not None:
+                        pulse_amplitude = pcd_intensity * self.intensity_to_amplitude_ratio
+                    signal[time_of_flight_index] += pulse_amplitude
         else:
             self.no_signal_scan_angles.append((azimuth, altitude))
  

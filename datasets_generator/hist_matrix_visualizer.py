@@ -6,10 +6,12 @@ import os
 import glob
 
 class HistMatrixVisualizer:
-    def __init__(self, npz_file_path: str = None, pcd_directory_path: str = None, data: dict = None):
+    def __init__(self, npz_file_path: str = None, pcd_directory_path: str = None, data: dict = None, amplitude_to_intensity_ratio: float = 255.0/10.0):
         self.npz_file_path = npz_file_path
         self.pcd_directory_path = pcd_directory_path
         self.is_prediction = False
+        self.amplitude_to_intensity_ratio = amplitude_to_intensity_ratio
+        print(f"amplitude_to_intensity_ratio: {self.amplitude_to_intensity_ratio}")
 
         if data is None and npz_file_path:
             print(f"Loading data from {npz_file_path}")
@@ -47,6 +49,7 @@ class HistMatrixVisualizer:
 
     def _reconstruct_point_cloud(self, frame_index: int = 0):
         points = []
+        intensities = []
         if frame_index >= len(self.hist_matrix):
             raise ValueError(f"Frame index {frame_index} is out of bounds for hist_matrix with {len(self.hist_matrix)} frames.")
         if frame_index < len(self.initial_azimuth_offsets):
@@ -60,6 +63,7 @@ class HistMatrixVisualizer:
 
         for v_idx in range(channels):
             for h_idx in range(horizontal_resolution):
+                intensity = 10  # Default intensity
                 if not self.is_prediction:
                     signal = frame_data[v_idx, h_idx, :]
                     
@@ -72,6 +76,9 @@ class HistMatrixVisualizer:
                     if len(peak_values) == 0:
                         continue
                     
+                    peak_amplitude = np.max(peak_values)
+                    intensity = np.clip(peak_amplitude * self.amplitude_to_intensity_ratio, 0,255)
+
                     # Determine the region of the highest pulse
                     highest_pulse_start_index = raises[np.argmax(peak_values)]
                     pulse_region = signal[highest_pulse_start_index:min(len(signal), highest_pulse_start_index + 50)]
@@ -122,15 +129,20 @@ class HistMatrixVisualizer:
                 z = distance_m * np.sin(omega)
                 
                 points.append([x, y, z])
+                intensities.append(intensity)
 
         pcd = o3d.geometry.PointCloud()
         if points:
             pcd.points = o3d.utility.Vector3dVector(np.array(points))
+            if intensities:
+                colors = [[i, i, i] for i in intensities]
+                pcd.colors = o3d.utility.Vector3dVector(np.array(colors))
         return pcd
 
     def visualize(self, frame_index: int = 0):
         reconstructed_pcd = self._reconstruct_point_cloud(frame_index)
-        reconstructed_pcd.paint_uniform_color([1, 0, 0])  # Red for reconstructed
+        if not reconstructed_pcd.has_colors():
+            reconstructed_pcd.paint_uniform_color([1, 0, 0])  # Red for reconstructed
 
         geometries = [reconstructed_pcd]
 
@@ -176,10 +188,11 @@ if __name__ == '__main__':
     parser.add_argument("--pcd-directory", type=str, default=None, help="Path to the directory with original .pcd files for comparison or for output naming.")
     parser.add_argument("--frame", type=int, default=0, help="Frame index to visualize.")
     parser.add_argument("--output-pcd-dir", type=str, default=None, help="Path to the directory to save reconstructed .pcd files. If provided, visualization is skipped and all frames are processed.")
+    parser.add_argument("--amplitude-to-intensity-ratio", type=float, default=1.0, help="Ratio to convert signal amplitude to intensity for reconstructed PCD.")
 
     args = parser.parse_args()
 
-    visualizer = HistMatrixVisualizer(npz_file_path=args.npz_file, pcd_directory_path=args.pcd_directory)
+    visualizer = HistMatrixVisualizer(npz_file_path=args.npz_file, pcd_directory_path=args.pcd_directory, amplitude_to_intensity_ratio=args.amplitude_to_intensity_ratio)
     if args.output_pcd_dir:
         visualizer.save_reconstructed_pcds(args.output_pcd_dir)
     else:
