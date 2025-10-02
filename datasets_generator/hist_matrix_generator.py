@@ -31,7 +31,8 @@ class LidarSignalDatasetGenerator:
                  sunlight_mean: float = 0.5,
                  spoofer_angle_deg: float = 0.0, 
                  spoofer_altitude_deg: float = 8.0,
-                 spoofer_width_deg: float = 90.0):
+                 spoofer_width_deg: float = 90.0,
+                 sync_angle_step_deg: float = 0.2): # Add new parameter
 
         self.lidar_type = lidar_type
         self.pcd_directory = pcd_directory
@@ -39,6 +40,7 @@ class LidarSignalDatasetGenerator:
         self.spoofer_angle_deg = spoofer_angle_deg
         self.spoofer_altitude_deg = spoofer_altitude_deg
         self.spoofer_width_deg = spoofer_width_deg
+        self.sync_angle_step_deg = sync_angle_step_deg # Store the new parameter
 
         if self.lidar_type == "VLP16":
             self.lidar = DummyLidarVLP16(
@@ -72,9 +74,8 @@ class LidarSignalDatasetGenerator:
                 time_resolution_ns=self.time_resolution_ns
             )
             if self.lidar_type == "PCD_VLP32c":
-                angle = 2
-                self.lidar.set_sync_angle_step(angle)  # Set sync angle step to 0.2 degrees for VLP32c
-                print(f"Set VLP32c sync angle step to {angle} degrees.")
+                self.lidar.set_sync_angle_step(self.sync_angle_step_deg)  # Use the new parameter
+                print(f"Set VLP32c sync angle step to {self.sync_angle_step_deg} degrees.")
                 #self.lidar.set_azimuth_time_perturbation([78,90,112],[20,20,20])
             self.lidar.set_pcd_files(self.pcd_files)
             

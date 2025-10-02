@@ -24,6 +24,7 @@ def main():
     parser.add_argument("--spoofer-angle", type=float, default=90.0, help="The angle for the spoofer trigger, in degrees, counter-clockwise with 0 at the front.")
     parser.add_argument("--spoofer-altitude", type=float, default=50.0, help="The altitude for the spoofer trigger, in degrees.")
     parser.add_argument("--spoofer-width-deg", type=float, default=90.0, help="The angular width of the spoofer's attack cone in degrees.")
+    parser.add_argument("--sync-angle-step-deg", type=float, default=0.2, help="Sync angle step in degrees for VLP32c LiDAR.")
 
     # Denoiser args
     parser.add_argument("--ckpt-path", type=str, default=None, help="Optional: Path to the denoiser model checkpoint file. If not provided, denoising is skipped.")
@@ -49,7 +50,8 @@ def main():
         spoofer_type=args.spoofer_type,
         spoofer_angle_deg=args.spoofer_angle,
         spoofer_altitude_deg=args.spoofer_altitude,
-        spoofer_width_deg=args.spoofer_width_deg
+        spoofer_width_deg=args.spoofer_width_deg,
+        sync_angle_step_deg=args.sync_angle_step_deg # Pass the new argument
     )
     generated_data = generator.generate(
         num_frames=args.num_frames,
