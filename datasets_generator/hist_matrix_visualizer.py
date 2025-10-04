@@ -141,8 +141,7 @@ class HistMatrixVisualizer:
 
     def visualize(self, frame_index: int = 0):
         reconstructed_pcd = self._reconstruct_point_cloud(frame_index)
-        if not reconstructed_pcd.has_colors():
-            reconstructed_pcd.paint_uniform_color([1, 0, 0])  # Red for reconstructed
+        reconstructed_pcd.paint_uniform_color([1, 0, 0])  # Red for reconstructed
 
         geometries = [reconstructed_pcd]
 
