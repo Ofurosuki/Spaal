@@ -198,7 +198,14 @@ class LidarSignalDatasetGenerator:
                         if len(raises) > 0:
                             peaks = np.array([np.max(signal[r:min(len(signal), r + 50)]) for r in raises])
                             if len(peaks) > 0:
-                                true_peak_index = raises[np.argmax(peaks)]
+                                # Find the start of the highest pulse
+                                highest_pulse_start_index = raises[np.argmax(peaks)]
+                                # Find the actual peak index within that pulse region
+                                pulse_region = signal[highest_pulse_start_index:min(len(signal), highest_pulse_start_index + 50)]
+                                if len(pulse_region) > 0:
+                                    peak_idx_in_region = np.argmax(pulse_region)
+                                    # The true peak is the start of the pulse region plus the peak index within it
+                                    true_peak_index = highest_pulse_start_index + peak_idx_in_region
 
                         lidar_amp = np.random.uniform(self.lidar_amplitude_range[0], self.lidar_amplitude_range[1])
                         current_lidar.set_amplitude(lidar_amp)

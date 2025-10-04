@@ -236,11 +236,13 @@ class PcdLidarVLP32c:
                 self.detected_point_indices.add(point_idx)
             
             time_of_flight_index = int(depth / (0.15 * self.time_resolution_ns))
+            time_of_flight = depth / (0.15 * self.time_resolution_ns)
             if time_of_flight_index < signal_length:
                 pulse_width_indices = int(self.pulse_width.in_nanoseconds / self.time_resolution_ns)
                 if pulse_width_indices > 0:
                     # The peak of the pulse is at the time of flight
-                    mu = time_of_flight_index
+                    #mu = time_of_flight_index
+                    mu = time_of_flight
 
                     # Calculate sigma so the FWHM matches the configured pulse_width
                     fwhm = pulse_width_indices
