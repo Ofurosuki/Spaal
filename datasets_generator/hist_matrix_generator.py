@@ -32,7 +32,8 @@ class LidarSignalDatasetGenerator:
                  spoofer_angle_deg: float = 0.0, 
                  spoofer_altitude_deg: float = 8.0,
                  spoofer_width_deg: float = 90.0,
-                 sync_angle_step_deg: float = 0.2): # Add new parameter
+                 sync_angle_step_deg: float = 10, # Add new parameter
+                 initial_point_offset: int = 0):
 
         self.lidar_type = lidar_type
         self.pcd_directory = pcd_directory
@@ -41,6 +42,7 @@ class LidarSignalDatasetGenerator:
         self.spoofer_altitude_deg = spoofer_altitude_deg
         self.spoofer_width_deg = spoofer_width_deg
         self.sync_angle_step_deg = sync_angle_step_deg # Store the new parameter
+        self.initial_point_offset = initial_point_offset
 
         if self.lidar_type == "VLP16":
             self.lidar = DummyLidarVLP16(
@@ -71,7 +73,8 @@ class LidarSignalDatasetGenerator:
                 lidar_rotation=np.array([0.0, 0.0, 0.0]),
                 amplitude=lidar_amplitude_range[0],
                 pulse_width=PreciseDuration(nanoseconds=lidar_pulse_width_ns),
-                time_resolution_ns=self.time_resolution_ns
+                time_resolution_ns=self.time_resolution_ns,
+                initial_point_offset=self.initial_point_offset
             )
             if self.lidar_type == "PCD_VLP32c":
                 self.lidar.set_sync_angle_step(self.sync_angle_step_deg)  # Use the new parameter
@@ -134,13 +137,13 @@ class LidarSignalDatasetGenerator:
         all_initial_azimuth_offsets = []
 
         # Define Spoofer's attack angle characteristics using internal angle representation
-        internal_angle_deg = (self.spoofer_angle_deg + 90) % 360
+        internal_angle_deg = (self.spoofer_angle_deg) % 360
         spoofer_attack_center_az = internal_angle_deg * 100
         spoofer_attack_width_az = self.spoofer_width_deg * 100 # Convert to 0.01 deg units
         spoofer_attack_start_az = spoofer_attack_center_az - spoofer_attack_width_az / 2
         spoofer_attack_end_az = spoofer_attack_center_az + spoofer_attack_width_az / 2
         print(f"Spoofer attack cone is centered at {spoofer_attack_center_az/100} deg with width {self.spoofer_width_deg} deg (internal angle system).")
-
+        print(f"start spoofer_attackstart_az: {spoofer_attack_start_az}, spoofer_attack_end_az: {spoofer_attack_end_az}")
         for i in range(num_frames):
             frame_idx = start_frame + i
             print(f"Generating frame {i + 1}/{num_frames} (PCD index: {frame_idx})...")
@@ -240,9 +243,11 @@ class LidarSignalDatasetGenerator:
                         
                         # Default to no attack signal
                         external_signal = np.zeros_like(signal)
-
+                        
                         # Check if spoofer is active and the current angle is within the attack cone
                         is_in_attack_angle = (spoofer_attack_start_az <= config.azimuth <= spoofer_attack_end_az)
+                        if spoofer_attack_start_az < 0:
+                            is_in_attack_angle = (config.azimuth >= (36000 + spoofer_attack_start_az) or config.azimuth <= spoofer_attack_end_az)
                         if self.spoofer.trigger_time is not None and is_in_attack_angle:
                             external_signal = apply_noise(self.spoofer.get_range_signal(config.start_timestamp, config.accept_duration), ratio=0.01)
 
@@ -322,6 +327,8 @@ if __name__ == '__main__':
                         help="Base name for the output .npz file.")
     parser.add_argument("--start-frame", type=int, default=0,
                         help="Starting frame index (0-indexed) for processing PCD files.")
+    parser.add_argument("--initial-point-offset", type=int, default=0,
+                        help="Initial point offset to rotate the PCD point cloud.")
 
     args = parser.parse_args()
 
@@ -336,7 +343,8 @@ if __name__ == '__main__':
         spoofer_type=args.spoofer_type,
         spoofer_angle_deg=args.spoofer_angle,
         spoofer_altitude_deg=args.spoofer_altitude,
-        spoofer_width_deg=args.spoofer_width_deg
+        spoofer_width_deg=args.spoofer_width_deg,
+        initial_point_offset=args.initial_point_offset
     )
     generator.generate(
         num_frames=args.num_frames,

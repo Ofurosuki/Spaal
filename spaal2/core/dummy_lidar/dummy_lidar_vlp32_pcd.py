@@ -34,7 +34,7 @@ class PcdLidarVLP32c:
     vertical_angles: list[float] = [fa.v_angle for fa in fire_angles]
 
 
-    def __init__(self, pcd_file_path: Optional[str], lidar_position: np.ndarray, lidar_rotation: np.ndarray, base_timestamp: PreciseDuration = PreciseDuration(nanoseconds=0), amplitude: float = 1.0, pulse_width: PreciseDuration = PreciseDuration(nanoseconds=10), time_resolution_ns: float = 1.0, intensity_to_amplitude_ratio: float = 10.0/255.0) -> None:
+    def __init__(self, pcd_file_path: Optional[str], lidar_position: np.ndarray, lidar_rotation: np.ndarray, base_timestamp: PreciseDuration = PreciseDuration(nanoseconds=0), amplitude: float = 1.0, pulse_width: PreciseDuration = PreciseDuration(nanoseconds=10), time_resolution_ns: float = 1.0, intensity_to_amplitude_ratio: float = 10.0/255.0, initial_point_offset: int = 0) -> None:
         self.index: int = 0
         self.max_index: int = int(360 / 0.2 * 32)
         self.accept_window = PreciseDuration(nanoseconds=800)
@@ -48,6 +48,7 @@ class PcdLidarVLP32c:
         self.pcd_file_path = pcd_file_path
         self.intensity_to_amplitude_ratio = intensity_to_amplitude_ratio
         self.intensities: Optional[np.ndarray] = None
+        self.initial_point_offset = initial_point_offset
 
         self.sync_angle_step = 0.2  # degrees
 
@@ -140,16 +141,24 @@ class PcdLidarVLP32c:
 
     def _read_pcd(self, file_path: str):
         try:
-            self.points, self.intensities = self._parse_pcd_file(file_path)
-            print(f"showing 20 intensities: {self.intensities[:20]}")
+            points, intensities = self._parse_pcd_file(file_path)
+            # print(f"showing 20 intensities: {intensities[:20]}")
         except Exception as e:
             print(f"Failed to parse PCD with custom parser: {e}. Falling back to open3d.")
             pcd = o3d.io.read_point_cloud(file_path)
-            self.points = np.asarray(pcd.points)
-            self.intensities = None
+            points = np.asarray(pcd.points)
+            intensities = None
 
-        if self.points is None:
+        if points is None:
             raise ValueError(f"Could not read points from {file_path}")
+
+        if self.initial_point_offset != 0:
+            points = np.roll(points, -self.initial_point_offset, axis=0)
+            if intensities is not None:
+                intensities = np.roll(intensities, -self.initial_point_offset, axis=0)
+        
+        self.points = points
+        self.intensities = intensities
 
         self.all_point_indices = set(range(len(self.points)))
         
