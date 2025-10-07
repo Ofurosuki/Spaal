@@ -286,6 +286,11 @@ class LidarSignalDatasetGenerator:
                     # Calculate horizontal_index based on the normalized angle
                     horizontal_index = int(normalized_azimuth / 360.0 * self.horizontal_resolution)
 
+                    # # --- DEBUGGING BLOCK ---
+                    # if self.spoofer_type != "off" and is_in_attack_angle:
+                    #     print(f"[DEBUG] Attack Active: world_azimuth={config.azimuth/100:.2f}, h_idx={horizontal_index}, normalized_az={normalized_azimuth:.2f}")
+                    # # --- END DEBUGGING BLOCK ---
+
                     vertical_index = self.altitude_to_sorted_v_idx_map.get(config.altitude)
 
                     if horizontal_index < self.horizontal_resolution and vertical_index is not None:

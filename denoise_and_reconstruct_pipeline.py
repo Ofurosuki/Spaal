@@ -1,50 +1,56 @@
 import argparse
 import os
 import numpy as np
-import torch
+#import torch
 import open3d as o3d
 from tqdm import tqdm
+from typing import Tuple
 
 # Add project root to sys.path to allow for module imports
 import sys
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 from datasets_generator.hist_matrix_generator import LidarSignalDatasetGenerator
-from HFR_Denoise.pipeline.denoise_pipeline import DenoisePipeline, run_denoising
+# from HFR_Denoise.pipeline.denoise_pipeline import DenoisePipeline, run_denoising
 from datasets_generator.hist_matrix_visualizer import HistMatrixVisualizer
 
-def get_peak_time_from_signal(signal: np.ndarray) -> float:
+def get_peak_time_and_amplitude(signal: np.ndarray) -> Tuple[float, float]:
     """
-    Finds the interpolated time of the highest peak in a signal.
-    Returns 0.0 if no peak is found.
+    Finds the interpolated time and amplitude of the highest peak in a signal.
+    Returns (0.0, 0.0) if no peak is found.
     """
     raises = np.flatnonzero((signal[:-1] < 0.01) & (signal[1:] >= 0.01)) + 1
     if len(raises) == 0:
-        return 0.0
+        return 0.0, 0.0
 
     peak_values = np.array([np.max(signal[r:min(len(signal), r + 50)]) for r in raises])
     if len(peak_values) == 0:
-        return 0.0
+        return 0.0, 0.0
+    
+    peak_amplitude = np.max(peak_values)
+    if peak_amplitude < 0.01:
+        return 0.0, 0.0
 
     highest_pulse_start_index = raises[np.argmax(peak_values)]
     pulse_region = signal[highest_pulse_start_index:min(len(signal), highest_pulse_start_index + 50)]
-
+    
     if len(pulse_region) == 0:
-        return 0.0
-
+        return 0.0, 0.0
+        
     peak_idx_in_region = np.argmax(pulse_region)
     peak_idx_global = highest_pulse_start_index + peak_idx_in_region
 
-    # Gaussian interpolation for sub-sample accuracy
+    interpolated_time = float(peak_idx_global)
     if 0 < peak_idx_global < len(signal) - 1:
-        y0, y1, y2 = signal[peak_idx_global - 1 : peak_idx_global + 2]
+        y0, y1, y2 = signal[peak_idx_global - 1:peak_idx_global + 2]
         if y0 > 0 and y1 > 0 and y2 > 0:
             ln_y0, ln_y1, ln_y2 = np.log(y0), np.log(y1), np.log(y2)
             denominator = (ln_y0 - 2 * ln_y1 + ln_y2)
             if abs(denominator) > 1e-9:
                 offset = (ln_y0 - ln_y2) / (2 * denominator)
-                return peak_idx_global + offset
-    return float(peak_idx_global)
+                interpolated_time = peak_idx_global + offset
+    
+    return interpolated_time, peak_amplitude
 
 def get_peaks_matrix_from_signals(signal_frame: np.ndarray) -> np.ndarray:
     """
@@ -54,7 +60,8 @@ def get_peaks_matrix_from_signals(signal_frame: np.ndarray) -> np.ndarray:
     peaks_matrix = np.zeros((channels, horizontal_resolution), dtype=np.float32)
     for v_idx in range(channels):
         for h_idx in range(horizontal_resolution):
-            peaks_matrix[v_idx, h_idx] = get_peak_time_from_signal(signal_frame[v_idx, h_idx, :])
+            peak_time, _ = get_peak_time_and_amplitude(signal_frame[v_idx, h_idx, :])
+            peaks_matrix[v_idx, h_idx] = peak_time
     return peaks_matrix
 
 def main():
@@ -66,7 +73,7 @@ def main():
     parser.add_argument("--num-frames", type=int, default=81, help="Number of frames to process.")
     parser.add_argument("--start-frame", type=int, default=0, help="Starting frame index for processing PCD files.")
     parser.add_argument("--spoofer-type", type=str, default="adaptive_hfr_perturbation", choices=["adaptive_hfr_perturbation", "off"], help="Type of spoofer to use.")
-    parser.add_argument("--spoofer-angle", type=float, default=90.0, help="The angle for the spoofer trigger, in degrees, counter-clockwise with 0 at the front.")
+    parser.add_argument("--spoofer-angle", type=float, default=0.0, help="The angle for the spoofer trigger, in degrees, counter-clockwise with 0 at the front.")
     parser.add_argument("--spoofer-altitude", type=float, default=50.0, help="The altitude for the spoofer trigger, in degrees.")
     parser.add_argument("--spoofer-width-deg", type=float, default=90.0, help="The angular width of the spoofer's attack cone in degrees.")
     parser.add_argument("--sync-angle-step-deg", type=float, default=0.2, help="Sync angle step in degrees for VLP32c LiDAR.")
@@ -78,7 +85,10 @@ def main():
     parser.add_argument("--output-dir", type=str, required=True, help="Path to the base directory to save output files.")
 
     # Evaluation args
-    parser.add_argument("--tolerance", type=int, default=2, help="Tolerance in bins for accuracy evaluation.")
+    parser.add_argument("--tolerance", type=float, default=0.5, help="Tolerance in meters for distance-based accuracy evaluation.")
+    parser.add_argument("--fov-center", type=float, default=0, help="Center of the evaluation FoV in degrees (0-front, CCW). If None, full FoV is used.")
+    parser.add_argument("--fov-width", type=float, default=90.0, help="Width of the evaluation FoV in degrees.")
+
 
     args = parser.parse_args()
 
@@ -116,6 +126,7 @@ def main():
 
     if args.ckpt_path and os.path.exists(args.ckpt_path):
         print("\n--- Step 2: Denoising Signals ---")
+        from HFR_Denoise.pipeline.denoise_pipeline import DenoisePipeline, run_denoising
         denoiser = DenoisePipeline(ckpt_path=args.ckpt_path)
         processed_signals = run_denoising(denoiser, generated_data['signals'])
     else:
@@ -170,9 +181,11 @@ def main():
             nuscenes_points.tofile(bin_path)
 
     # --- 4. Evaluating Accuracy ---
-    print("\n--- Step 4: Evaluating Peak Prediction Accuracy ---")
+    print("\n--- Step 4: Evaluating Peak Prediction Accuracy by Distance ---")
     
     answer_matrix = generated_data['answer_matrix']
+    #time_resolution_ns = generated_data['time_resolution_ns']
+    time_resolution_ns = 1.0
     
     if len(processed_signals.shape) == 3:
         processed_signals = np.expand_dims(processed_signals, axis=0)
@@ -182,30 +195,74 @@ def main():
     all_pred_peaks = []
 
     for i in tqdm(range(num_eval_frames), desc="Evaluating Accuracy"):
-        prediction_peaks_matrix = get_peaks_matrix_from_signals(processed_signals[i])
         true_peaks_matrix = answer_matrix[i]
-
-        valid_points_mask = true_peaks_matrix > 0
         
-        if np.any(valid_points_mask):
-            all_true_peaks.append(true_peaks_matrix[valid_points_mask])
-            all_pred_peaks.append(prediction_peaks_matrix[valid_points_mask])
+        # Base mask for valid points (where a return is expected)
+        final_mask = true_peaks_matrix > 0
+
+        # If a specific FoV is requested, create and apply an FoV mask
+        if args.fov_center is not None:
+            horizontal_resolution = generator.horizontal_resolution
+            full_fov = 360.0
+            azimuth_offset = generated_data['initial_azimuth_offsets'][i]
+
+            # Calculate the world azimuth angle for each horizontal index
+            h_indices = np.arange(horizontal_resolution)
+            world_azimuths = ((h_indices / horizontal_resolution) * full_fov + azimuth_offset) % 360
+
+            # Convert user-facing FoV center to internal angle, without the +90 offset
+            fov_center_internal = args.fov_center % 360
+            half_width = args.fov_width / 2
+
+            # Calculate the angular difference from the center and normalize to [-180, 180)
+            angular_diff = world_azimuths - fov_center_internal
+            angular_diff = (angular_diff + 180) % 360 - 180
+            
+            # Create a mask where the absolute difference is within half the fov width
+            fov_mask_1d = np.abs(angular_diff) <= half_width
+
+            # --- DEBUGGING BLOCK ---
+            selected_indices = np.where(fov_mask_1d)[0]
+            if len(selected_indices) > 0:
+                print(f"[DEBUG-EVAL] Frame {i}: Evaluating h_idx range {np.min(selected_indices)} to {np.max(selected_indices)}")
+            else:
+                print(f"[DEBUG-EVAL] Frame {i}: No h_idx selected in specified FoV.")
+            # --- END DEBUGGING BLOCK ---
+            
+            # Expand 1D horizontal mask to 2D to match the matrix shape
+            fov_mask_2d = np.tile(fov_mask_1d, (true_peaks_matrix.shape[0], 1))
+            final_mask = final_mask & fov_mask_2d
+
+
+
+        if np.any(final_mask):
+            prediction_peaks_matrix = get_peaks_matrix_from_signals(processed_signals[i])
+            all_true_peaks.append(true_peaks_matrix[final_mask])
+            all_pred_peaks.append(prediction_peaks_matrix[final_mask])
 
     if not all_true_peaks:
-        print("No valid points found for evaluation.")
+        print("No valid points found for evaluation in the specified FoV.")
     else:
         true_peaks = np.concatenate(all_true_peaks)
         pred_peaks = np.concatenate(all_pred_peaks)
 
-        absolute_errors = np.abs(true_peaks - pred_peaks)
+        # Convert peak times (in bins) to distance (in meters)
+        to_meters_const = time_resolution_ns * 0.15
+        true_dist_m = true_peaks * to_meters_const
+        pred_dist_m = pred_peaks * to_meters_const
+
+        absolute_errors = np.abs(true_dist_m - pred_dist_m)
         mae = np.mean(absolute_errors)
 
         correct_predictions = np.sum(absolute_errors <= args.tolerance)
-        accuracy = correct_predictions / len(true_peaks)
+        accuracy = correct_predictions / len(true_dist_m)
+        
+        if args.fov_center is not None:
+            print(f"\nEvaluation is limited to FoV centered at {args.fov_center} deg with a width of {args.fov_width} deg.")
 
-        print(f"\nEvaluation based on {len(true_peaks)} valid return points across {num_eval_frames} frames:")
-        print(f"Accuracy (within +/- {args.tolerance} bins): {accuracy:.4f}")
-        print(f"Mean Absolute Error (MAE): {mae:.4f} bins")
+        print(f"Evaluation based on distance comparison for {len(true_dist_m)} valid return points across {num_eval_frames} frames:")
+        print(f"Accuracy (within +/- {args.tolerance} meters): {accuracy:.4f}")
+        print(f"Mean Absolute Error (MAE): {mae:.4f} meters")
 
     print("\nPipeline finished successfully!")
 
