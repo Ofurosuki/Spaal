@@ -85,7 +85,7 @@ def main():
     parser.add_argument("--output-dir", type=str, required=True, help="Path to the base directory to save output files.")
 
     # Evaluation args
-    parser.add_argument("--tolerance", type=float, default=0.5, help="Tolerance in meters for distance-based accuracy evaluation.")
+    parser.add_argument("--tolerance", type=float, nargs='+', default=[0.1], help="One or more tolerance values (in meters) for accuracy evaluation.")
     parser.add_argument("--fov-center", type=float, default=0, help="Center of the evaluation FoV in degrees (0-front, CCW). If None, full FoV is used.")
     parser.add_argument("--fov-width", type=float, default=90.0, help="Width of the evaluation FoV in degrees.")
 
@@ -223,10 +223,10 @@ def main():
 
             # --- DEBUGGING BLOCK ---
             selected_indices = np.where(fov_mask_1d)[0]
-            if len(selected_indices) > 0:
-                print(f"[DEBUG-EVAL] Frame {i}: Evaluating h_idx range {np.min(selected_indices)} to {np.max(selected_indices)}")
-            else:
-                print(f"[DEBUG-EVAL] Frame {i}: No h_idx selected in specified FoV.")
+            # if len(selected_indices) > 0:
+            #     print(f"[DEBUG-EVAL] Frame {i}: Evaluating h_idx range {np.min(selected_indices)} to {np.max(selected_indices)}")
+            # else:
+            #     print(f"[DEBUG-EVAL] Frame {i}: No h_idx selected in specified FoV.")
             # --- END DEBUGGING BLOCK ---
             
             # Expand 1D horizontal mask to 2D to match the matrix shape
@@ -254,15 +254,17 @@ def main():
         absolute_errors = np.abs(true_dist_m - pred_dist_m)
         mae = np.mean(absolute_errors)
 
-        correct_predictions = np.sum(absolute_errors <= args.tolerance)
-        accuracy = correct_predictions / len(true_dist_m)
-        
         if args.fov_center is not None:
             print(f"\nEvaluation is limited to FoV centered at {args.fov_center} deg with a width of {args.fov_width} deg.")
 
         print(f"Evaluation based on distance comparison for {len(true_dist_m)} valid return points across {num_eval_frames} frames:")
-        print(f"Accuracy (within +/- {args.tolerance} meters): {accuracy:.4f}")
         print(f"Mean Absolute Error (MAE): {mae:.4f} meters")
+        
+        print("Accuracy scores:")
+        for tol in sorted(args.tolerance):
+            correct_predictions = np.sum(absolute_errors <= tol)
+            accuracy = correct_predictions / len(true_dist_m)
+            print(f"  - Within +/- {tol:.3f} meters: {accuracy:.4f}")
 
     print("\nPipeline finished successfully!")
 
