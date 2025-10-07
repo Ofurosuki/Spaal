@@ -11,7 +11,9 @@ from spaal2.core.dummy_lidar.dummy_lidar_vlp16_pcd import PcdLidarVLP16
 from spaal2.core.dummy_lidar.dummy_lidar_vlp32_pcd import PcdLidarVLP32c
 from spaal2.core.dummy_spoofer.dummy_spoofer_adaptive_hfr_with_perturbation import DummySpooferAdaptiveHFRWithPerturbation
 from spaal2.core.dummy_spoofer.dummy_spoofer_off import DummySpooferOff
+#from numba import njit
 
+#@njit(fastmath=True)
 def get_peak_time_and_amplitude(signal: np.ndarray) -> Tuple[float, float]:
     """
     Finds the interpolated time and amplitude of the highest peak in a signal.
@@ -223,7 +225,6 @@ class LidarSignalDatasetGenerator:
             
             frame_data = np.zeros((self.channels, self.horizontal_resolution, self.samples_per_scan), dtype=np.float32)
             frame_labels = np.zeros((self.channels, self.horizontal_resolution, self.samples_per_scan), dtype=np.uint8)
-
             try:
                 for scan_idx in range(current_lidar.max_index):
                     config, signal = current_lidar.scan()
@@ -328,6 +329,8 @@ class LidarSignalDatasetGenerator:
         return data_payload
 
 if __name__ == '__main__':
+    import time
+
     parser = argparse.ArgumentParser(description="Generate LiDAR signal datasets.")
     parser.add_argument("--lidar-type", type=str, default="VLP16", choices=["VLP16", "PCD_VLP16", "PCD_VLP32c"],
                         help="Type of LiDAR to use.")
@@ -371,9 +374,17 @@ if __name__ == '__main__':
         spoofer_width_deg=args.spoofer_width_deg,
         initial_point_offset=args.initial_point_offset
     )
+    
+    print("\nStarting dataset generation...")
+    start_time = time.perf_counter()
+
     generator.generate(
         num_frames=args.num_frames,
         start_frame=args.start_frame,
         filename_prefix=args.output_filename,
         save_to_file=True
     )
+
+    end_time = time.perf_counter()
+    duration = end_time - start_time
+    print(f"\nDataset generation finished in {duration:.2f} seconds.")

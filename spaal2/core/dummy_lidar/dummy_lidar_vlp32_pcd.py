@@ -215,32 +215,82 @@ class PcdLidarVLP32c:
         return azimuth_index
 
     def _create_depth_map(self):
+        if len(self.points) == 0:
+            return {}, {}
+
+        points = self.points
+        
+        # 1. Vectorized calculations
+        depth = np.linalg.norm(points, axis=1)
+        
+        # Avoid division by zero for points at the origin
+        non_zero_depth_mask = depth > 1e-6
+        
+        if not np.any(non_zero_depth_mask):
+            return {}, {}
+
+        points = points[non_zero_depth_mask]
+        depth = depth[non_zero_depth_mask]
+        original_indices = np.arange(len(self.points))[non_zero_depth_mask]
+        
+        x, y, z = points[:, 0], points[:, 1], points[:, 2]
+        
+        azimuth_deg = np.rad2deg(np.arctan2(x, y))
+        altitude_deg = np.rad2deg(np.arcsin(z / depth))
+
+        # 2. Optimize closest_vertical_angle lookup
+        vertical_angles_np = np.array(self.vertical_angles)
+        diffs = np.abs(altitude_deg[:, np.newaxis] - vertical_angles_np)
+        closest_v_angle_indices = np.argmin(diffs, axis=1)
+        closest_vertical_angles = vertical_angles_np[closest_v_angle_indices]
+
+        # 3. Vectorized key creation
+        horizontal_resolution = 20
+        azimuth_indices = np.round(azimuth_deg * 100 / horizontal_resolution)
+        discretized_azimuths = azimuth_indices * horizontal_resolution
+        
+        azimuth_keys = (discretized_azimuths % 36000).astype(int)
+        altitude_keys = (closest_vertical_angles * 100).astype(int)
+
+        # 4. Filter for minimum depth per key using sorting
+        # Sort by azimuth, then altitude, then depth.
+        sort_indices = np.lexsort((depth, altitude_keys, azimuth_keys))
+        
+        sorted_azimuth_keys = azimuth_keys[sort_indices]
+        sorted_altitude_keys = altitude_keys[sort_indices]
+
+        # Find the first occurrence of each unique (azimuth, altitude) pair.
+        # Since the array is sorted by depth as the last key, the first 
+        # occurrence corresponds to the minimum depth.
+        keys_arr = np.c_[sorted_azimuth_keys, sorted_altitude_keys]
+        _, first_occurrence_indices = np.unique(keys_arr, axis=0, return_index=True)
+        
+        # Get the original indices from the *unsorted* data that correspond to our final selection
+        final_indices = sort_indices[first_occurrence_indices]
+
+        # Create the maps using the final selected indices
+        final_azimuth_keys = azimuth_keys[final_indices]
+        final_altitude_keys = altitude_keys[final_indices]
+        final_depths = depth[final_indices]
+        final_original_indices = original_indices[final_indices]
+
         depth_map = {}
         original_point_indices_map = {}
-        horizontal_resolution = 20
-        
-        for i, point in enumerate(self.points):
-            x, y, z = point
-            if np.linalg.norm([x, y, z]) == 0:
-                continue
-            
-            depth = np.linalg.norm(point)
-            azimuth_deg = np.rad2deg(np.arctan2(x, y))
-            altitude_deg = np.rad2deg(np.arcsin(z / depth))
 
-            closest_vertical_angle = min(self.vertical_angles, key=lambda v_angle: abs(v_angle - altitude_deg))
-            
-            azimuth_index = round(azimuth_deg * 100 / horizontal_resolution)
-            discretized_azimuth = (azimuth_index * horizontal_resolution)
+        intensities = self.intensities
+        has_intensities = intensities is not None
 
-            azimuth_key = int(discretized_azimuth % 36000)
-            altitude_key = int(closest_vertical_angle * 100)
+        if has_intensities:
+            # Filter intensities based on the non_zero_depth_mask as well
+            intensities = intensities[non_zero_depth_mask]
+            final_intensities = intensities[final_indices]
 
-            if (azimuth_key, altitude_key) not in depth_map or depth < depth_map.get((azimuth_key, altitude_key), (float('inf'), None))[0]:
-                pcd_intensity = self.intensities[i] if self.intensities is not None else None
-                depth_map[(azimuth_key, altitude_key)] = (depth, pcd_intensity)
-                original_point_indices_map[(azimuth_key, altitude_key)] = i
-                
+        for i in range(len(final_azimuth_keys)):
+            key = (final_azimuth_keys[i], final_altitude_keys[i])
+            pcd_intensity = final_intensities[i] if has_intensities else None
+            depth_map[key] = (final_depths[i], pcd_intensity)
+            original_point_indices_map[key] = final_original_indices[i]
+
         return depth_map, original_point_indices_map
 
     def set_intensity_to_amplitude_ratio(self, ratio: float):

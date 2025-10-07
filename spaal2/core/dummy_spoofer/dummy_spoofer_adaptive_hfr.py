@@ -100,23 +100,29 @@ class DummySpooferAdaptiveHFR(DummySpooferInterface):
             self.trigger_time = None
             return np.zeros((output_length, ))
         
-        # Calculate the phase in the 1.0ns-resolution buffer
-        phase_ns = (start_timestamp - attack_start_time).in_nanoseconds % self.pulse_period_ns
-        
-        # Create the high-resolution source time points (from the buffer's perspective)
-        src_time_points = np.arange(phase_ns, phase_ns + duration.in_nanoseconds, 1.0)
-        
-        # Wrap around the buffer
-        src_indices = np.round(src_time_points).astype(int) % len(self.pulse_sequence_buffer)
-        
-        # Get the signal from the buffer
-        buffered_signal = self.pulse_sequence_buffer[src_indices]
+        # --- Optimized Interpolation ---
+        # Create the target time points for the output signal
+        target_time_points = np.arange(output_length) * self.time_resolution_ns
 
-        # Create the target time points for interpolation
-        target_time_points = np.arange(0, duration.in_nanoseconds, self.time_resolution_ns)
+        # Calculate the corresponding time points in the buffer's reference frame
+        phase_ns = (start_timestamp - attack_start_time).in_nanoseconds
+        sample_times = phase_ns + target_time_points
 
-        # Interpolate to match the desired time resolution
-        signal = np.interp(target_time_points, src_time_points, buffered_signal)
+        # Find the indices and weights for linear interpolation
+        t_floor = np.floor(sample_times)
+        interp_weights = sample_times - t_floor
+
+        # Get the buffer values at floor and ceil positions, wrapping around the buffer
+        buffer_len = len(self.pulse_sequence_buffer)
+        indices_floor = t_floor.astype(np.int64) % buffer_len
+        indices_ceil = (t_floor + 1).astype(np.int64) % buffer_len
+
+        vals_floor = self.pulse_sequence_buffer[indices_floor]
+        vals_ceil = self.pulse_sequence_buffer[indices_ceil]
+
+        # Perform the interpolation
+        signal = vals_floor + interp_weights * (vals_ceil - vals_floor)
+        # --- End of Optimization ---
 
         if start_timestamp < attack_start_time:
             clear_until_index = int((attack_start_time - start_timestamp).in_nanoseconds / self.time_resolution_ns)
