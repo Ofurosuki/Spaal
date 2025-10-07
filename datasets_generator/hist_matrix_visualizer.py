@@ -4,6 +4,45 @@ import open3d as o3d
 import argparse
 import os
 import glob
+from typing import Tuple
+
+def get_peak_time_and_amplitude(signal: np.ndarray) -> Tuple[float, float]:
+    """
+    Finds the interpolated time and amplitude of the highest peak in a signal.
+    Returns (0.0, 0.0) if no peak is found.
+    """
+    raises = np.flatnonzero((signal[:-1] < 0.01) & (signal[1:] >= 0.01)) + 1
+    if len(raises) == 0:
+        return 0.0, 0.0
+
+    peak_values = np.array([np.max(signal[r:min(len(signal), r + 50)]) for r in raises])
+    if len(peak_values) == 0:
+        return 0.0, 0.0
+    
+    peak_amplitude = np.max(peak_values)
+    if peak_amplitude < 0.01:
+        return 0.0, 0.0
+
+    highest_pulse_start_index = raises[np.argmax(peak_values)]
+    pulse_region = signal[highest_pulse_start_index:min(len(signal), highest_pulse_start_index + 50)]
+    
+    if len(pulse_region) == 0:
+        return 0.0, 0.0
+        
+    peak_idx_in_region = np.argmax(pulse_region)
+    peak_idx_global = highest_pulse_start_index + peak_idx_in_region
+
+    interpolated_time = float(peak_idx_global)
+    if 0 < peak_idx_global < len(signal) - 1:
+        y0, y1, y2 = signal[peak_idx_global - 1:peak_idx_global + 2]
+        if y0 > 0 and y1 > 0 and y2 > 0:
+            ln_y0, ln_y1, ln_y2 = np.log(y0), np.log(y1), np.log(y2)
+            denominator = (ln_y0 - 2 * ln_y1 + ln_y2)
+            if abs(denominator) > 1e-9:
+                offset = (ln_y0 - ln_y2) / (2 * denominator)
+                interpolated_time = peak_idx_global + offset
+    
+    return interpolated_time, peak_amplitude
 
 class HistMatrixVisualizer:
     def __init__(self, npz_file_path: str = None, pcd_directory_path: str = None, data: dict = None, amplitude_to_intensity_ratio: float = 255.0/10.0):
@@ -59,61 +98,29 @@ class HistMatrixVisualizer:
             print(f"Warning: Frame index {frame_index} is out of bounds for azimuth offsets. Using last available offset.")
 
         frame_data = self.hist_matrix[frame_index]
-        channels, horizontal_resolution, samples_per_scan = frame_data.shape
+        
+        is_prediction_local = len(frame_data.shape) == 2
+        
+        if is_prediction_local:
+            channels, horizontal_resolution = frame_data.shape
+        else:
+            channels, horizontal_resolution, _ = frame_data.shape
 
         for v_idx in range(channels):
             for h_idx in range(horizontal_resolution):
-                intensity = 10  # Default intensity
-                if not self.is_prediction:
+                if not is_prediction_local:
                     signal = frame_data[v_idx, h_idx, :]
-                    
-                    raises = np.flatnonzero((signal[:-1] < 0.01) & (signal[1:] >= 0.01)) + 1
-                    if len(raises) == 0:
-                        continue
+                    highest_peak_time, peak_amplitude = get_peak_time_and_amplitude(signal)
 
-                    # Find the pulse with the highest peak
-                    peak_values = np.array([np.max(signal[r:min(len(signal), r + 50)]) for r in raises])
-                    if len(peak_values) == 0:
+                    if highest_peak_time == 0.0:
                         continue
                     
-                    peak_amplitude = np.max(peak_values)
-                    intensity = np.clip(peak_amplitude * self.amplitude_to_intensity_ratio, 0,255)
-
-                    # Determine the region of the highest pulse
-                    highest_pulse_start_index = raises[np.argmax(peak_values)]
-                    pulse_region = signal[highest_pulse_start_index:min(len(signal), highest_pulse_start_index + 50)]
-                    
-                    # Find the integer index of the peak within that pulse region
-                    if len(pulse_region) == 0:
-                        continue
-                    peak_idx_in_region = np.argmax(pulse_region)
-                    peak_idx_global = highest_pulse_start_index + peak_idx_in_region
-
-                    # Perform Gaussian interpolation (parabolic on log values) for better accuracy
-                    if 0 < peak_idx_global < len(signal) - 1:
-                        y0 = signal[peak_idx_global - 1]
-                        y1 = signal[peak_idx_global]
-                        y2 = signal[peak_idx_global + 1]
-
-                        # Ensure values are positive for log
-                        if y0 > 0 and y1 > 0 and y2 > 0:
-                            ln_y0 = np.log(y0)
-                            ln_y1 = np.log(y1)
-                            ln_y2 = np.log(y2)
-                            
-                            denominator = (ln_y0 - 2 * ln_y1 + ln_y2)
-                            if abs(denominator) > 1e-9:
-                                offset = (ln_y0 - ln_y2) / (2 * denominator)
-                                highest_peak_time = peak_idx_global + offset
-                            else:
-                                highest_peak_time = float(peak_idx_global) # Fallback for flat log-parabola
-                        else:
-                            highest_peak_time = float(peak_idx_global) # Fallback if values are not suitable for log
-                    else:
-                        highest_peak_time = float(peak_idx_global) # Fallback for peaks at signal boundary
+                    intensity = np.clip(peak_amplitude * self.amplitude_to_intensity_ratio, 0, 255)
                 else:
-                    highest_peak_time = frame_data[v_idx, h_idx, 0]
-
+                    highest_peak_time = frame_data[v_idx, h_idx]
+                    if highest_peak_time <= 0:
+                        continue
+                    intensity = 100 # Default intensity for predictions
 
                 distance_m = (highest_peak_time * self.time_resolution_ns) * 0.15
                 
@@ -123,7 +130,6 @@ class HistMatrixVisualizer:
                 alpha = np.deg2rad(azimuth_deg)
                 omega = np.deg2rad(altitude_deg)
                 
-                # Spherical to cartesian conversion (Y-forward, X-right, Z-up)
                 x = distance_m * np.cos(omega) * np.sin(alpha)
                 y = distance_m * np.cos(omega) * np.cos(alpha)
                 z = distance_m * np.sin(omega)
@@ -135,7 +141,8 @@ class HistMatrixVisualizer:
         if points:
             pcd.points = o3d.utility.Vector3dVector(np.array(points))
             if intensities:
-                colors = [[i, i, i] for i in intensities]
+                #color_values = np.clip(np.array(intensities) / 255.0, 0, 1)
+                colors = [[val, val, val] for val in intensities]
                 pcd.colors = o3d.utility.Vector3dVector(np.array(colors))
         return pcd
 

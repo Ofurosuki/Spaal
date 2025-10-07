@@ -2,6 +2,7 @@ import numpy as np
 import os
 import argparse
 import glob
+from typing import Tuple
 from spaal2.core import (
     PreciseDuration, DummyOutdoor, apply_noise, gen_sunlight,
 )
@@ -10,6 +11,44 @@ from spaal2.core.dummy_lidar.dummy_lidar_vlp16_pcd import PcdLidarVLP16
 from spaal2.core.dummy_lidar.dummy_lidar_vlp32_pcd import PcdLidarVLP32c
 from spaal2.core.dummy_spoofer.dummy_spoofer_adaptive_hfr_with_perturbation import DummySpooferAdaptiveHFRWithPerturbation
 from spaal2.core.dummy_spoofer.dummy_spoofer_off import DummySpooferOff
+
+def get_peak_time_and_amplitude(signal: np.ndarray) -> Tuple[float, float]:
+    """
+    Finds the interpolated time and amplitude of the highest peak in a signal.
+    Returns (0.0, 0.0) if no peak is found.
+    """
+    raises = np.flatnonzero((signal[:-1] < 0.01) & (signal[1:] >= 0.01)) + 1
+    if len(raises) == 0:
+        return 0.0, 0.0
+
+    peak_values = np.array([np.max(signal[r:min(len(signal), r + 50)]) for r in raises])
+    if len(peak_values) == 0:
+        return 0.0, 0.0
+    
+    peak_amplitude = np.max(peak_values)
+    if peak_amplitude < 0.01:
+        return 0.0, 0.0
+
+    highest_pulse_start_index = raises[np.argmax(peak_values)]
+    pulse_region = signal[highest_pulse_start_index:min(len(signal), highest_pulse_start_index + 50)]
+    
+    if len(pulse_region) == 0:
+        return 0.0, 0.0
+        
+    peak_idx_in_region = np.argmax(pulse_region)
+    peak_idx_global = highest_pulse_start_index + peak_idx_in_region
+
+    interpolated_time = float(peak_idx_global)
+    if 0 < peak_idx_global < len(signal) - 1:
+        y0, y1, y2 = signal[peak_idx_global - 1:peak_idx_global + 2]
+        if y0 > 0 and y1 > 0 and y2 > 0:
+            ln_y0, ln_y1, ln_y2 = np.log(y0), np.log(y1), np.log(y2)
+            denominator = (ln_y0 - 2 * ln_y1 + ln_y2)
+            if abs(denominator) > 1e-9:
+                offset = (ln_y0 - ln_y2) / (2 * denominator)
+                interpolated_time = peak_idx_global + offset
+    
+    return interpolated_time, peak_amplitude
 
 class LidarSignalDatasetGenerator:
     def __init__(self, 
@@ -133,7 +172,7 @@ class LidarSignalDatasetGenerator:
 
         all_frames_data = np.zeros((num_frames, self.channels, self.horizontal_resolution, self.samples_per_scan), dtype=np.float32)
         all_labels_data = np.zeros((num_frames, self.channels, self.horizontal_resolution, self.samples_per_scan), dtype=np.uint8)
-        answer_matrix = np.zeros((num_frames, self.channels, self.horizontal_resolution), dtype=np.int32)
+        answer_matrix = np.zeros((num_frames, self.channels, self.horizontal_resolution), dtype=np.float32)
         all_initial_azimuth_offsets = []
 
         # Define Spoofer's attack angle characteristics using internal angle representation
@@ -188,27 +227,8 @@ class LidarSignalDatasetGenerator:
             try:
                 for scan_idx in range(current_lidar.max_index):
                     config, signal = current_lidar.scan()
-                    # find candidate peaks in the signal
-                    raises = np.flatnonzero(
-                        (signal[:-1] < 0.01) & (signal[1:] >= 0.01)
-                    ) + 1
                     
-                    if len(raises) == 0:
-                        true_peak_index = 0
-                    else:
-                        peaks = np.empty_like(raises, dtype=np.float64)
-                        for peak_i in range(len(raises)):
-                            peaks[peak_i] = np.max(
-                                signal[raises[peak_i]:min(len(signal), raises[peak_i] + 50)]
-                            )
-                        highest_peak_index = np.argmax(peaks)
-                        highest_peak = peaks[highest_peak_index]
-                        highest_peak_time = raises[highest_peak_index]
-
-                        true_peak_index = highest_peak_time
-
-                    #lidar_amp = np.random.uniform(self.lidar_amplitude_range[0], self.lidar_amplitude_range[1])
-                    #current_lidar.set_amplitude(lidar_amp)
+                    true_peak_time, _ = get_peak_time_and_amplitude(signal)
                     
                     # labeling: 0 = no return, 1 = legitimate return, 2 = HFR return
                     LEGITIMATE_PULSE = 1
@@ -268,10 +288,10 @@ class LidarSignalDatasetGenerator:
 
                     vertical_index = self.altitude_to_sorted_v_idx_map.get(config.altitude)
 
-                    if horizontal_index < self.horizontal_resolution:
+                    if horizontal_index < self.horizontal_resolution and vertical_index is not None:
                         frame_data[vertical_index, horizontal_index, :] = signal
                         frame_labels[vertical_index, horizontal_index, :] = current_labels
-                        answer_matrix[i, vertical_index, horizontal_index] = true_peak_index
+                        answer_matrix[i, vertical_index, horizontal_index] = true_peak_time
 
             except StopIteration:
                 pass
