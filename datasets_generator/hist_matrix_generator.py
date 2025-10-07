@@ -12,6 +12,7 @@ from spaal2.core.dummy_lidar.dummy_lidar_vlp32_pcd import PcdLidarVLP32c
 from spaal2.core.dummy_spoofer.dummy_spoofer_adaptive_hfr_with_perturbation import DummySpooferAdaptiveHFRWithPerturbation
 from spaal2.core.dummy_spoofer.dummy_spoofer_off import DummySpooferOff
 #from numba import njit
+from tqdm import tqdm
 
 #@njit(fastmath=True)
 def get_peak_time_and_amplitude(signal: np.ndarray) -> Tuple[float, float]:
@@ -185,13 +186,13 @@ class LidarSignalDatasetGenerator:
         spoofer_attack_end_az = spoofer_attack_center_az + spoofer_attack_width_az / 2
         print(f"Spoofer attack cone is centered at {spoofer_attack_center_az/100} deg with width {self.spoofer_width_deg} deg (internal angle system).")
         print(f"start spoofer_attackstart_az: {spoofer_attack_start_az}, spoofer_attack_end_az: {spoofer_attack_end_az}")
-        for i in range(num_frames):
+        for i in tqdm(range(num_frames), desc="Generating frames"):
             frame_idx = start_frame + i
-            print(f"Generating frame {i + 1}/{num_frames} (PCD index: {frame_idx})...")
+            #print(f"Generating frame {i + 1}/{num_frames} (PCD index: {frame_idx})...")
             
             if self.lidar_type in ["PCD_VLP16", "PCD_VLP32c"]:
                 pcd_file_path = self.pcd_files[frame_idx]
-                print(f"  - Using PCD file: {os.path.basename(pcd_file_path)}")
+                #print(f"  - Using PCD file: {os.path.basename(pcd_file_path)}")
                 current_lidar = self.lidar.new_frame(frame_num=frame_idx, base_timestamp=PreciseDuration(nanoseconds=frame_idx * 10**9))
             else:
                 current_lidar = self.lidar.new_frame(base_timestamp=PreciseDuration(nanoseconds=frame_idx * 10**9))
@@ -221,7 +222,7 @@ class LidarSignalDatasetGenerator:
                     distances = [np.sqrt((az - target_azimuth)**2 + (alt - target_altitude)**2) for az, alt in available_points]
                     closest_index = np.argmin(distances)
                     actual_trigger_point = available_points[closest_index]
-                    print(f"Target spoofer point at {self.spoofer_angle_deg} deg (front=0, ccw) not found. Using closest point: az={actual_trigger_point[0]/100}, alt={actual_trigger_point[1]/100} deg")
+                    #print(f"Target spoofer point at {self.spoofer_angle_deg} deg (front=0, ccw) not found. Using closest point: az={actual_trigger_point[0]/100}, alt={actual_trigger_point[1]/100} deg")
             
             frame_data = np.zeros((self.channels, self.horizontal_resolution, self.samples_per_scan), dtype=np.float32)
             frame_labels = np.zeros((self.channels, self.horizontal_resolution, self.samples_per_scan), dtype=np.uint8)

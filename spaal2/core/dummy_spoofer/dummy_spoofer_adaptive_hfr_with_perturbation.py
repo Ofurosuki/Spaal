@@ -86,7 +86,7 @@ class DummySpooferAdaptiveHFRWithPerturbation(DummySpooferInterface):
             peak_time_ns = peak_index * self.time_resolution_ns
         else:
             # 基準パルスが見つからない場合：spoofer自身の距離からToFを計算して代替する
-            print("Spoofer trigger: No valid pulse found. Using spoofer's own distance for fallback timing.")
+            #print("Spoofer trigger: No valid pulse found. Using spoofer's own distance for fallback timing.")
             # 光速 (m/ns)
             SPEED_OF_LIGHT_M_PER_NS = 0.299792458 
             # ToF(往復時間) = 2 * 距離 / 光速
@@ -105,7 +105,7 @@ class DummySpooferAdaptiveHFRWithPerturbation(DummySpooferInterface):
             high=self.amplitude_range[1],
             size=num_pulses
         )
-        print(f"Triggered at {self.trigger_time.in_nanoseconds}ns. Generated {num_pulses} random amplitudes.")
+        #print(f"Triggered at {self.trigger_time.in_nanoseconds}ns. Generated {num_pulses} random amplitudes.")
 
     def get_range_signal(self, start_timestamp: PreciseDuration, duration: PreciseDuration) -> npt.NDArray[np.float64]:
         output_length = int(duration.in_nanoseconds / self.time_resolution_ns)
