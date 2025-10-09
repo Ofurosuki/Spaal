@@ -5,6 +5,7 @@ import os
 import glob
 from typing import Tuple
 import blosc2
+import pickle
 
 def get_peak_time_and_amplitude(signal: np.ndarray) -> Tuple[float, float]:
     """
@@ -69,7 +70,9 @@ class HistMatrixVisualizer:
                 print(f"Loading data from {file_to_load}")
                 with open(file_to_load, 'rb') as f:
                     packed_data = f.read()
-                data = blosc2.unpack_array2(packed_data)
+                
+                unpacked_data = blosc2.unpack(packed_data)
+                data = pickle.loads(unpacked_data)
 
                 # Add the batch dimension as the visualizer expects it
                 data['signals'] = np.expand_dims(data['signals'], axis=0)

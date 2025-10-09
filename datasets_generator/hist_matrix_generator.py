@@ -4,6 +4,7 @@ import argparse
 import json
 from typing import Tuple
 import blosc2
+import pickle
 from tqdm import tqdm
 
 from spaal2.core import PreciseDuration
@@ -146,10 +147,12 @@ class HistMatrixGenerator:
             'time_resolution_ns': np.array([self.time_resolution_ns])
         }
         
-        # Save to a blosc2 compressed file
-        #blosc2.save_dict(data_payload, output_filename)
+        # Serialize the dictionary with pickle and compress with blosc2
+        pickled_data = pickle.dumps(data_payload)
+        compressed_data = blosc2.pack(pickled_data)
+        
         with open(output_filename, 'wb') as f:
-            f.write(blosc2.pack_array2(data_payload))
+            f.write(compressed_data)
 
     def generate(self, num_frames: int = -1, start_frame: int = 0):
         total_samples = len(self.lidar_samples)
