@@ -340,11 +340,10 @@ class PcdLidarVLP32c:
     def _get_current_timestamp(self) -> int:
         horizontal_steps_per_ring = self.max_index // 32
         azimuth_step_index = self.index % horizontal_steps_per_ring
-        current_azimuth_deg = azimuth_step_index * 0.2
+        current_azimuth_deg = azimuth_step_index * 0.2 + 8 # 8というのはsync_angleが45の時にぴったりになるようにadhocに調整した値
         altitude_step_index = self.index // horizontal_steps_per_ring
 
-        # 水平角が20度増加するごとにタイムスタンプを20ns増加させる
-        # self.sync_angle_step = 5 # degrees
+        # 水平角がself.sync_angle_step度増加するごとにタイムスタンプをtime_increase_per_step ns増加させる
         time_increase_per_step = 20  # ns
         timestamp = (current_azimuth_deg // self.sync_angle_step) * time_increase_per_step
 

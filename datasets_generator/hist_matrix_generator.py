@@ -74,7 +74,7 @@ class LidarSignalDatasetGenerator:
                  spoofer_angle_deg: float = 0.0, 
                  spoofer_altitude_deg: float = 8.0,
                  spoofer_width_deg: float = 90.0,
-                 sync_angle_step_deg: float = 10, # Add new parameter
+                 sync_angle_step_deg: float = 45.0, 
                  initial_point_offset: int = 0):
 
         self.lidar_type = lidar_type
@@ -348,7 +348,7 @@ if __name__ == '__main__':
     # New arguments for spoofer targeting
     parser.add_argument("--spoofer-angle", type=float, default=0.0,
                         help="The angle for the spoofer trigger, in degrees, counter-clockwise with 0 at the front.")
-    parser.add_argument("--spoofer-altitude", type=float, default=8.0,
+    parser.add_argument("--spoofer-altitude", type=float, default=50.0,
                         help="The altitude for the spoofer trigger, in degrees.")
     parser.add_argument("--spoofer-width-deg", type=float, default=90.0,
                         help="The angular width of the spoofer's attack cone in degrees.")
