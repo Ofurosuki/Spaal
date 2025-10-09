@@ -5,6 +5,8 @@ import argparse
 import os
 import glob
 from typing import Tuple
+import json
+import blosc2
 
 def get_peak_time_and_amplitude(signal: np.ndarray) -> Tuple[float, float]:
     """
@@ -45,38 +47,51 @@ def get_peak_time_and_amplitude(signal: np.ndarray) -> Tuple[float, float]:
     return interpolated_time, peak_amplitude
 
 class HistMatrixVisualizer:
-    def __init__(self, npz_file_path: str = None, pcd_directory_path: str = None, data: dict = None, amplitude_to_intensity_ratio: float = 255.0/10.0):
-        self.npz_file_path = npz_file_path
+    def __init__(self, dataset_root_path: str, frame_index: int = 0, pcd_directory_path: str = None, data: dict = None, amplitude_to_intensity_ratio: float = 255.0/10.0, use_answer_matrix: bool = False):
+        self.dataset_root_path = dataset_root_path
+        self.frame_index = frame_index
         self.pcd_directory_path = pcd_directory_path
-        self.is_prediction = False
+        self.is_prediction = use_answer_matrix
         self.amplitude_to_intensity_ratio = amplitude_to_intensity_ratio
         print(f"amplitude_to_intensity_ratio: {self.amplitude_to_intensity_ratio}")
 
-        if data is None and npz_file_path:
-            print(f"Loading data from {npz_file_path}")
-            with np.load(npz_file_path) as loaded_data:
-                data = {key: loaded_data[key] for key in loaded_data}
-        elif data is None:
-            raise ValueError("Either 'npz_file_path' or 'data' dictionary must be provided.")
+        if data is None:
+            sample_dirs = sorted([d for d in os.listdir(dataset_root_path) if os.path.isdir(os.path.join(dataset_root_path, d))])
+            if not sample_dirs:
+                raise FileNotFoundError(f"No sample directories found in {dataset_root_path}")
+            if frame_index >= len(sample_dirs):
+                raise ValueError(f"Frame index {frame_index} is out of bounds for {len(sample_dirs)} sample directories.")
+            
+            sample_dir = os.path.join(dataset_root_path, sample_dirs[frame_index])
+            print(f"Loading data from {sample_dir}")
 
-        print(f"shape of signals: {data['signals'].shape if 'signals' in data else 'N/A'}")
-        if 'signals' not in data and 'prediction' in data:
-            self.is_prediction = True
-            self.hist_matrix = data['prediction']
-        else:
-            self.hist_matrix = data['signals']
-        print(f"Loaded hist_matrix with shape: {self.hist_matrix.shape}")
+            with open(os.path.join(sample_dir, 'config.json'), 'r') as f:
+                config_data = json.load(f)
+            
+            if use_answer_matrix:
+                bl2_file = os.path.join(sample_dir, 'answer_matrix.bl2')
+                self.is_prediction = True
+            else:
+                bl2_file = os.path.join(sample_dir, 'signal.bl2')
+                self.is_prediction = False
 
-        if 'initial_azimuth_offsets' in data:
-            self.initial_azimuth_offsets = data['initial_azimuth_offsets']
-        else:
-            print("Warning: 'initial_azimuth_offsets' not found. Defaulting to 0.0 for all frames.")
-            self.initial_azimuth_offsets = [data.get('initial_azimuth_offset', 0.0)] * len(self.hist_matrix)
+            with open(bl2_file, 'rb') as f:
+                packed_data = f.read()
+            
+            hist_matrix_single_frame = blosc2.unpack_array(packed_data)
+            self.hist_matrix = np.expand_dims(hist_matrix_single_frame, axis=0)
+            
+            data = config_data
+
+        print(f"shape of hist_matrix: {self.hist_matrix.shape}")
+
+        self.initial_azimuth_offsets = [data.get('initial_azimuth_offset', 0.0)]
         
         v_angles_default = sorted([-30.67, -9.33, -29.33, -8.0, -28.0, -6.66, -26.66, -5.33, -25.33, -4.0, -24.0, -2.67, -22.67, -1.33, -21.33, 0.0, -20.0, 1.33, -18.67, 2.67, -17.33, 4.0, -16.0, 5.33, -14.67, 6.67, -13.33, 8.0, -12.0, 9.33, -10.67, 10.67], reverse=True)
         self.vertical_angles = data.get('vertical_angles', v_angles_default)
         self.fov = data.get('fov', 360.0)
         self.time_resolution_ns = data.get('time_resolution_ns', 1.0)
+        self.original_bin_path = data.get('original_bin_path')
 
         self.pcd_files = []
         if self.pcd_directory_path:
@@ -152,7 +167,19 @@ class HistMatrixVisualizer:
 
         geometries = [reconstructed_pcd]
 
-        if self.pcd_files and frame_index < len(self.pcd_files):
+        if self.original_bin_path and os.path.exists(self.original_bin_path):
+            print(f"Loading original BIN for comparison: {self.original_bin_path}")
+            raw_data = np.fromfile(self.original_bin_path, dtype=np.float32)
+            if raw_data.size % 5 != 0:
+                raw_data = raw_data[:-(raw_data.size % 5)]
+            
+            points = raw_data.reshape(-1, 5)[:, :3]
+            
+            original_pcd = o3d.geometry.PointCloud()
+            original_pcd.points = o3d.utility.Vector3dVector(points)
+            original_pcd.paint_uniform_color([0, 0, 1])  # Blue for original
+            geometries.append(original_pcd)
+        elif self.pcd_files and frame_index < len(self.pcd_files):
             pcd_file_to_load = self.pcd_files[frame_index]
             print(f"Loading original PCD for comparison: {pcd_file_to_load}")
             original_pcd = o3d.io.read_point_cloud(pcd_file_to_load)
@@ -189,17 +216,32 @@ class HistMatrixVisualizer:
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description="Visualize or save LiDAR histogram matrix from .npz file.")
-    parser.add_argument("--npz-file", required=True, type=str, help="Path to the .npz histogram matrix file.")
-    parser.add_argument("--pcd-directory", type=str, default=None, help="Path to the directory with original .pcd files for comparison or for output naming.")
+    parser = argparse.ArgumentParser(description="Visualize LiDAR data from the new dataset format.")
+    parser.add_argument("--dataset-root-path", required=True, type=str, help="Path to the root directory of the dataset.")
     parser.add_argument("--frame", type=int, default=0, help="Frame index to visualize.")
-    parser.add_argument("--output-pcd-dir", type=str, default=None, help="Path to the directory to save reconstructed .pcd files. If provided, visualization is skipped and all frames are processed.")
+    parser.add_argument("--pcd-directory", type=str, default=None, help="Path to the directory with original .pcd files for comparison.")
+    parser.add_argument("--output-pcd-dir", type=str, default=None, help="Path to the directory to save reconstructed .pcd files. If provided, visualization is skipped.")
     parser.add_argument("--amplitude-to-intensity-ratio", type=float, default=1.0, help="Ratio to convert signal amplitude to intensity for reconstructed PCD.")
+    parser.add_argument("--use-answer-matrix", action='store_true', help="Use answer_matrix.bl2 instead of signal.bl2 for reconstruction.")
 
     args = parser.parse_args()
 
-    visualizer = HistMatrixVisualizer(npz_file_path=args.npz_file, pcd_directory_path=args.pcd_directory, amplitude_to_intensity_ratio=args.amplitude_to_intensity_ratio)
+    visualizer = HistMatrixVisualizer(
+        dataset_root_path=args.dataset_root_path,
+        frame_index=args.frame,
+        pcd_directory_path=args.pcd_directory,
+        amplitude_to_intensity_ratio=args.amplitude_to_intensity_ratio,
+        use_answer_matrix=args.use_answer_matrix
+    )
+
     if args.output_pcd_dir:
-        visualizer.save_reconstructed_pcds(args.output_pcd_dir)
+        # The save_reconstructed_pcds method loops through all frames, which is not what we want here
+        # as we only loaded a single frame. We can modify it or just save the single frame.
+        # For now, let's just save the single reconstructed frame.
+        pcd = visualizer._reconstruct_point_cloud(frame_index=0) # We always use frame_index 0 of the loaded data
+        os.makedirs(args.output_pcd_dir, exist_ok=True)
+        output_path = os.path.join(args.output_pcd_dir, f"reconstructed_frame_{args.frame}.pcd")
+        o3d.io.write_point_cloud(output_path, pcd)
+        print(f"Saved reconstructed PCD to {output_path}")
     else:
-        visualizer.visualize(args.frame)
+        visualizer.visualize(0) # We always use frame_index 0 of the loaded data

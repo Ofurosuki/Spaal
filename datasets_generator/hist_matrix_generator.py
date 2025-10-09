@@ -11,8 +11,11 @@ from spaal2.core.dummy_lidar.dummy_lidar_vlp16_pcd import PcdLidarVLP16
 from spaal2.core.dummy_lidar.dummy_lidar_vlp32_pcd import PcdLidarVLP32c
 from spaal2.core.dummy_spoofer.dummy_spoofer_adaptive_hfr_with_perturbation import DummySpooferAdaptiveHFRWithPerturbation
 from spaal2.core.dummy_spoofer.dummy_spoofer_off import DummySpooferOff
-#from numba import njit
 from tqdm import tqdm
+import json
+import blosc2
+
+#@njit(fastmath=True)
 
 #@njit(fastmath=True)
 def get_peak_time_and_amplitude(signal: np.ndarray) -> Tuple[float, float]:
@@ -57,6 +60,7 @@ class LidarSignalDatasetGenerator:
     def __init__(self, 
                  lidar_type: str = "PCD_VLP32c",
                  pcd_directory: str = None,
+                 json_path: str = None,
                  output_dir: str = "./datasets",
                  outdoor_distance: float = 50.0, outdoor_ratio: float = 0.8,
                  spoofer_type: str = "adaptive_hfr_perturbation",
@@ -74,11 +78,12 @@ class LidarSignalDatasetGenerator:
                  spoofer_angle_deg: float = 0.0, 
                  spoofer_altitude_deg: float = 8.0,
                  spoofer_width_deg: float = 90.0,
-                 sync_angle_step_deg: float = 45.0, 
+                 sync_angle_step_deg: float = 0.2, 
                  initial_point_offset: int = 0):
 
         self.lidar_type = lidar_type
         self.pcd_directory = pcd_directory
+        self.json_path = json_path
         self.time_resolution_ns = time_resolution_ns
         self.spoofer_angle_deg = spoofer_angle_deg
         self.spoofer_altitude_deg = spoofer_altitude_deg
@@ -95,12 +100,23 @@ class LidarSignalDatasetGenerator:
             self.channels = 16
             self.horizontal_resolution = 1800
         elif self.lidar_type == "PCD_VLP16" or self.lidar_type == "PCD_VLP32c":
-            if not self.pcd_directory or not os.path.isdir(self.pcd_directory):
-                raise ValueError(f"PCD directory path must be provided and valid for {self.lidar_type} lidar type. Provided: {self.pcd_directory}")
-            
-            self.pcd_files = sorted(glob.glob(os.path.join(self.pcd_directory, '*.pcd')))
-            if not self.pcd_files:
-                raise ValueError(f"No PCD files found in {self.pcd_directory}")
+            if self.json_path:
+                if not os.path.exists(self.json_path):
+                    raise FileNotFoundError(f"Input JSON file not found at {self.json_path}")
+                with open(self.json_path, 'r') as f:
+                    self.samples = json.load(f)
+                if not self.samples:
+                    raise ValueError(f"No samples found in {self.json_path}")
+                self.pcd_files = [item['path'] for item in self.samples]
+            elif self.pcd_directory:
+                if not os.path.isdir(self.pcd_directory):
+                    raise ValueError(f"PCD directory path must be a valid directory. Provided: {self.pcd_directory}")
+                self.pcd_files = sorted(glob.glob(os.path.join(self.pcd_directory, '*.pcd')))
+                if not self.pcd_files:
+                    raise ValueError(f"No PCD files found in {self.pcd_directory}")
+                self.samples = [{'path': path, 'token': os.path.splitext(os.path.basename(path))[0]} for path in self.pcd_files]
+            else:
+                raise ValueError("Either --json-path or --pcd-directory must be provided for PCD lidar types.")
 
             if self.lidar_type == "PCD_VLP16":
                 lidar_class = PcdLidarVLP16
@@ -163,20 +179,18 @@ class LidarSignalDatasetGenerator:
             raise ValueError(f"Spoofer type {self.spoofer_type} not implemented for this script yet.")
 
     def generate(self, num_frames: int, start_frame: int = 0, filename_prefix: str = "lidar_signal", save_to_file: bool = True):
-        if self.pcd_directory:
-            total_pcd_files = len(self.pcd_files)
-            if start_frame >= total_pcd_files:
+        if self.pcd_directory or self.json_path:
+            total_files = len(self.pcd_files)
+            if start_frame >= total_files:
                 print(f"Start frame {start_frame} is out of bounds. No files to process.")
-                return None
-            if start_frame + num_frames > total_pcd_files:
-                print(f"Warning: Requested frames ({num_frames} from {start_frame}) exceeds available PCD files ({total_pcd_files}).")
-                num_frames = total_pcd_files - start_frame
+                return
+            
+            if num_frames == -1:
+                num_frames = total_files - start_frame
+            elif start_frame + num_frames > total_files:
+                print(f"Warning: Requested frames ({num_frames} from {start_frame}) exceeds available files ({total_files}).")
+                num_frames = total_files - start_frame
                 print(f"Adjusting to process {num_frames} frames.")
-
-        all_frames_data = np.zeros((num_frames, self.channels, self.horizontal_resolution, self.samples_per_scan), dtype=np.float32)
-        all_labels_data = np.zeros((num_frames, self.channels, self.horizontal_resolution, self.samples_per_scan), dtype=np.uint8)
-        answer_matrix = np.zeros((num_frames, self.channels, self.horizontal_resolution), dtype=np.float32)
-        all_initial_azimuth_offsets = []
 
         # Define Spoofer's attack angle characteristics using internal angle representation
         internal_angle_deg = (self.spoofer_angle_deg) % 360
@@ -186,21 +200,18 @@ class LidarSignalDatasetGenerator:
         spoofer_attack_end_az = spoofer_attack_center_az + spoofer_attack_width_az / 2
         print(f"Spoofer attack cone is centered at {spoofer_attack_center_az/100} deg with width {self.spoofer_width_deg} deg (internal angle system).")
         print(f"start spoofer_attackstart_az: {spoofer_attack_start_az}, spoofer_attack_end_az: {spoofer_attack_end_az}")
+
         for i in tqdm(range(num_frames), desc="Generating frames"):
             frame_idx = start_frame + i
-            #print(f"Generating frame {i + 1}/{num_frames} (PCD index: {frame_idx})...")
+            sample_info = self.samples[frame_idx]
+            sample_token = sample_info['token']
             
             if self.lidar_type in ["PCD_VLP16", "PCD_VLP32c"]:
-                pcd_file_path = self.pcd_files[frame_idx]
-                #print(f"  - Using PCD file: {os.path.basename(pcd_file_path)}")
                 current_lidar = self.lidar.new_frame(frame_num=frame_idx, base_timestamp=PreciseDuration(nanoseconds=frame_idx * 10**9))
             else:
                 current_lidar = self.lidar.new_frame(base_timestamp=PreciseDuration(nanoseconds=frame_idx * 10**9))
 
-            if hasattr(current_lidar, 'initial_azimuth_offset'):
-                all_initial_azimuth_offsets.append(current_lidar.initial_azimuth_offset)
-            else:
-                all_initial_azimuth_offsets.append(0.0)
+            initial_azimuth_offset = current_lidar.initial_azimuth_offset if hasattr(current_lidar, 'initial_azimuth_offset') else 0.0
 
             actual_trigger_point = None
             if self.spoofer_type != "off" and hasattr(current_lidar, 'depth_map'):
@@ -210,6 +221,7 @@ class LidarSignalDatasetGenerator:
                 target_azimuth = internal_angle_deg * 100
                 target_altitude = self.spoofer_altitude_deg * 100
                 target_point = (target_azimuth, target_altitude)
+                print(f"Target spoofer trigger point at az={target_azimuth/100} deg, alt={target_altitude/100} deg")
 
                 available_points = list(current_lidar.depth_map.keys())
                 
@@ -217,15 +229,29 @@ class LidarSignalDatasetGenerator:
                     print("Warning: Cannot determine spoofer trigger point, depth map is empty.")
                 elif target_point in current_lidar.depth_map:
                     actual_trigger_point = target_point
+                    print(f"Using exact spoofer trigger point at {self.spoofer_angle_deg} deg (front=0, ccw).")
                 else:
-                    # Find the closest point by Euclidean distance
-                    distances = [np.sqrt((az - target_azimuth)**2 + (alt - target_altitude)**2) for az, alt in available_points]
-                    closest_index = np.argmin(distances)
-                    actual_trigger_point = available_points[closest_index]
-                    #print(f"Target spoofer point at {self.spoofer_angle_deg} deg (front=0, ccw) not found. Using closest point: az={actual_trigger_point[0]/100}, alt={actual_trigger_point[1]/100} deg")
-            
+                    # Find the closest point, prioritizing points on the same altitude ring
+                    points_on_same_altitude = [p for p in available_points if p[1] == target_altitude]
+                    
+                    if points_on_same_altitude:
+                        # If points are found on the target altitude, find the one with the closest azimuth
+                        azimuth_distances = [abs(az - target_azimuth) for az, alt in points_on_same_altitude]
+                        closest_index_on_alt = np.argmin(azimuth_distances)
+                        actual_trigger_point = points_on_same_altitude[closest_index_on_alt]
+                        print(f"Target spoofer point at az={target_azimuth/100}, alt={target_altitude/100} deg not found. Using closest point on same altitude ring: az={actual_trigger_point[0]/100}, alt={actual_trigger_point[1]/100} deg")
+                    else:
+                        # Fallback: find the closest point to the target azimuth on the HIGHEST altitude ring.
+                        new_target_altitude = self.sorted_vertical_angles[0] * 100
+                        distances = [np.sqrt((az - target_azimuth)**2 + (alt - new_target_altitude)**2) for az, alt in available_points]
+                        closest_index = np.argmin(distances)
+                        actual_trigger_point = available_points[closest_index]
+                        print(f"Target spoofer point at az={target_azimuth/100}, alt={target_altitude/100} deg not found. No points on target altitude ring. Using closest point to highest altitude ring: az={actual_trigger_point[0]/100}, alt={actual_trigger_point[1]/100} deg")
+
             frame_data = np.zeros((self.channels, self.horizontal_resolution, self.samples_per_scan), dtype=np.float32)
             frame_labels = np.zeros((self.channels, self.horizontal_resolution, self.samples_per_scan), dtype=np.uint8)
+            answer_matrix = np.zeros((self.channels, self.horizontal_resolution), dtype=np.float32)
+            
             try:
                 for scan_idx in range(current_lidar.max_index):
                     config, signal = current_lidar.scan()
@@ -248,25 +274,19 @@ class LidarSignalDatasetGenerator:
                             alt_key_target = actual_trigger_point[1]
 
                             # Check if the current ideal scan angle is 'close' to the target trigger angle
-                            # Tolerance is roughly half the step size. Azimuth step is 20 (0.2 deg).
-                            azimuth_tolerance = 100
-                            # Vertical steps vary, but 100 (1 deg) is a reasonable tolerance.
-                            altitude_tolerance = 200
+                            azimuth_tolerance = 800
+                            altitude_tolerance = 400
 
-                            # Handle azimuth wraparound at 360 degrees (36000 units)
                             azimuth_diff = abs(az_key_ideal - az_key_target)
                             azimuth_diff = min(azimuth_diff, 36000 - azimuth_diff)
 
                             altitude_diff = abs(alt_key_ideal - alt_key_target)
 
                             if azimuth_diff <= azimuth_tolerance and altitude_diff <= altitude_tolerance:
-                                # Trigger only once per attack.
                                 self.spoofer.trigger(config, signal)
                         
-                        # Default to no attack signal
                         external_signal = np.zeros_like(signal)
                         
-                        # Check if spoofer is active and the current angle is within the attack cone
                         is_in_attack_angle = (spoofer_attack_start_az <= config.azimuth <= spoofer_attack_end_az)
                         if spoofer_attack_start_az < 0:
                             is_in_attack_angle = (config.azimuth >= (36000 + spoofer_attack_start_az) or config.azimuth <= spoofer_attack_end_az)
@@ -278,56 +298,46 @@ class LidarSignalDatasetGenerator:
 
                     signal = np.clip(signal, 0, 9)
 
-                    # Convert config.azimuth (0-35999) to degrees (0-359.99)
                     azimuth_deg = config.azimuth / 100.0
                     
-                    # Normalize azimuth by subtracting the initial offset to get the 'base' angle for this frame
-                    # This correctly maps the angle to the horizontal index, counteracting the visualizer's addition of the offset.
                     normalized_azimuth = (azimuth_deg - current_lidar.initial_azimuth_offset + 360) % 360
                     
-                    # Calculate horizontal_index based on the normalized angle
                     horizontal_index = int(normalized_azimuth / 360.0 * self.horizontal_resolution)
-
-                    # # --- DEBUGGING BLOCK ---
-                    # if self.spoofer_type != "off" and is_in_attack_angle:
-                    #     print(f"[DEBUG] Attack Active: world_azimuth={config.azimuth/100:.2f}, h_idx={horizontal_index}, normalized_az={normalized_azimuth:.2f}")
-                    # # --- END DEBUGGING BLOCK ---
 
                     vertical_index = self.altitude_to_sorted_v_idx_map.get(config.altitude)
 
                     if horizontal_index < self.horizontal_resolution and vertical_index is not None:
                         frame_data[vertical_index, horizontal_index, :] = signal
                         frame_labels[vertical_index, horizontal_index, :] = current_labels
-                        answer_matrix[i, vertical_index, horizontal_index] = true_peak_time
+                        answer_matrix[vertical_index, horizontal_index] = true_peak_time
 
             except StopIteration:
                 pass
 
-            all_frames_data[i, :, :, :] = frame_data
-            all_labels_data[i, :, :, :] = frame_labels
+            if save_to_file:
+                frame_output_dir = os.path.join(self.output_dir, sample_token)
+                os.makedirs(frame_output_dir, exist_ok=True)
 
-        vertical_angles = self.sorted_vertical_angles
-        fov = 360.0  # FOV for VLP16 is 360 degrees
+                # Save data using blosc2
+                with open(os.path.join(frame_output_dir, 'signal.bl2'), 'wb') as f:
+                    f.write(blosc2.pack_array(frame_data))
+                with open(os.path.join(frame_output_dir, 'labels.bl2'), 'wb') as f:
+                    f.write(blosc2.pack_array(frame_labels))
+                with open(os.path.join(frame_output_dir, 'answer_matrix.bl2'), 'wb') as f:
+                    f.write(blosc2.pack_array(answer_matrix))
 
-        data_payload = {
-            'signals': all_frames_data,
-            'labels': all_labels_data,
-            'answer_matrix': answer_matrix,
-            'initial_azimuth_offsets': np.array(all_initial_azimuth_offsets),
-            'vertical_angles': vertical_angles,
-            'fov': fov,
-            'time_resolution_ns': self.time_resolution_ns
-        }
-
-        if save_to_file:
-            end_frame = start_frame + num_frames - 1
-            output_filename_with_batch = f"{filename_prefix}_{start_frame}_to_{end_frame}.npz"
-            output_filename = os.path.join(self.output_dir, output_filename_with_batch)
-
-            np.savez_compressed(output_filename, **data_payload)
-            print(f"Saved all frames to {output_filename}")
+                # Save config to json
+                config_data = {
+                    'original_bin_path': sample_info['path'],
+                    'initial_azimuth_offset': float(initial_azimuth_offset),
+                    'vertical_angles': [float(angle) for angle in self.sorted_vertical_angles],
+                    'fov': 360.0,
+                    'time_resolution_ns': float(self.time_resolution_ns)
+                }
+                with open(os.path.join(frame_output_dir, 'config.json'), 'w') as f:
+                    json.dump(config_data, f, indent=2)
         
-        return data_payload
+        print(f"Finished processing {num_frames} frames. Output saved in {self.output_dir}")
 
 if __name__ == '__main__':
     import time
@@ -337,6 +347,8 @@ if __name__ == '__main__':
                         help="Type of LiDAR to use.")
     parser.add_argument("--pcd-directory", type=str, default=None,
                         help="Path to the directory containing PCD files, required if lidar-type starts with PCD.")
+    parser.add_argument("--json-path", type=str, default=None,
+                        help="Path to the JSON file containing paths to .bin files.")
     parser.add_argument("--num-frames", type=int, default=1,
                         help="Number of frames to generate.")
     parser.add_argument("--output-dir", type=str, default="./lidar_datasets",
@@ -348,12 +360,10 @@ if __name__ == '__main__':
     # New arguments for spoofer targeting
     parser.add_argument("--spoofer-angle", type=float, default=0.0,
                         help="The angle for the spoofer trigger, in degrees, counter-clockwise with 0 at the front.")
-    parser.add_argument("--spoofer-altitude", type=float, default=50.0,
+    parser.add_argument("--spoofer-altitude", type=float, default=40.0,
                         help="The altitude for the spoofer trigger, in degrees.")
     parser.add_argument("--spoofer-width-deg", type=float, default=90.0,
                         help="The angular width of the spoofer's attack cone in degrees.")
-    parser.add_argument("--output-filename", type=str, default="lidar_signal",
-                        help="Base name for the output .npz file.")
     parser.add_argument("--start-frame", type=int, default=0,
                         help="Starting frame index (0-indexed) for processing PCD files.")
     parser.add_argument("--initial-point-offset", type=int, default=0,
@@ -361,12 +371,13 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    if (args.lidar_type.startswith("PCD")) and not args.pcd_directory:
-        parser.error(f"--pcd-directory is required when --lidar-type is {args.lidar_type}")
+    if (args.lidar_type.startswith("PCD")) and not args.pcd_directory and not args.json_path:
+        parser.error(f"--pcd-directory or --json-path is required when --lidar-type is {args.lidar_type}")
 
     generator = LidarSignalDatasetGenerator(
         lidar_type=args.lidar_type,
         pcd_directory=args.pcd_directory,
+        json_path=args.json_path,
         output_dir=args.output_dir,
         time_resolution_ns=args.time_resolution_ns,
         spoofer_type=args.spoofer_type,
@@ -382,7 +393,6 @@ if __name__ == '__main__':
     generator.generate(
         num_frames=args.num_frames,
         start_frame=args.start_frame,
-        filename_prefix=args.output_filename,
         save_to_file=True
     )
 

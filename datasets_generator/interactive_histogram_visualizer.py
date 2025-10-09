@@ -2,25 +2,46 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.widgets import Slider
 import argparse
+import os
+import json
+import blosc2
 
-def visualize_interactive(npz_file_path: str):
+def visualize_interactive(dataset_root_path: str, frame_index: int):
     """
-    Loads a hist-matrix .npz file and provides an interactive plot
+    Loads a frame from the new dataset format and provides an interactive plot
     with sliders to select and view individual histograms.
     """
-    # 1. Load data from the .npz file
+    # 1. Load data from the dataset directory structure
     try:
-        with np.load(npz_file_path) as data:
-            # Use the first frame [0] for visualization
-            hist_matrix = data['signals'][0]
-            vertical_angles = data['vertical_angles']
-            # Try to load labels, but don't fail if they don't exist
-            label_matrix = data.get('labels', [None])[0]
-    except FileNotFoundError:
-        print(f"Error: File not found at {npz_file_path}")
+        sample_dirs = sorted([d for d in os.listdir(dataset_root_path) if os.path.isdir(os.path.join(dataset_root_path, d))])
+        if not sample_dirs:
+            raise FileNotFoundError(f"No sample directories found in {dataset_root_path}")
+        if frame_index >= len(sample_dirs):
+            raise ValueError(f"Frame index {frame_index} is out of bounds for {len(sample_dirs)} sample directories.")
+        
+        sample_dir = os.path.join(dataset_root_path, sample_dirs[frame_index])
+        print(f"Loading data from {sample_dir}")
+
+        with open(os.path.join(sample_dir, 'config.json'), 'r') as f:
+            config_data = json.load(f)
+        
+        vertical_angles = config_data['vertical_angles']
+
+        with open(os.path.join(sample_dir, 'signal.bl2'), 'rb') as f:
+            hist_matrix = blosc2.unpack_array(f.read())
+
+        labels_path = os.path.join(sample_dir, 'labels.bl2')
+        if os.path.exists(labels_path):
+            with open(labels_path, 'rb') as f:
+                label_matrix = blosc2.unpack_array(f.read())
+        else:
+            label_matrix = None
+
+    except FileNotFoundError as e:
+        print(f"Error: {e}")
         return
     except Exception as e:
-        print(f"Error loading .npz file: {e}")
+        print(f"Error loading data: {e}")
         return
 
     # 2. Get dimensions from the loaded data
@@ -113,8 +134,9 @@ def visualize_interactive(npz_file_path: str):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description="Interactively visualize histograms from a .npz file.")
-    parser.add_argument("--npz-file", required=True, help="Path to the .npz histogram matrix file.")
+    parser = argparse.ArgumentParser(description="Interactively visualize histograms from the new dataset format.")
+    parser.add_argument("--dataset-root-path", required=True, help="Path to the root directory of the dataset.")
+    parser.add_argument("--frame", type=int, default=0, help="Frame index to visualize.")
     args = parser.parse_args()
 
-    visualize_interactive(args.npz_file)
+    visualize_interactive(args.dataset_root_path, args.frame)

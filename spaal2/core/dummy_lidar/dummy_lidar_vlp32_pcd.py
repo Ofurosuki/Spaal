@@ -140,14 +140,24 @@ class PcdLidarVLP32c:
         return points, intensities
 
     def _read_pcd(self, file_path: str):
-        try:
-            points, intensities = self._parse_pcd_file(file_path)
-            # print(f"showing 20 intensities: {intensities[:20]}")
-        except Exception as e:
-            print(f"Failed to parse PCD with custom parser: {e}. Falling back to open3d.")
-            pcd = o3d.io.read_point_cloud(file_path)
-            points = np.asarray(pcd.points)
-            intensities = None
+        if file_path.endswith('.pcd'):
+            try:
+                points, intensities = self._parse_pcd_file(file_path)
+                # print(f"showing 20 intensities: {intensities[:20]}")
+            except Exception as e:
+                print(f"Failed to parse PCD with custom parser: {e}. Falling back to open3d.")
+                pcd = o3d.io.read_point_cloud(file_path)
+                points = np.asarray(pcd.points)
+                intensities = None
+        elif file_path.endswith('.bin'):
+            raw_data = np.fromfile(file_path, dtype=np.float32)
+            if raw_data.size % 5 != 0:
+                raw_data = raw_data[:-(raw_data.size % 5)]
+            point_cloud = raw_data.reshape(-1, 5)
+            points = point_cloud[:, :3]
+            intensities = point_cloud[:, 3]
+        else:
+            raise ValueError(f"Unsupported file type: {file_path}")
 
         if points is None:
             raise ValueError(f"Could not read points from {file_path}")
@@ -298,6 +308,31 @@ class PcdLidarVLP32c:
 
     def set_amplitude(self, amplitude: float):
         self.amplitude = amplitude
+
+    def new_frame_from_points(self, points: np.ndarray, intensities: np.ndarray, base_timestamp: PreciseDuration = PreciseDuration(nanoseconds=0)) -> "PcdLidarVLP32c":
+        self.points = points
+        self.intensities = intensities
+
+        if self.initial_point_offset != 0:
+            self.points = np.roll(self.points, -self.initial_point_offset, axis=0)
+            if self.intensities is not None:
+                self.intensities = np.roll(self.intensities, -self.initial_point_offset, axis=0)
+
+        self.all_point_indices = set(range(len(self.points)))
+        
+        if len(self.points) > 0:
+            first_point = self.points[0]
+            self.initial_azimuth_offset = np.rad2deg(np.arctan2(first_point[1], first_point[0]))
+        else:
+            self.initial_azimuth_offset = 0
+
+        self.depth_map, self.original_point_indices_map = self._create_depth_map()
+        self.no_signal_scan_angles: list[tuple[int, int]] = []
+        
+        self.index = 0
+        self.base_timestamp = base_timestamp
+        self.detected_point_indices = set()
+        return self
 
     def new_frame(self, frame_num: int = 0, base_timestamp: PreciseDuration = PreciseDuration(nanoseconds=0)) -> "PcdLidarVLP32c":
         if not self.pcd_files:

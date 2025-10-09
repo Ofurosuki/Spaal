@@ -1,0 +1,22 @@
+[
+  {
+    "token": "b2899eb96cec4d36adcb7a3170efca17",
+    "path": "C:\\Users\\nextr\\nuScenes\\nuscenes_data\\samples/LIDAR_TOP/n008-2018-08-27-11-48-51-0400__LIDAR_TOP__1535385111448839.pcd.bin"
+  },
+  {
+    "token": "b5baeed9277642debf7abf2bae8c8e90",
+    "path": "C:\\Users\\nextr\\nuScenes\\nuscenes_data\\samples/LIDAR_TOP/n015-2018-07-24-11-22-45+0800__LIDAR_TOP__1532402933146604.pcd.bin"
+  },
+  {
+    "token": "961ec15476e447b083e0e6942dfb2507",
+    "path": "C:\\Users\\nextr\\nuScenes\\nuscenes_data\\samples/LIDAR_TOP/n015-2018-11-21-19-38-26+0800__LIDAR_TOP__1542800999448167.pcd.bin"
+  },
+  {
+    "token": "d7ae8ef1a5464d1d894b608b9920ced4",
+    "path": "C:\\Users\\nextr\\nuScenes\\nuscenes_data\\samples/LIDAR_TOP/n008-2018-08-27-11-48-51-0400__LIDAR_TOP__1535385095449675.pcd.bin"
+  },
+  {
+    "token": "4c850e12ce914a34ba56fd9896123b10",
+    "path": "C:\\Users\\nextr\\nuScenes\\nuscenes_data\\samples/LIDAR_TOP/n015-2018-07-24-11-22-45+0800__LIDAR_TOP__1532402939697511.pcd.bin"
+  }
+]
