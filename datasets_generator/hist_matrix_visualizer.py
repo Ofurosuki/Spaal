@@ -100,7 +100,11 @@ class HistMatrixVisualizer:
         v_angles_default = sorted([-30.67, -9.33, -29.33, -8.0, -28.0, -6.66, -26.66, -5.33, -25.33, -4.0, -24.0, -2.67, -22.67, -1.33, -21.33, 0.0, -20.0, 1.33, -18.67, 2.67, -17.33, 4.0, -16.0, 5.33, -14.67, 6.67, -13.33, 8.0, -12.0, 9.33, -10.67, 10.67], reverse=True)
         self.vertical_angles = data.get('vertical_angles', v_angles_default)
         self.fov = data.get('fov', 360.0)
+        if isinstance(self.fov, np.ndarray):
+            self.fov = self.fov[0]
         self.time_resolution_ns = data.get('time_resolution_ns', 1.0)
+        if isinstance(self.time_resolution_ns, np.ndarray):
+            self.time_resolution_ns = self.time_resolution_ns[0]
 
         self.pcd_files = []
         if self.pcd_directory_path:
