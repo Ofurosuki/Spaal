@@ -1,10 +1,10 @@
-
 import numpy as np
 import open3d as o3d
 import argparse
 import os
 import glob
 from typing import Tuple
+import blosc2
 
 def get_peak_time_and_amplitude(signal: np.ndarray) -> Tuple[float, float]:
     """
@@ -45,33 +45,58 @@ def get_peak_time_and_amplitude(signal: np.ndarray) -> Tuple[float, float]:
     return interpolated_time, peak_amplitude
 
 class HistMatrixVisualizer:
-    def __init__(self, npz_file_path: str = None, pcd_directory_path: str = None, data: dict = None, amplitude_to_intensity_ratio: float = 255.0/10.0):
+    def __init__(self, npz_file_path: str = None, blosc_dir: str = None, frame_index: int = 0, pcd_directory_path: str = None, data: dict = None, amplitude_to_intensity_ratio: float = 255.0/10.0):
         self.npz_file_path = npz_file_path
+        self.blosc_dir = blosc_dir
         self.pcd_directory_path = pcd_directory_path
         self.is_prediction = False
         self.amplitude_to_intensity_ratio = amplitude_to_intensity_ratio
         print(f"amplitude_to_intensity_ratio: {self.amplitude_to_intensity_ratio}")
 
-        if data is None and npz_file_path:
-            print(f"Loading data from {npz_file_path}")
-            with np.load(npz_file_path) as loaded_data:
-                data = {key: loaded_data[key] for key in loaded_data}
-        elif data is None:
-            raise ValueError("Either 'npz_file_path' or 'data' dictionary must be provided.")
+        if data is None:
+            if npz_file_path:
+                print(f"Loading data from {npz_file_path}")
+                with np.load(npz_file_path) as loaded_data:
+                    data = {key: loaded_data[key] for key in loaded_data}
+            elif blosc_dir:
+                blosc_files = sorted(glob.glob(os.path.join(blosc_dir, '*.bl2')))
+                if not blosc_files:
+                    raise FileNotFoundError(f"No .bl2 files found in {blosc_dir}")
+                if frame_index >= len(blosc_files):
+                    raise ValueError(f"Frame index {frame_index} is out of bounds for {len(blosc_files)} blosc files.")
+                
+                file_to_load = blosc_files[frame_index]
+                print(f"Loading data from {file_to_load}")
+                with open(file_to_load, 'rb') as f:
+                    packed_data = f.read()
+                data = blosc2.unpack_array2(packed_data)
+
+                # Add the batch dimension as the visualizer expects it
+                data['signals'] = np.expand_dims(data['signals'], axis=0)
+                if 'answer_matrix' in data:
+                    data['answer_matrix'] = np.expand_dims(data['answer_matrix'], axis=0)
+                # The key from generator is 'initial_azimuth_offset', but visualizer expects 'initial_azimuth_offsets'
+                if 'initial_azimuth_offset' in data:
+                    data['initial_azimuth_offsets'] = data.pop('initial_azimuth_offset')
+
+            else:
+                raise ValueError("Either 'npz_file_path', 'blosc_dir', or 'data' dictionary must be provided.")
 
         print(f"shape of signals: {data['signals'].shape if 'signals' in data else 'N/A'}")
         if 'signals' not in data and 'prediction' in data:
             self.is_prediction = True
             self.hist_matrix = data['prediction']
-        else:
+        elif 'signals' in data:
             self.hist_matrix = data['signals']
+        else:
+            raise ValueError("Input data must contain 'signals' or 'prediction' key.")
         print(f"Loaded hist_matrix with shape: {self.hist_matrix.shape}")
 
         if 'initial_azimuth_offsets' in data:
             self.initial_azimuth_offsets = data['initial_azimuth_offsets']
         else:
             print("Warning: 'initial_azimuth_offsets' not found. Defaulting to 0.0 for all frames.")
-            self.initial_azimuth_offsets = [data.get('initial_azimuth_offset', 0.0)] * len(self.hist_matrix)
+            self.initial_azimuth_offsets = [0.0] * len(self.hist_matrix)
         
         v_angles_default = sorted([-30.67, -9.33, -29.33, -8.0, -28.0, -6.66, -26.66, -5.33, -25.33, -4.0, -24.0, -2.67, -22.67, -1.33, -21.33, 0.0, -20.0, 1.33, -18.67, 2.67, -17.33, 4.0, -16.0, 5.33, -14.67, 6.67, -13.33, 8.0, -12.0, 9.33, -10.67, 10.67], reverse=True)
         self.vertical_angles = data.get('vertical_angles', v_angles_default)
@@ -141,8 +166,7 @@ class HistMatrixVisualizer:
         if points:
             pcd.points = o3d.utility.Vector3dVector(np.array(points))
             if intensities:
-                #color_values = np.clip(np.array(intensities) / 255.0, 0, 1)
-                colors = [[val, val, val] for val in intensities]
+                colors = [[val/255.0, val/255.0, val/255.0] for val in intensities]
                 pcd.colors = o3d.utility.Vector3dVector(np.array(colors))
         return pcd
 
@@ -189,17 +213,34 @@ class HistMatrixVisualizer:
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description="Visualize or save LiDAR histogram matrix from .npz file.")
-    parser.add_argument("--npz-file", required=True, type=str, help="Path to the .npz histogram matrix file.")
+    parser = argparse.ArgumentParser(description="Visualize or save LiDAR histogram matrix from .npz or .bl2 file.")
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument("--npz-file", type=str, help="Path to the .npz histogram matrix file.")
+    group.add_argument("--blosc-dir", type=str, help="Path to the directory containing .bl2 histogram matrix files.")
+    
     parser.add_argument("--pcd-directory", type=str, default=None, help="Path to the directory with original .pcd files for comparison or for output naming.")
-    parser.add_argument("--frame", type=int, default=0, help="Frame index to visualize.")
+    parser.add_argument("--frame", type=int, default=0, help="Frame index to visualize. For .npz, it's the frame in the file. For --blosc-dir, it's the file index in the directory.")
     parser.add_argument("--output-pcd-dir", type=str, default=None, help="Path to the directory to save reconstructed .pcd files. If provided, visualization is skipped and all frames are processed.")
     parser.add_argument("--amplitude-to-intensity-ratio", type=float, default=1.0, help="Ratio to convert signal amplitude to intensity for reconstructed PCD.")
 
     args = parser.parse_args()
 
-    visualizer = HistMatrixVisualizer(npz_file_path=args.npz_file, pcd_directory_path=args.pcd_directory, amplitude_to_intensity_ratio=args.amplitude_to_intensity_ratio)
-    if args.output_pcd_dir:
-        visualizer.save_reconstructed_pcds(args.output_pcd_dir)
-    else:
-        visualizer.visualize(args.frame)
+    if args.blosc_dir:
+        visualizer = HistMatrixVisualizer(
+            blosc_dir=args.blosc_dir, 
+            frame_index=args.frame,
+            pcd_directory_path=args.pcd_directory, 
+            amplitude_to_intensity_ratio=args.amplitude_to_intensity_ratio
+        )
+        # When loading from blosc, we load a single frame, so we visualize frame 0 of our data object
+        visualizer.visualize(frame_index=0)
+    else: # args.npz_file must be set
+        visualizer = HistMatrixVisualizer(
+            npz_file_path=args.npz_file, 
+            pcd_directory_path=args.pcd_directory, 
+            amplitude_to_intensity_ratio=args.amplitude_to_intensity_ratio
+        )
+        if args.output_pcd_dir:
+            visualizer.save_reconstructed_pcds(args.output_pcd_dir)
+        else:
+            visualizer.visualize(args.frame)

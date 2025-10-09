@@ -314,6 +314,31 @@ class PcdLidarVLP32c:
         self.detected_point_indices = set()
         return self
 
+    def new_frame_from_points(self, points: np.ndarray, intensities: Optional[np.ndarray], base_timestamp: PreciseDuration = PreciseDuration(nanoseconds=0)) -> "PcdLidarVLP32c":
+        if self.initial_point_offset != 0:
+            points = np.roll(points, -self.initial_point_offset, axis=0)
+            if intensities is not None:
+                intensities = np.roll(intensities, -self.initial_point_offset, axis=0)
+        
+        self.points = points
+        self.intensities = intensities
+
+        self.all_point_indices = set(range(len(self.points)))
+        
+        if len(self.points) > 0:
+            first_point = self.points[0]
+            self.initial_azimuth_offset = np.rad2deg(np.arctan2(first_point[1], first_point[0]))
+        else:
+            self.initial_azimuth_offset = 0
+
+        self.depth_map, self.original_point_indices_map = self._create_depth_map()
+        self.no_signal_scan_angles: list[tuple[int, int]] = []
+        
+        self.index = 0
+        self.base_timestamp = base_timestamp
+        self.detected_point_indices = set()
+        return self
+
     def _get_current_angle(self) -> tuple[int, int]:
         # Determine which altitude ring and azimuth step we are on based on the new ideal scan pattern
         altitude_index = self.index // self.horizontal_steps

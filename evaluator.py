@@ -228,24 +228,32 @@ class CustommAPEvaluator:
         return True
 
     def _calculate_ap(self, class_results, total_gt_for_class):
-        if total_gt_for_class == 0 or not class_results:
-            return 0.0
+        if total_gt_for_class == 0:
+            precision = 0.0 if class_results else 1.0
+            return 0.0, precision, 0.0
+
+        if not class_results:
+            return 0.0, 1.0, 0.0
+
         class_results.sort(key=lambda x: x['score'], reverse=True)
         is_tp = np.array([r['is_tp'] for r in class_results])
         tp_cumulative = np.cumsum(is_tp)
         fp_cumulative = np.cumsum(~is_tp)
+
         recalls = tp_cumulative / total_gt_for_class
         precisions = tp_cumulative / (tp_cumulative + fp_cumulative)
+
+        final_precision = precisions[-1]
+        final_recall = recalls[-1]
+
         interpolated_precisions = np.copy(precisions)
         for i in range(len(precisions) - 2, -1, -1):
             interpolated_precisions[i] = max(interpolated_precisions[i], interpolated_precisions[i+1])
-        indices = np.where((recalls > 0.1) & (interpolated_precisions > 0.1))[0]
-        if len(indices) < 2:
-            return 0.0
-        filtered_recalls = recalls[indices]
-        filtered_precisions = interpolated_precisions[indices]
-        ap = np.trapz(y=filtered_precisions, x=filtered_recalls)
-        return ap
+        
+        # ★★★ カスタムフィルタリングを削除し、以下の行に置き換え ★★★
+        ap = np.trapz(y=interpolated_precisions, x=recalls)
+        
+        return ap, final_precision, final_recall
 
     def evaluate(self, iou_threshold: float = 0.5, fov_center: float = None, fov_width: float = None, match_metric: str = 'iou'):
         if not self._load_data():
@@ -257,33 +265,76 @@ class CustommAPEvaluator:
 
     def _evaluate_by_iou(self, iou_threshold, fov_center, fov_width):
         all_class_results, total_gts_by_class = self._perform_matching('iou', iou_threshold, fov_center, fov_width)
-        mAP, ap_by_class = self._calculate_final_map(all_class_results, total_gts_by_class)
+        mAP, ap_by_class, precision_by_class, recall_by_class = self._calculate_final_map(all_class_results, total_gts_by_class)
+
+        valid_precisions = [p for p in precision_by_class.values()]
+        mPrecision = np.mean(valid_precisions) if valid_precisions else 0.0
+        valid_recalls = [r for r in recall_by_class.values()]
+        mRecall = np.mean(valid_recalls) if valid_recalls else 0.0
+
         print(f"\n--- Custom Evaluation Results (Sensor Frame) ---")
         print(f"mAP @ {iou_threshold} IoU: {mAP:.4f}")
-        print("\nPer-Class AP:")
-        for class_name, ap in sorted(ap_by_class.items()):
-            print(f"- {class_name}: {ap:.4f}")
+        print(f"Mean Precision: {mPrecision:.4f}")
+        print(f"Mean Recall: {mRecall:.4f}")
+        print("\nPer-Class AP, Precision, Recall:")
+        all_class_names = sorted(ap_by_class.keys())
+        for class_name in all_class_names:
+            ap = ap_by_class.get(class_name, 0.0)
+            p = precision_by_class.get(class_name, 0.0)
+            r = recall_by_class.get(class_name, 0.0)
+            print(f"- {class_name:<25} | AP: {ap:.4f}, Precision: {p:.4f}, Recall: {r:.4f}")
         return mAP
 
     def _evaluate_by_dist(self, fov_center, fov_width):
         dist_thresholds_to_test = [0.5, 1, 2, 4]
         mAPs_at_thresholds = []
+        mPs_at_thresholds = []
+        mRs_at_thresholds = []
+        
         final_ap_by_class = defaultdict(float)
+        final_precision_by_class = defaultdict(float)
+        final_recall_by_class = defaultdict(float)
+
         for dist_thresh in dist_thresholds_to_test:
             print(f"\n--- Calculating for distance threshold: {dist_thresh}m ---")
             all_class_results, total_gts_by_class = self._perform_matching('dist', dist_thresh, fov_center, fov_width)
-            mAP_for_thresh, ap_by_class = self._calculate_final_map(all_class_results, total_gts_by_class)
-            print(f"mAP @ {dist_thresh}m: {mAP_for_thresh:.4f}")
+            mAP_for_thresh, ap_by_class, p_by_class, r_by_class = self._calculate_final_map(all_class_results, total_gts_by_class)
+            
+            valid_precisions = [p for p in p_by_class.values()]
+            mP_for_thresh = np.mean(valid_precisions) if valid_precisions else 0.0
+            valid_recalls = [r for r in r_by_class.values()]
+            mR_for_thresh = np.mean(valid_recalls) if valid_recalls else 0.0
+
+            print(f"mAP @ {dist_thresh}m: {mAP_for_thresh:.4f}, mP: {mP_for_thresh:.4f}, mR: {mR_for_thresh:.4f}")
+            
             mAPs_at_thresholds.append(mAP_for_thresh)
+            mPs_at_thresholds.append(mP_for_thresh)
+            mRs_at_thresholds.append(mR_for_thresh)
+
             for class_name, ap in ap_by_class.items():
                 final_ap_by_class[class_name] += ap
+            for class_name, p in p_by_class.items():
+                final_precision_by_class[class_name] += p
+            for class_name, r in r_by_class.items():
+                final_recall_by_class[class_name] += r
+
         final_mAP = np.mean(mAPs_at_thresholds)
+        final_mP = np.mean(mPs_at_thresholds)
+        final_mR = np.mean(mRs_at_thresholds)
+
         print(f"\n--- Final Custom Evaluation Result ---")
         print(f"Mean AP over thresholds {dist_thresholds_to_test}m: {final_mAP:.4f}")
-        print("\nMean Per-Class AP:")
-        for class_name in sorted(final_ap_by_class.keys()):
+        print(f"Mean Precision over thresholds {dist_thresholds_to_test}m: {final_mP:.4f}")
+        print(f"Mean Recall over thresholds {dist_thresholds_to_test}m: {final_mR:.4f}")
+        
+        print("\nMean Per-Class AP, Precision, Recall:")
+        all_class_names = sorted(final_ap_by_class.keys() | final_precision_by_class.keys() | final_recall_by_class.keys())
+        for class_name in all_class_names:
             mean_ap = final_ap_by_class[class_name] / len(dist_thresholds_to_test)
-            print(f"- {class_name}: {mean_ap:.4f}")
+            mean_p = final_precision_by_class[class_name] / len(dist_thresholds_to_test)
+            mean_r = final_recall_by_class[class_name] / len(dist_thresholds_to_test)
+            print(f"- {class_name:<25} | AP: {mean_ap:.4f}, P: {mean_p:.4f}, R: {mean_r:.4f}")
+            
         return final_mAP
 
     def _perform_matching(self, metric, threshold, fov_center, fov_width):
@@ -334,13 +385,18 @@ class CustommAPEvaluator:
 
     def _calculate_final_map(self, all_class_results, total_gts_by_class):
         ap_by_class = {}
+        precision_by_class = {}
+        recall_by_class = {}
         all_class_names = total_gts_by_class.keys() | all_class_results.keys()
         for class_name in all_class_names:
-            ap = self._calculate_ap(all_class_results[class_name], total_gts_by_class[class_name])
+            ap, precision, recall = self._calculate_ap(all_class_results[class_name], total_gts_by_class[class_name])
             ap_by_class[class_name] = ap
+            precision_by_class[class_name] = precision
+            recall_by_class[class_name] = recall
+        
         valid_aps = [ap for ap in ap_by_class.values() if ap is not None]
         mAP = np.mean(valid_aps) if valid_aps else 0.0
-        return mAP, ap_by_class
+        return mAP, ap_by_class, precision_by_class, recall_by_class
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Custom mAP evaluation for nuScenes detection results.')
