@@ -3,7 +3,6 @@ import os
 import argparse
 import json
 from typing import Tuple
-import blosc2
 import pickle
 from tqdm import tqdm
 
@@ -41,7 +40,7 @@ def get_peak_time_and_amplitude(signal: np.ndarray) -> Tuple[float, float]:
 class HistMatrixGenerator:
     def __init__(self, 
                  json_path: str,
-                 output_dir: str = "./nuscenes_hist_matrix_blosc",
+                 output_dir: str = "./nuscenes_hist_matrix_pickle",
                  lidar_amplitude_range: tuple[float, float] = (3.0, 3.0),
                  lidar_pulse_width_ns: float = 5,
                  time_resolution_ns: float = 1.0,
@@ -88,7 +87,7 @@ class HistMatrixGenerator:
         token = sample_info['token']
         bin_path = sample_info['path']
         
-        output_filename = os.path.join(self.output_dir, f"{token}.bl2")
+        output_filename = os.path.join(self.output_dir, f"{token}.pkl")
         if os.path.exists(output_filename):
             # print(f"File {output_filename} already exists. Skipping.")
             return
@@ -147,12 +146,11 @@ class HistMatrixGenerator:
             'time_resolution_ns': np.array([self.time_resolution_ns])
         }
         
-        # Serialize the dictionary with pickle and compress with blosc2
+        # Serialize the dictionary with pickle
         pickled_data = pickle.dumps(data_payload)
-        compressed_data = blosc2.pack(pickled_data)
         
         with open(output_filename, 'wb') as f:
-            f.write(compressed_data)
+            f.write(pickled_data)
 
     def generate(self, num_frames: int = -1, start_frame: int = 0):
         total_samples = len(self.lidar_samples)
@@ -185,8 +183,8 @@ if __name__ == '__main__':
                         help="Number of frames to generate. -1 for all frames in the JSON.")
     parser.add_argument("--start-frame", type=int, default=0,
                         help="Starting frame index (0-indexed) from the JSON file.")
-    parser.add_argument("--output-dir", type=str, default="./nuscenes_hist_matrix_blosc",
-                        help="Directory to save the generated .bl2 files.")
+    parser.add_argument("--output-dir", type=str, default="./nuscenes_hist_matrix_pickle",
+                        help="Directory to save the generated .pkl files.")
     parser.add_argument("--time-resolution-ns", type=float, default=1.0,
                         help="Time resolution in nanoseconds for the simulation.")
     parser.add_argument("--initial-point-offset", type=int, default=0,

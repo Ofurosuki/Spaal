@@ -4,7 +4,6 @@ import argparse
 import os
 import glob
 from typing import Tuple
-import blosc2
 import pickle
 
 def get_peak_time_and_amplitude(signal: np.ndarray) -> Tuple[float, float]:
@@ -46,9 +45,9 @@ def get_peak_time_and_amplitude(signal: np.ndarray) -> Tuple[float, float]:
     return interpolated_time, peak_amplitude
 
 class HistMatrixVisualizer:
-    def __init__(self, npz_file_path: str = None, blosc_dir: str = None, frame_index: int = 0, pcd_directory_path: str = None, data: dict = None, amplitude_to_intensity_ratio: float = 255.0/10.0):
+    def __init__(self, npz_file_path: str = None, pickle_dir: str = None, frame_index: int = 0, pcd_directory_path: str = None, data: dict = None, amplitude_to_intensity_ratio: float = 255.0/10.0):
         self.npz_file_path = npz_file_path
-        self.blosc_dir = blosc_dir
+        self.pickle_dir = pickle_dir
         self.pcd_directory_path = pcd_directory_path
         self.is_prediction = False
         self.amplitude_to_intensity_ratio = amplitude_to_intensity_ratio
@@ -59,20 +58,17 @@ class HistMatrixVisualizer:
                 print(f"Loading data from {npz_file_path}")
                 with np.load(npz_file_path) as loaded_data:
                     data = {key: loaded_data[key] for key in loaded_data}
-            elif blosc_dir:
-                blosc_files = sorted(glob.glob(os.path.join(blosc_dir, '*.bl2')))
-                if not blosc_files:
-                    raise FileNotFoundError(f"No .bl2 files found in {blosc_dir}")
-                if frame_index >= len(blosc_files):
-                    raise ValueError(f"Frame index {frame_index} is out of bounds for {len(blosc_files)} blosc files.")
+            elif pickle_dir:
+                pickle_files = sorted(glob.glob(os.path.join(pickle_dir, '*.pkl')))
+                if not pickle_files:
+                    raise FileNotFoundError(f"No .pkl files found in {pickle_dir}")
+                if frame_index >= len(pickle_files):
+                    raise ValueError(f"Frame index {frame_index} is out of bounds for {len(pickle_files)} pickle files.")
                 
-                file_to_load = blosc_files[frame_index]
+                file_to_load = pickle_files[frame_index]
                 print(f"Loading data from {file_to_load}")
                 with open(file_to_load, 'rb') as f:
-                    packed_data = f.read()
-                
-                unpacked_data = blosc2.unpack(packed_data)
-                data = pickle.loads(unpacked_data)
+                    data = pickle.load(f)
 
                 # Add the batch dimension as the visualizer expects it
                 data['signals'] = np.expand_dims(data['signals'], axis=0)
@@ -219,7 +215,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Visualize or save LiDAR histogram matrix from .npz or .bl2 file.")
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--npz-file", type=str, help="Path to the .npz histogram matrix file.")
-    group.add_argument("--blosc-dir", type=str, help="Path to the directory containing .bl2 histogram matrix files.")
+    group.add_argument("--pickle-dir", type=str, help="Path to the directory containing .pkl histogram matrix files.")
     
     parser.add_argument("--pcd-directory", type=str, default=None, help="Path to the directory with original .pcd files for comparison or for output naming.")
     parser.add_argument("--frame", type=int, default=0, help="Frame index to visualize. For .npz, it's the frame in the file. For --blosc-dir, it's the file index in the directory.")
@@ -228,9 +224,9 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    if args.blosc_dir:
+    if args.pickle_dir:
         visualizer = HistMatrixVisualizer(
-            blosc_dir=args.blosc_dir, 
+            pickle_dir=args.pickle_dir, 
             frame_index=args.frame,
             pcd_directory_path=args.pcd_directory, 
             amplitude_to_intensity_ratio=args.amplitude_to_intensity_ratio
