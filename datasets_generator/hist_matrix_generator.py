@@ -343,7 +343,7 @@ if __name__ == '__main__':
     import time
 
     parser = argparse.ArgumentParser(description="Generate LiDAR signal datasets.")
-    parser.add_argument("--lidar-type", type=str, default="VLP16", choices=["VLP16", "PCD_VLP16", "PCD_VLP32c"],
+    parser.add_argument("--lidar-type", type=str, default="PCD_VLP32c", choices=["VLP16", "PCD_VLP16", "PCD_VLP32c"],
                         help="Type of LiDAR to use.")
     parser.add_argument("--pcd-directory", type=str, default=None,
                         help="Path to the directory containing PCD files, required if lidar-type starts with PCD.")
@@ -368,6 +368,8 @@ if __name__ == '__main__':
                         help="Starting frame index (0-indexed) for processing PCD files.")
     parser.add_argument("--initial-point-offset", type=int, default=0,
                         help="Initial point offset to rotate the PCD point cloud.")
+    parser.add_argument("--sync-angle", type=float, default=1.0,
+                        help="Sync angle step in degrees for VLP32c. Default is 0.2 degrees.")
 
     args = parser.parse_args()
 
@@ -384,7 +386,8 @@ if __name__ == '__main__':
         spoofer_angle_deg=args.spoofer_angle,
         spoofer_altitude_deg=args.spoofer_altitude,
         spoofer_width_deg=args.spoofer_width_deg,
-        initial_point_offset=args.initial_point_offset
+        initial_point_offset=args.initial_point_offset,
+        sync_angle_step_deg=args.sync_angle
     )
     
     print("\nStarting dataset generation...")
