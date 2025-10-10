@@ -6,22 +6,32 @@ import blosc2
 import numpy as np
 
 class HistMatrixDataset(Dataset):
-    def __init__(self, dataset_root_path: str, transform=None):
+    def __init__(self, root_path: str, split: str, dataset_name: str, scan_type: str, sync_angle: float, transform=None):
         """
         Args:
-            dataset_root_path (string): Path to the root directory of the dataset.
+            root_path (string): Path to the absolute root of the dataset.
+            split (string): 'train', 'val', or 'test'.
+            dataset_name (string): e.g., 'nuscenes'.
+            scan_type (string): e.g., 'horizontal'.
+            sync_angle (float): The synchronization angle.
             transform (callable, optional): Optional transform to be applied on a sample.
         """
-        self.root_path = dataset_root_path
         self.transform = transform
         
+        sync_angle_str = str(sync_angle).replace('.', '_')
+        
+        self.dataset_path = os.path.join(root_path, split, dataset_name, scan_type, sync_angle_str)
+        
+        if not os.path.isdir(self.dataset_path):
+            raise FileNotFoundError(f"Dataset path does not exist: {self.dataset_path}")
+
         self.sample_dirs = sorted([
-            d for d in os.listdir(dataset_root_path) 
-            if os.path.isdir(os.path.join(dataset_root_path, d))
+            d for d in os.listdir(self.dataset_path) 
+            if os.path.isdir(os.path.join(self.dataset_path, d))
         ])
         
         if not self.sample_dirs:
-            raise FileNotFoundError(f"No sample directories found in {dataset_root_path}")
+            raise FileNotFoundError(f"No sample directories found in {self.dataset_path}")
 
     def __len__(self):
         return len(self.sample_dirs)
@@ -31,7 +41,7 @@ class HistMatrixDataset(Dataset):
             idx = idx.tolist()
 
         sample_dir_name = self.sample_dirs[idx]
-        sample_path = os.path.join(self.root_path, sample_dir_name)
+        sample_path = os.path.join(self.dataset_path, sample_dir_name)
 
         signal_path = os.path.join(sample_path, 'signal.bl2')
         labels_path = os.path.join(sample_path, 'labels.bl2')
