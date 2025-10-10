@@ -6,9 +6,9 @@ import random
 from tqdm import tqdm
 
 from nuscenes.nuscenes import NuScenes
-from nuscenes.utils.splits import train as train_scene_names
+from nuscenes.utils.splits import train as train_scene_names, val as val_scene_names
 
-def collect_paths(dataroot: str, version: str, num_samples: int, output_json: str):
+def collect_paths(dataroot: str, version: str, num_samples: int, output_json: str, split: str):
     """
     Collects random .pcd.bin file paths from the nuScenes dataset, verifies
     their existence, and saves them to a JSON file along with their sample tokens.
@@ -22,19 +22,28 @@ def collect_paths(dataroot: str, version: str, num_samples: int, output_json: st
     print(f"Initializing NuScenes SDK for version {version}...")
     nusc = NuScenes(version=version, dataroot=dataroot, verbose=False)
 
-    print("Filtering for scenes in the 'train' split...")
-    # Get scene objects from the list of train scene names
-    train_scenes = [s for s in nusc.scene if s['name'] in train_scene_names]
+    print(f"Filtering for scenes in the '{split}' split...")
     
+    if split == 'train':
+        scene_names = train_scene_names
+    elif split == 'val':
+        scene_names = val_scene_names
+    else:
+        # This case should not be reached due to argparse choices, but it's good practice
+        raise ValueError(f"Invalid split provided: {split}. Choose 'train' or 'val'.")
+
+    # Get scene objects from the list of scene names
+    scenes = [s for s in nusc.scene if s['name'] in scene_names]
+
     all_samples = []
-    for scene in tqdm(train_scenes, desc="Collecting samples from scenes"):
+    for scene in tqdm(scenes, desc=f"Collecting samples from {split} scenes"):
         current_sample_token = scene['first_sample_token']
         while current_sample_token:
             sample = nusc.get('sample', current_sample_token)
             all_samples.append(sample)
             current_sample_token = sample['next']
 
-    print(f"Found {len(all_samples)} total samples in the train split. Shuffling...")
+    print(f"Found {len(all_samples)} total samples in the {split} split. Shuffling...")
     random.shuffle(all_samples)
 
     collected_data = []
@@ -96,11 +105,19 @@ if __name__ == "__main__":
         default="nuscenes_info.json",
         help="Path for the output JSON file."
     )
+    parser.add_argument(
+        "--split",
+        type=str,
+        default="train",
+        choices=["train", "val"],
+        help="The dataset split to use, e.g., 'train' or 'val'."
+    )
     args = parser.parse_args()
 
     collect_paths(
         dataroot=args.dataroot,
         version=args.version,
         num_samples=args.num_samples,
-        output_json=args.output_json
+        output_json=args.output_json,
+        split=args.split
     )

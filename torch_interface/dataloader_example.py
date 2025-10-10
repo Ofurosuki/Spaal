@@ -6,7 +6,8 @@ from dataset import HistMatrixDataset
 if __name__ == '__main__':
     # 1. Define dataset parameters
     # IMPORTANT: Replace this with the absolute root path of your dataset structure.
-    root = 'C:/Users/nextr/spaal2-core/my_new_dataset' 
+    #root = 'C:/Users/nextr/spaal2-core/my_new_dataset' 
+    root = '/data2/yoshida/1010_dataset'  # Example for Linux/Mac
     split = 'train'
     dataset_name = 'nuscenes'
     scan_type = 'horizontal'
