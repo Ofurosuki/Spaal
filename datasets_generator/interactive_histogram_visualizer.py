@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.widgets import Slider
+from matplotlib.widgets import Slider, CheckButtons
 import argparse
 import os
 import json
@@ -9,8 +9,7 @@ import blosc2
 def visualize_interactive(dataset_root_path: str, frame_specifier: str):
     """
     Loads frames from the new dataset format and provides an interactive plot
-    with sliders to select and view individual histograms.
-    Can visualize a single frame or an overlay of a range of frames.
+    with sliders and checkboxes to select and view individual histograms.
     """
     # 1. Parse frame_specifier to get frame indices
     if '-' in frame_specifier:
@@ -74,7 +73,7 @@ def visualize_interactive(dataset_root_path: str, frame_specifier: str):
 
     # 4. Setup the initial Matplotlib plot
     fig, ax = plt.subplots()
-    plt.subplots_adjust(bottom=0.3)  # Make room for sliders
+    plt.subplots_adjust(left=0.3, bottom=0.3)
 
     # Initial indices for the first plot
     initial_altitude_idx = 0
@@ -83,44 +82,20 @@ def visualize_interactive(dataset_root_path: str, frame_specifier: str):
     # Create x-axis for the histogram plot (representing time samples)
     time_axis = np.arange(num_samples)
 
-    def draw_histogram(alt_idx, azi_idx):
-        """Clears the axes and redraws the histogram(s) with colored labels if applicable."""
-        ax.clear()
-        
-        # Plot signals from all selected frames
-        for i, hist_matrix in enumerate(hist_matrices):
-            signal = hist_matrix[alt_idx, azi_idx, :]
-            ax.plot(time_axis, signal, linewidth=0.75, label=f"Frame {frame_indices[i]}")
-
-        # If only one frame is visualized, show labels
-        if len(hist_matrices) == 1 and label_matrices[0] is not None:
-            label_matrix = label_matrices[0]
-            # Check if label_matrix has the correct shape
-            if label_matrix.shape == hist_matrices[0].shape:
-                labels = label_matrix[alt_idx, azi_idx, :]
-                bar_height = 10  # A small height for the color bar on the x-axis
-
-                # Draw a colored bar on the x-axis for genuine signals
-                ax.fill_between(time_axis, 0, bar_height, where=labels == 1, 
-                                color='skyblue', alpha=0.8, label='Genuine (1)')
-                # Draw a colored bar on the x-axis for HFR signals
-                ax.fill_between(time_axis, 0, bar_height, where=labels == 2, 
-                                color='pink', alpha=0.8, label='HFR (2)')
-        
-        bar_height = 10
-        ax.set_xlabel("Time Sample Index")
-        ax.set_ylabel("Intensity")
-        ax.set_ylim(0, bar_height)
-        ax.grid(True)
-        ax.legend(loc='upper right')
-        
-        # Update the title to show current indices and angle
-        altitude_deg = vertical_angles[alt_idx]
-        fig.suptitle(f'Altitude Idx: {alt_idx} (~{altitude_deg:.2f} deg), Azimuth Idx: {azi_idx}')
-
-    # 5. Create axes for the sliders
-    ax_altitude = plt.axes([0.25, 0.15, 0.65, 0.03])
-    ax_azimuth = plt.axes([0.25, 0.1, 0.65, 0.03])
+    # 5. Create widget axes
+    ax_altitude = plt.axes([0.3, 0.15, 0.6, 0.03])
+    ax_azimuth = plt.axes([0.3, 0.1, 0.6, 0.03])
+    
+    check_buttons = None
+    if len(frame_indices) > 1:
+        ax_check = plt.axes([0.05, 0.4, 0.15, 0.5])
+        check_labels = [f'Frame {i}' for i in frame_indices]
+        check_actives = [True] * len(frame_indices)
+        check_buttons = CheckButtons(ax_check, check_labels, check_actives)
+    else:
+        plt.subplots_adjust(left=0.1, bottom=0.3)
+        ax_altitude.set_position([0.25, 0.15, 0.65, 0.03])
+        ax_azimuth.set_position([0.25, 0.1, 0.65, 0.03])
 
     # 6. Create the sliders for altitude and azimuth
     slider_altitude = Slider(
@@ -141,21 +116,58 @@ def visualize_interactive(dataset_root_path: str, frame_specifier: str):
         valstep=1
     )
 
-    # 7. Define the update function to be called by sliders
+    # 7. Define the main drawing function
+    def draw_histogram(alt_idx, azi_idx):
+        """Clears the axes and redraws the histogram(s) based on widget states."""
+        ax.clear()
+        
+        visibles = [True] * len(hist_matrices)
+        if check_buttons:
+            visibles = check_buttons.get_status()
+
+        # Plot signals for visible frames
+        for i, hist_matrix in enumerate(hist_matrices):
+            if visibles[i]:
+                signal = hist_matrix[alt_idx, azi_idx, :]
+                ax.plot(time_axis, signal, linewidth=0.75, label=f"Frame {frame_indices[i]}")
+
+        # If exactly one frame is visible, show its labels
+        if sum(visibles) == 1:
+            visible_idx = visibles.index(True)
+            label_matrix = label_matrices[visible_idx]
+            if label_matrix is not None and label_matrix.shape == hist_matrices[visible_idx].shape:
+                labels = label_matrix[alt_idx, azi_idx, :]
+                bar_height = 10
+                ax.fill_between(time_axis, 0, bar_height, where=labels == 1, 
+                                color='skyblue', alpha=0.8, label='Genuine (1)')
+                ax.fill_between(time_axis, 0, bar_height, where=labels == 2, 
+                                color='pink', alpha=0.8, label='HFR (2)')
+        
+        bar_height = 10
+        ax.set_xlabel("Time Sample Index")
+        ax.set_ylabel("Intensity")
+        ax.set_ylim(0, bar_height)
+        ax.grid(True)
+        ax.legend(loc='upper right')
+        
+        altitude_deg = vertical_angles[alt_idx]
+        fig.suptitle(f'Altitude Idx: {alt_idx} (~{altitude_deg:.2f} deg), Azimuth Idx: {azi_idx}')
+
+    # 8. Define the single update function for all widgets
     def update(val):
         alt_idx = int(slider_altitude.val)
         azi_idx = int(slider_azimuth.val)
         draw_histogram(alt_idx, azi_idx)
         fig.canvas.draw_idle()
 
-    # Initial draw
-    draw_histogram(initial_altitude_idx, initial_azimuth_idx)
-
-    # 8. Register the update function with the sliders
+    # 9. Register the update function with the widgets
     slider_altitude.on_changed(update)
     slider_azimuth.on_changed(update)
+    if check_buttons:
+        check_buttons.on_clicked(update)
 
-    # 9. Display the plot
+    # 10. Initial draw and display
+    draw_histogram(initial_altitude_idx, initial_azimuth_idx)
     plt.show()
 
 
