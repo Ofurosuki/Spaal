@@ -1,22 +1,4002 @@
 [
   {
-    "token": "b2899eb96cec4d36adcb7a3170efca17",
-    "path": "C:\\Users\\nextr\\nuScenes\\nuscenes_data\\samples/LIDAR_TOP/n008-2018-08-27-11-48-51-0400__LIDAR_TOP__1535385111448839.pcd.bin"
+    "token": "4216be3ba0b842f79834cbea0284c66a",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-41-59+0800__LIDAR_TOP__1533112947547336.pcd.bin"
   },
   {
-    "token": "b5baeed9277642debf7abf2bae8c8e90",
-    "path": "C:\\Users\\nextr\\nuScenes\\nuscenes_data\\samples/LIDAR_TOP/n015-2018-07-24-11-22-45+0800__LIDAR_TOP__1532402933146604.pcd.bin"
+    "token": "823a5f1a0e894c9eb09159eb027267a6",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-41-59+0800__LIDAR_TOP__1533113005397472.pcd.bin"
   },
   {
-    "token": "961ec15476e447b083e0e6942dfb2507",
-    "path": "C:\\Users\\nextr\\nuScenes\\nuscenes_data\\samples/LIDAR_TOP/n015-2018-11-21-19-38-26+0800__LIDAR_TOP__1542800999448167.pcd.bin"
+    "token": "1725ebb7010c4bae948104e5c218c5dc",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-05-21-11-06-59-0400__LIDAR_TOP__1526915778647073.pcd.bin"
   },
   {
-    "token": "d7ae8ef1a5464d1d894b608b9920ced4",
-    "path": "C:\\Users\\nextr\\nuScenes\\nuscenes_data\\samples/LIDAR_TOP/n008-2018-08-27-11-48-51-0400__LIDAR_TOP__1535385095449675.pcd.bin"
+    "token": "25fa4c0fd07244109761c13b202db590",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708672450920.pcd.bin"
   },
   {
-    "token": "4c850e12ce914a34ba56fd9896123b10",
-    "path": "C:\\Users\\nextr\\nuScenes\\nuscenes_data\\samples/LIDAR_TOP/n015-2018-07-24-11-22-45+0800__LIDAR_TOP__1532402939697511.pcd.bin"
+    "token": "7ff81d2763e94d9991ebb72a6edebb6b",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-32-59+0800__LIDAR_TOP__1533112732446948.pcd.bin"
+  },
+  {
+    "token": "afb71942bb074042bc61a6339acd5533",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-50-34+0800__LIDAR_TOP__1531886078447204.pcd.bin"
+  },
+  {
+    "token": "5132e14be6cd4bd78b099e97b9832fc5",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708701148332.pcd.bin"
+  },
+  {
+    "token": "d13c39f4ba0243b88891e6b6069728a6",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729523799164.pcd.bin"
+  },
+  {
+    "token": "f634c034220642e3b7992f3a2f554ba2",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153248297555.pcd.bin"
+  },
+  {
+    "token": "697755ae2dcf4c57a62437054123fd8e",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708446449211.pcd.bin"
+  },
+  {
+    "token": "060c42c4e7dc46d99daa4669d1ae4807",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-50-34+0800__LIDAR_TOP__1531886386147493.pcd.bin"
+  },
+  {
+    "token": "7c654820082448cf811e58aa6cc83f34",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-41-59+0800__LIDAR_TOP__1533113049197467.pcd.bin"
+  },
+  {
+    "token": "c3eb6a0e8567487b9c516beed5c3bfe7",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532621819448879.pcd.bin"
+  },
+  {
+    "token": "3d79066d3f624bfdb740b0bf4d7db5bc",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-21-11-53-44-0400__LIDAR_TOP__1534867452198394.pcd.bin"
+  },
+  {
+    "token": "ae4080c20a4c490ca8d0abb63a0147c0",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153643546990.pcd.bin"
+  },
+  {
+    "token": "9ba33e117c9b46748e8dd67220e65ccb",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-32-59+0800__LIDAR_TOP__1533112762696597.pcd.bin"
+  },
+  {
+    "token": "04fec20c52994d1eba244ca573d61c54",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-32-59+0800__LIDAR_TOP__1533112749196620.pcd.bin"
+  },
+  {
+    "token": "1f33044f38be4eb3bbecd6879723a54a",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-18-34+0800__LIDAR_TOP__1531884295548998.pcd.bin"
+  },
+  {
+    "token": "656b40c040cb4b4da38195248361f2da",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708681448607.pcd.bin"
+  },
+  {
+    "token": "171574717b5d42e9b1dde6ae35972001",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708182548329.pcd.bin"
+  },
+  {
+    "token": "3342241505534c71b056475d8021a802",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532621751648794.pcd.bin"
+  },
+  {
+    "token": "8e7ff5bf1e664147a2068c07eb0eab2f",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-13-19+0800__LIDAR_TOP__1532402190298640.pcd.bin"
+  },
+  {
+    "token": "0b55b081e37f4834b4bbf5399c54ce55",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708328048807.pcd.bin"
+  },
+  {
+    "token": "49709033eaee4622bd6552fd80ad3a3e",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532621817448263.pcd.bin"
+  },
+  {
+    "token": "0ac26a9df4fc426984fe8d4bf0ecfe19",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-22-45+0800__LIDAR_TOP__1532402825047287.pcd.bin"
+  },
+  {
+    "token": "12b9c6369c9a4c85ad64de307a4bee99",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-03-52+0800__LIDAR_TOP__1532401495697651.pcd.bin"
+  },
+  {
+    "token": "9dbe8d86d6b74d4cb22e59c560cc6653",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-13-19+0800__LIDAR_TOP__1532402309697154.pcd.bin"
+  },
+  {
+    "token": "4ccfb338a07e48c895afa835c85608a1",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-03-52+0800__LIDAR_TOP__1532401556545955.pcd.bin"
+  },
+  {
+    "token": "61dbd58301cf44d18b1891f1b41d4bf8",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153498699032.pcd.bin"
+  },
+  {
+    "token": "4673f5a2081346dcb0fb3047f44a64f8",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-36-48+0800__LIDAR_TOP__1532662684548972.pcd.bin"
+  },
+  {
+    "token": "5e747bbb23c64a6498ee70fb5125e9e0",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-05-21-11-06-59-0400__LIDAR_TOP__1526915264947916.pcd.bin"
+  },
+  {
+    "token": "4fe138a75d2d44fab6e2f42308ad0933",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-05-21-11-06-59-0400__LIDAR_TOP__1526915467947768.pcd.bin"
+  },
+  {
+    "token": "b13fec7567c14e77a970baca4d6d41be",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-21-11-53-44-0400__LIDAR_TOP__1534867270948458.pcd.bin"
+  },
+  {
+    "token": "095042156163407b8d29f793abf09cc7",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-17-04-15+0800__LIDAR_TOP__1533114329196523.pcd.bin"
+  },
+  {
+    "token": "3dbec5de00d9498d8b0df5a9189ac47d",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-28-16-16-48-0400__LIDAR_TOP__1535487887697017.pcd.bin"
+  },
+  {
+    "token": "c810c797f09246d68c55b5099fd169a5",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-05-21-11-06-59-0400__LIDAR_TOP__1526915710397994.pcd.bin"
+  },
+  {
+    "token": "3ca2135019e349089c39cd55151123f9",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-36-48+0800__LIDAR_TOP__1532662739449089.pcd.bin"
+  },
+  {
+    "token": "ad9c5b62bcad48fc86d2aea1cfbca25b",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708244898500.pcd.bin"
+  },
+  {
+    "token": "6c9c114fd8f34b03b6744cb31acdc7b6",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708216448709.pcd.bin"
+  },
+  {
+    "token": "2f3f0c339c524099a42dea2d9790da10",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-03-52+0800__LIDAR_TOP__1532401773449546.pcd.bin"
+  },
+  {
+    "token": "99a099034bf04179996a347a7756e691",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-13-19+0800__LIDAR_TOP__1532402019797789.pcd.bin"
+  },
+  {
+    "token": "b4dacd0ebc8546e8ae48eac6fe6d5709",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-05-21-11-06-59-0400__LIDAR_TOP__1526915262446877.pcd.bin"
+  },
+  {
+    "token": "e98ad055ed514624b4d0963aa6c86fab",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535728924446545.pcd.bin"
+  },
+  {
+    "token": "3984cf1d048a4cebb20078a7f24171e7",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-21-11-53-44-0400__LIDAR_TOP__1534867347898435.pcd.bin"
+  },
+  {
+    "token": "9d45122f1cd747acb4248359f6b1b5f8",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-05-21-11-06-59-0400__LIDAR_TOP__1526915250396770.pcd.bin"
+  },
+  {
+    "token": "f57094dbf4894a5cb531454ec187c15d",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-05-21-11-06-59-0400__LIDAR_TOP__1526915420047077.pcd.bin"
+  },
+  {
+    "token": "399314faf89f4946842413b8ad2f62fd",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-06-15-06-32-0400__LIDAR_TOP__1533582790696448.pcd.bin"
+  },
+  {
+    "token": "c25317ed2c5a4a64b6c339ab78dc1177",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-21-11-53-44-0400__LIDAR_TOP__1534867523449009.pcd.bin"
+  },
+  {
+    "token": "4ac58be9aadf443188d78a02f5e978ec",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-32-59+0800__LIDAR_TOP__1533112706697207.pcd.bin"
+  },
+  {
+    "token": "8f62acaedc4e48edb940ccb5a8531aba",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729424397887.pcd.bin"
+  },
+  {
+    "token": "84542637f1814850aee3c39d0456b850",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-05-21-11-06-59-0400__LIDAR_TOP__1526915725447343.pcd.bin"
+  },
+  {
+    "token": "8ebc9d1c17374adc8b14bc899ed17773",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532707872400042.pcd.bin"
+  },
+  {
+    "token": "fbaaa06667fa456e9bed479d27b7b4b2",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-22-45+0800__LIDAR_TOP__1532402747197665.pcd.bin"
+  },
+  {
+    "token": "b587f864f6a34d318115db336a6ccdf7",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-36-48+0800__LIDAR_TOP__1532662898049746.pcd.bin"
+  },
+  {
+    "token": "1cc7485ecb1042bba23e693a351f200e",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708700148563.pcd.bin"
+  },
+  {
+    "token": "da26145a0427443cb5906811a70e682c",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-36-48+0800__LIDAR_TOP__1532662673547832.pcd.bin"
+  },
+  {
+    "token": "39c12021d7744dd182134ba9f4365f63",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-21-11-53-44-0400__LIDAR_TOP__1534867164948753.pcd.bin"
+  },
+  {
+    "token": "547d9d76301a49ca887161a041b6b518",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535728806399467.pcd.bin"
+  },
+  {
+    "token": "a6b6bea37da542d4b2672c0e005a45eb",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535728977446684.pcd.bin"
+  },
+  {
+    "token": "5f503879670c4540accfff232620a177",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532621943648784.pcd.bin"
+  },
+  {
+    "token": "0f649e85ac6344d3a80eaefbdfaf7c30",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-36-48+0800__LIDAR_TOP__1532663103048672.pcd.bin"
+  },
+  {
+    "token": "6d44ad55069243ce951c6f978be79c3c",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-22-45+0800__LIDAR_TOP__1532402816148505.pcd.bin"
+  },
+  {
+    "token": "028a51780bdb4b30a0f0f268abde2b8c",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-17-13-57+0800__LIDAR_TOP__1533115296048158.pcd.bin"
+  },
+  {
+    "token": "a5dc7588bad8408488dc8e324370a876",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-36-48+0800__LIDAR_TOP__1532662960449055.pcd.bin"
+  },
+  {
+    "token": "865c7cfa18c343f684a963dddd70b02d",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-21-11-53-44-0400__LIDAR_TOP__1534867154949007.pcd.bin"
+  },
+  {
+    "token": "03e24ade4aab45328b0868fa7ddb28d2",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153289947079.pcd.bin"
+  },
+  {
+    "token": "c8aa2c0e45dc412287ca804da139445f",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-15-10-21+0800__LIDAR_TOP__1533107674046346.pcd.bin"
+  },
+  {
+    "token": "fd63a2b1e8d3484ea42ccba6c8561947",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708649198803.pcd.bin"
+  },
+  {
+    "token": "16437e63c8aa4fb191adaf23b7db84c2",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-36-48+0800__LIDAR_TOP__1532662677048070.pcd.bin"
+  },
+  {
+    "token": "c3cd3f8e0a6c46d79cbdde33648f6a26",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153436297458.pcd.bin"
+  },
+  {
+    "token": "2a01b653e9d94f418136c4795a336d06",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-36-48+0800__LIDAR_TOP__1532662887049108.pcd.bin"
+  },
+  {
+    "token": "3f1400f727314e1ba7d11e207657fbf9",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708585648150.pcd.bin"
+  },
+  {
+    "token": "0776e60f3963455db460d3d8629895cf",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-24-31+0800__LIDAR_TOP__1532661929948999.pcd.bin"
+  },
+  {
+    "token": "3f68f0f1ae364291b5da88893e6732d1",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729223047328.pcd.bin"
+  },
+  {
+    "token": "6c47c9ac671a494a890b43680549707e",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708440398198.pcd.bin"
+  },
+  {
+    "token": "6b5b128a0fb442cb8cb343eb973c79a0",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153290447504.pcd.bin"
+  },
+  {
+    "token": "c3208996f0524831b3438d537b291dad",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-18-34+0800__LIDAR_TOP__1531884535398813.pcd.bin"
+  },
+  {
+    "token": "47bd7cecaa1348b9ba2bf91375a8ac51",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-21-11-53-44-0400__LIDAR_TOP__1534867213398549.pcd.bin"
+  },
+  {
+    "token": "3fcdcdd376e64913b2db66b7b7d47e5c",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-41-59+0800__LIDAR_TOP__1533113043046914.pcd.bin"
+  },
+  {
+    "token": "d725ff90a6fd468f8e2c2f01e36e5574",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-32-59+0800__LIDAR_TOP__1533112728197404.pcd.bin"
+  },
+  {
+    "token": "136bedf0cc674a3e9d604d3537e161a4",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153749697236.pcd.bin"
+  },
+  {
+    "token": "fd923e00da4d478bbe6a23b298ad8a0b",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-07-57+0800__LIDAR_TOP__1531883732048768.pcd.bin"
+  },
+  {
+    "token": "e9f248d5c74945ab8b4befcb90566f6f",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-05-21-11-06-59-0400__LIDAR_TOP__1526915735946955.pcd.bin"
+  },
+  {
+    "token": "b887b7fd08b040b5836845fad10c7919",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-36-48+0800__LIDAR_TOP__1532662747900570.pcd.bin"
+  },
+  {
+    "token": "f20e731de22a4bce82f2f90d13ead637",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532707970948660.pcd.bin"
+  },
+  {
+    "token": "48d69be7b6e24cb1b3fb1bf804d57ae2",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-21-11-53-44-0400__LIDAR_TOP__1534867351948328.pcd.bin"
+  },
+  {
+    "token": "7e145562380944f199f262cfe5233985",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-03-52+0800__LIDAR_TOP__1532401771948835.pcd.bin"
+  },
+  {
+    "token": "33cd77ea438641f487f0be911385aa33",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729429047748.pcd.bin"
+  },
+  {
+    "token": "411cc944765840e19a3172a9cb7630df",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708195449496.pcd.bin"
+  },
+  {
+    "token": "800c325707dc4f5d89f967b7ad3b5594",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-50-34+0800__LIDAR_TOP__1531886166898195.pcd.bin"
+  },
+  {
+    "token": "6068f24b8cce48ffa2886c6300bfd5f7",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-03-52+0800__LIDAR_TOP__1532401557047483.pcd.bin"
+  },
+  {
+    "token": "3518582e76004dd6819313150462f47a",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532621993697717.pcd.bin"
+  },
+  {
+    "token": "2057bfabbebb4127895ec3e969b50dd5",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-05-21-11-06-59-0400__LIDAR_TOP__1526915332147502.pcd.bin"
+  },
+  {
+    "token": "ee206c184c434b44a38193c6a2598e8c",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532707776298354.pcd.bin"
+  },
+  {
+    "token": "f42230a62a044100b102d62076e1050a",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-50-34+0800__LIDAR_TOP__1531886069549530.pcd.bin"
+  },
+  {
+    "token": "4fde19d0b7f145b285614d96c8f7af9c",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532621948198501.pcd.bin"
+  },
+  {
+    "token": "771b3a6ddb4c4bfca6f0e02b62d47952",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-41-59+0800__LIDAR_TOP__1533112988547676.pcd.bin"
+  },
+  {
+    "token": "d60e9d5c0f294d67944e14f5bb0ed82a",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-13-19+0800__LIDAR_TOP__1532402335547581.pcd.bin"
+  },
+  {
+    "token": "99968b34254e455987aa5efa1ce39596",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-03-52+0800__LIDAR_TOP__1532401553647914.pcd.bin"
+  },
+  {
+    "token": "ede8baf3b0f24773a221c7873c1d6208",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532707825549941.pcd.bin"
+  },
+  {
+    "token": "b468648932334a099ae4aedffad5e928",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-13-19+0800__LIDAR_TOP__1532402010146420.pcd.bin"
+  },
+  {
+    "token": "ada7c07e6caf4aac9e7d9a94570f90c2",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-36-48+0800__LIDAR_TOP__1532662729448262.pcd.bin"
+  },
+  {
+    "token": "bd4382444d1340a29af39345f4e8d473",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-21-11-53-44-0400__LIDAR_TOP__1534867515898850.pcd.bin"
+  },
+  {
+    "token": "738299f2c5594630b48a921682e51d3f",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535728941896300.pcd.bin"
+  },
+  {
+    "token": "185f91f897784b87b0a673f895e5ad7a",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532621804647247.pcd.bin"
+  },
+  {
+    "token": "2e9f32951d604d81a2389b4cb1b9e5f4",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-21-11-53-44-0400__LIDAR_TOP__1534867218048401.pcd.bin"
+  },
+  {
+    "token": "878d0d9a5bcd42af924e9cdedba6f7a7",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-41-59+0800__LIDAR_TOP__1533113000947257.pcd.bin"
+  },
+  {
+    "token": "12e379ce75a44c21bc322b90615fcb45",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708331050277.pcd.bin"
+  },
+  {
+    "token": "9e513dfe3c2f4305a1ad6adb5a429e46",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-24-31+0800__LIDAR_TOP__1532662169948650.pcd.bin"
+  },
+  {
+    "token": "2b0ef41021754cccb8cd5e1a7b101ae2",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-50-34+0800__LIDAR_TOP__1531885881798485.pcd.bin"
+  },
+  {
+    "token": "778114edee4a4bd4851efd2402434f38",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-05-21-11-06-59-0400__LIDAR_TOP__1526915781197326.pcd.bin"
+  },
+  {
+    "token": "d6bdc28ed0f448daa169199113f5235f",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-15-10-21+0800__LIDAR_TOP__1533107673546493.pcd.bin"
+  },
+  {
+    "token": "d003d998c266479b88aa6c09e5380f50",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-17-04-15+0800__LIDAR_TOP__1533114570697479.pcd.bin"
+  },
+  {
+    "token": "d1775bade46e4f34987a0b66b36c6039",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-50-34+0800__LIDAR_TOP__1531886172699302.pcd.bin"
+  },
+  {
+    "token": "b04dd98c5d144bdcbbf506297cb64f20",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153417547131.pcd.bin"
+  },
+  {
+    "token": "f213c5785c644b5aae1c250206fd0c9c",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535728955547239.pcd.bin"
+  },
+  {
+    "token": "173a999421f14da8bd638382a1a97584",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-15-10-21+0800__LIDAR_TOP__1533107781948250.pcd.bin"
+  },
+  {
+    "token": "accd55e0df1442dd95986ab274a527eb",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-18-34+0800__LIDAR_TOP__1531884119898930.pcd.bin"
+  },
+  {
+    "token": "74bd326966294792b8c60c877bcf04bf",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532621863698435.pcd.bin"
+  },
+  {
+    "token": "6c8aa3a5c4bb44499fc5ac1427930f1a",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532622243198415.pcd.bin"
+  },
+  {
+    "token": "327d786481f948bdbf7ed3b107002742",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-05-21-11-06-59-0400__LIDAR_TOP__1526915372948276.pcd.bin"
+  },
+  {
+    "token": "586331ec27f144a6b0995d56c3b30de5",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729335448156.pcd.bin"
+  },
+  {
+    "token": "52e8cf1070664761bbc6fc2d2c1002c3",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-21-11-53-44-0400__LIDAR_TOP__1534867340049707.pcd.bin"
+  },
+  {
+    "token": "344f7c3f2bc644fc82ee4c438453fda4",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532622022798378.pcd.bin"
+  },
+  {
+    "token": "c0a51702e6de48cca59be5bfa51542cc",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-22-45+0800__LIDAR_TOP__1532402869147540.pcd.bin"
+  },
+  {
+    "token": "253a5702f3dd4c94ac6dd889fee93f25",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532707963047986.pcd.bin"
+  },
+  {
+    "token": "98110d318a00426a9104d76011cbb53a",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-50-34+0800__LIDAR_TOP__1531885981048247.pcd.bin"
+  },
+  {
+    "token": "5fb3c6ea0fe94672831f37e9b1482ebb",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-21-11-53-44-0400__LIDAR_TOP__1534867218548282.pcd.bin"
+  },
+  {
+    "token": "a41415b38aba478fbe545b4121231ac2",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-21-11-53-44-0400__LIDAR_TOP__1534867105199149.pcd.bin"
+  },
+  {
+    "token": "12a4784174a143f69fb530083e9aabca",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-05-21-11-06-59-0400__LIDAR_TOP__1526915794797373.pcd.bin"
+  },
+  {
+    "token": "94df2c5474cd498491fbf4b191ac64e3",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153262947693.pcd.bin"
+  },
+  {
+    "token": "6f7a3e706b1b495bb678f88415259ada",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153547897023.pcd.bin"
+  },
+  {
+    "token": "0e9cfdeb8b9144998f3058746028e94e",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708553548813.pcd.bin"
+  },
+  {
+    "token": "f9c675f64374453bae4a78be7d4cb8aa",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-36-48+0800__LIDAR_TOP__1532663095448791.pcd.bin"
+  },
+  {
+    "token": "fc3a742ae3ef42c385b59634e7389f65",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532621983198134.pcd.bin"
+  },
+  {
+    "token": "a1b5c51c7a2740d0980e8f93a0cdc32a",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-22-45+0800__LIDAR_TOP__1532402747698669.pcd.bin"
+  },
+  {
+    "token": "1f9a0a2380894784b17372dbefbf6ad6",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708234948520.pcd.bin"
+  },
+  {
+    "token": "e1f4df98b30b44b880447b2aa07671b6",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-05-21-11-06-59-0400__LIDAR_TOP__1526915323047968.pcd.bin"
+  },
+  {
+    "token": "29221cab407b47f69557452a0c2ab2a4",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-18-34+0800__LIDAR_TOP__1531884304298467.pcd.bin"
+  },
+  {
+    "token": "bd20e86376e84e35b9308c76342d800f",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-03-52+0800__LIDAR_TOP__1532401772449256.pcd.bin"
+  },
+  {
+    "token": "5cf81367e02e4c37aa002cab673cce01",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-21-11-53-44-0400__LIDAR_TOP__1534867404449695.pcd.bin"
+  },
+  {
+    "token": "c10007fedcb64c82b0b5702f93a2c4ca",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535728936399889.pcd.bin"
+  },
+  {
+    "token": "12cc46028a0747f19823f8e0af041f44",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-32-59+0800__LIDAR_TOP__1533112773197314.pcd.bin"
+  },
+  {
+    "token": "8e17654ab1c644499ca78d7e00e403d4",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532707867949276.pcd.bin"
+  },
+  {
+    "token": "5e67d8ee31af478ca77ff8da824c7a85",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532621920698123.pcd.bin"
+  },
+  {
+    "token": "0d1df5bb89994a0aa4d3913075832115",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153727948683.pcd.bin"
+  },
+  {
+    "token": "db17f836084f472ebcbb70003bd8373c",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-18-34+0800__LIDAR_TOP__1531884168948169.pcd.bin"
+  },
+  {
+    "token": "38bf4d45f61242b1bcfd289c8a25fbc3",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-24-31+0800__LIDAR_TOP__1532662222948790.pcd.bin"
+  },
+  {
+    "token": "fe5a8c2952ee48d2ab613c9fb5b66ffe",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708439898866.pcd.bin"
+  },
+  {
+    "token": "fd93a06eaefb4df3bc148dd210e3c510",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-21-11-53-44-0400__LIDAR_TOP__1534867403449972.pcd.bin"
+  },
+  {
+    "token": "527058a654914a7898e37c900b1d9373",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-05-21-11-06-59-0400__LIDAR_TOP__1526915621447218.pcd.bin"
+  },
+  {
+    "token": "a59678b06ecd4833bb8fc4f2d5e8138a",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-06-15-06-32-0400__LIDAR_TOP__1533583207647916.pcd.bin"
+  },
+  {
+    "token": "6536a957cf804c23a378ab4f36f251df",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532621914649272.pcd.bin"
+  },
+  {
+    "token": "fa9ccdb9784f43ffba91100e1264e175",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-06-15-06-32-0400__LIDAR_TOP__1533583064697162.pcd.bin"
+  },
+  {
+    "token": "c8ea813c3370490baec62b8c97ab87b2",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-17-04-15+0800__LIDAR_TOP__1533114379197396.pcd.bin"
+  },
+  {
+    "token": "8a26d28c396a4602a3b93aecd512df4e",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-36-48+0800__LIDAR_TOP__1532663096948404.pcd.bin"
+  },
+  {
+    "token": "1d36ee045e6947f9bb00f83fed9fa95c",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-50-34+0800__LIDAR_TOP__1531886173698517.pcd.bin"
+  },
+  {
+    "token": "4f54c487d0f24522a03c4ca69bfd2f64",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-17-04-15+0800__LIDAR_TOP__1533114284548291.pcd.bin"
+  },
+  {
+    "token": "538d376def744137b5f3c33eb3c5b9e7",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-41-59+0800__LIDAR_TOP__1533113038946685.pcd.bin"
+  },
+  {
+    "token": "70065d733b124b4689050ce8bdd84e1e",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708688054056.pcd.bin"
+  },
+  {
+    "token": "d716391ceb3543a185ad533afe3b9926",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-03-52+0800__LIDAR_TOP__1532401566897358.pcd.bin"
+  },
+  {
+    "token": "1d63e0270ac745079b7605446a7e9e2f",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-32-59+0800__LIDAR_TOP__1533112715646324.pcd.bin"
+  },
+  {
+    "token": "a3f6ecd0d5e74e9bb397c883d4cd4e46",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-03-52+0800__LIDAR_TOP__1532401770447630.pcd.bin"
+  },
+  {
+    "token": "0f2a2ff81ac643279b61b8162c129333",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729511646730.pcd.bin"
+  },
+  {
+    "token": "ea81a70458934cd4839f721d39cb3fb8",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729101047150.pcd.bin"
+  },
+  {
+    "token": "ce3512f37b76446aab99c3611de500c3",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153724947736.pcd.bin"
+  },
+  {
+    "token": "e242a5016ba54fb9b69c353aa30ade6c",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729228449281.pcd.bin"
+  },
+  {
+    "token": "f8e0d79210e341a0b7604d75bf4ad2a7",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-22-45+0800__LIDAR_TOP__1532402943697655.pcd.bin"
+  },
+  {
+    "token": "6135c5a724384a99b31710ebe934d5ab",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-21-11-53-44-0400__LIDAR_TOP__1534867212397697.pcd.bin"
+  },
+  {
+    "token": "bd6953061982492490adc6176c5de377",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-22-45+0800__LIDAR_TOP__1532402735448385.pcd.bin"
+  },
+  {
+    "token": "88b05afbc8fc48ec96222893cd257a9f",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-05-21-11-06-59-0400__LIDAR_TOP__1526915647046497.pcd.bin"
+  },
+  {
+    "token": "3c455289f32a4664877d78675bf383e2",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-17-13-57+0800__LIDAR_TOP__1533115185046340.pcd.bin"
+  },
+  {
+    "token": "bb5c693bb753428293ca5180eb34a81b",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708464648251.pcd.bin"
+  },
+  {
+    "token": "646fbb7efb714137b09e6d994d998ccd",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-21-11-53-44-0400__LIDAR_TOP__1534867316448285.pcd.bin"
+  },
+  {
+    "token": "c7e42c5c47be4095bd767f15b5e16fb2",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708015798186.pcd.bin"
+  },
+  {
+    "token": "c5821b978c1a4b7682210a664e5175a7",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-17-13-57+0800__LIDAR_TOP__1533115290896766.pcd.bin"
+  },
+  {
+    "token": "ec2bdcbbbd1c437a9b4661681c6fb2b9",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-36-48+0800__LIDAR_TOP__1532663102048941.pcd.bin"
+  },
+  {
+    "token": "d3732ff115e8407691fed0af24c9d60f",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-03-52+0800__LIDAR_TOP__1532401611798280.pcd.bin"
+  },
+  {
+    "token": "0320a3afd5264acea0a4e390c2cb2895",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-41-59+0800__LIDAR_TOP__1533112980946694.pcd.bin"
+  },
+  {
+    "token": "81605d6d6225499598ca59e142a68878",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-18-34+0800__LIDAR_TOP__1531884167447977.pcd.bin"
+  },
+  {
+    "token": "feb574d94d0e48b8a52b27a45825a072",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532622012899814.pcd.bin"
+  },
+  {
+    "token": "45dbc4747f3f4af696bbac7152312592",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-05-21-11-06-59-0400__LIDAR_TOP__1526915675196579.pcd.bin"
+  },
+  {
+    "token": "088813c19d924cf29e6018a391eead35",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532622032698582.pcd.bin"
+  },
+  {
+    "token": "a5029efc3dba41189aa14695a29c391c",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729083947408.pcd.bin"
+  },
+  {
+    "token": "1fd10531e05740719806d1e4a44a72db",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-41-59+0800__LIDAR_TOP__1533113235046294.pcd.bin"
+  },
+  {
+    "token": "21a1e93e0a7c41e4b26ee15a022a49c0",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729398398804.pcd.bin"
+  },
+  {
+    "token": "50f174df9fc44453be9199198110fbfd",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-15-10-21+0800__LIDAR_TOP__1533107750546735.pcd.bin"
+  },
+  {
+    "token": "238eeeeac34c47f787d79f21deaa26f4",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-13-19+0800__LIDAR_TOP__1532402313698954.pcd.bin"
+  },
+  {
+    "token": "ed635ea36bba47fb9f909d0163eb887d",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-32-59+0800__LIDAR_TOP__1533112778546099.pcd.bin"
+  },
+  {
+    "token": "7eba0649bc02490cb21190142f86ece8",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-18-34+0800__LIDAR_TOP__1531884537399986.pcd.bin"
+  },
+  {
+    "token": "6e8f1c5bc8354d0db2f88c85ed2570d3",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729253696859.pcd.bin"
+  },
+  {
+    "token": "fbccee9a22d54b7db07edc0313767d09",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708723947975.pcd.bin"
+  },
+  {
+    "token": "4627a0349b754d30b074dc3a7705b1b7",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-21-11-53-44-0400__LIDAR_TOP__1534867095898347.pcd.bin"
+  },
+  {
+    "token": "1718bf8e4cd144428a61204ecbf9ddb3",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153559447247.pcd.bin"
+  },
+  {
+    "token": "4ccdf9ff891548ea92ec212744b8372e",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-05-21-11-06-59-0400__LIDAR_TOP__1526915390647872.pcd.bin"
+  },
+  {
+    "token": "dd23d897ccf4447aa528af543a0888ed",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532621836198040.pcd.bin"
+  },
+  {
+    "token": "7d0d1a19c1564a2cba5353185305b232",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-36-48+0800__LIDAR_TOP__1532662818298451.pcd.bin"
+  },
+  {
+    "token": "86cc010be6694eb88c748b80718243b1",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708696698652.pcd.bin"
+  },
+  {
+    "token": "0fa696be6d2f4de4a6c2ed1e9f02bee5",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153636197605.pcd.bin"
+  },
+  {
+    "token": "bba3bbf8fb5b443d91ce478600ac3b49",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-22-45+0800__LIDAR_TOP__1532402930648325.pcd.bin"
+  },
+  {
+    "token": "12fa4cd28ca443c8a499b203c3063a90",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-41-59+0800__LIDAR_TOP__1533113234546415.pcd.bin"
+  },
+  {
+    "token": "b1be1e9dca384857825b39e837fbf995",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-06-15-06-32-0400__LIDAR_TOP__1533583374897978.pcd.bin"
+  },
+  {
+    "token": "2413a14ee2e44cbe9d6a4a16ded4b0a2",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-17-13-57+0800__LIDAR_TOP__1533115296547486.pcd.bin"
+  },
+  {
+    "token": "800967eb50f547a2ac10a33b820f9c51",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-05-21-11-06-59-0400__LIDAR_TOP__1526915777546680.pcd.bin"
+  },
+  {
+    "token": "a502cd4d7239461fb98aa991dc0cd945",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535728844047213.pcd.bin"
+  },
+  {
+    "token": "b110ee96a2624325aeaf381a23f7153f",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-22-45+0800__LIDAR_TOP__1532402750198029.pcd.bin"
+  },
+  {
+    "token": "c7c6dadeff4c4a388c9e6e49991e8646",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-22-45+0800__LIDAR_TOP__1532402834197663.pcd.bin"
+  },
+  {
+    "token": "81f2a4cc42074bcaad7a400e5162c259",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-41-59+0800__LIDAR_TOP__1533112978448958.pcd.bin"
+  },
+  {
+    "token": "68dfd100c1984eeab887f8d919a4e0f6",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-06-15-06-32-0400__LIDAR_TOP__1533583268696945.pcd.bin"
+  },
+  {
+    "token": "0bd7c462b8ee479a8734ef5ef7fb30b0",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729124947735.pcd.bin"
+  },
+  {
+    "token": "4e6173b55e3743ccbd557e149e9ab098",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532707969448486.pcd.bin"
+  },
+  {
+    "token": "d5e30b61c77f48fdb31aff787d229c8c",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729302898131.pcd.bin"
+  },
+  {
+    "token": "95d145ad66a5466d88c4d473b4ba8427",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708431048731.pcd.bin"
+  },
+  {
+    "token": "b269b00914184fc1ad77248fd5d8cc6c",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708725448746.pcd.bin"
+  },
+  {
+    "token": "ca94b621d1744a7b812573fc12efba9c",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-22-45+0800__LIDAR_TOP__1532402594197437.pcd.bin"
+  },
+  {
+    "token": "dfc5f95c9ba146469666043e83fa4e9e",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-18-34+0800__LIDAR_TOP__1531884005398527.pcd.bin"
+  },
+  {
+    "token": "894d6b718da047b19ad8f5b364f8ebed",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535728864947467.pcd.bin"
+  },
+  {
+    "token": "e28319b88b634a2d9eff6fdfa7db5500",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-22-45+0800__LIDAR_TOP__1532402937698000.pcd.bin"
+  },
+  {
+    "token": "2744187b82734ac8b0a4ce66101d8eb0",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-17-04-15+0800__LIDAR_TOP__1533114561147324.pcd.bin"
+  },
+  {
+    "token": "e9a168c95211471e822f40f088d15e23",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-17-04-15+0800__LIDAR_TOP__1533114567695992.pcd.bin"
+  },
+  {
+    "token": "9d87455a4c954f42b9d6f4dbaafbd8ed",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-50-34+0800__LIDAR_TOP__1531886103198856.pcd.bin"
+  },
+  {
+    "token": "de3fa436e7944c6a92c4cc6e1d236fb6",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-50-34+0800__LIDAR_TOP__1531886173198622.pcd.bin"
+  },
+  {
+    "token": "767b63e315c04420a259265041d5427f",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708644299006.pcd.bin"
+  },
+  {
+    "token": "aa8575e1bfb74fdb8a50a2ced9ed3895",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532707977898238.pcd.bin"
+  },
+  {
+    "token": "0a92a700bdc24d7cbfdfbc4dc0a5f751",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153287947011.pcd.bin"
+  },
+  {
+    "token": "15978eee1b84469b951567a1e12ba08d",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-05-21-11-06-59-0400__LIDAR_TOP__1526915377047265.pcd.bin"
+  },
+  {
+    "token": "e3d85f28f9114d869ed8f8e809c30630",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-24-31+0800__LIDAR_TOP__1532662223948542.pcd.bin"
+  },
+  {
+    "token": "09a82efe32974f4eb06a0e8d24643310",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-32-59+0800__LIDAR_TOP__1533112737398112.pcd.bin"
+  },
+  {
+    "token": "40db9668962e4cf7a16da79328be5c35",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-41-59+0800__LIDAR_TOP__1533113004897602.pcd.bin"
+  },
+  {
+    "token": "5893307f31e14e68ad6afbc2d59a9f66",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153487699023.pcd.bin"
+  },
+  {
+    "token": "21880b272e0945aab3b2dfb8909d6753",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729043449123.pcd.bin"
+  },
+  {
+    "token": "88cbc6fe663e444facbc0d8984a6aa57",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-32-59+0800__LIDAR_TOP__1533112720697596.pcd.bin"
+  },
+  {
+    "token": "76d90c9eb86a449299d58ea73094006d",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-32-59+0800__LIDAR_TOP__1533112837696840.pcd.bin"
+  },
+  {
+    "token": "df9d3e4cfe6446b987f37b8ffbf74954",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-05-21-11-06-59-0400__LIDAR_TOP__1526915388647246.pcd.bin"
+  },
+  {
+    "token": "cef0d6e660ab46819a85b1b4501f3e05",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-13-19+0800__LIDAR_TOP__1532402149897154.pcd.bin"
+  },
+  {
+    "token": "efea9b230bf74b51b756048ac28a2a01",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708327447766.pcd.bin"
+  },
+  {
+    "token": "50c3279895d745828e4e4653eb462069",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-50-34+0800__LIDAR_TOP__1531886107148097.pcd.bin"
+  },
+  {
+    "token": "0643e2d7cd7c4f0ba63bbedbd77ec650",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153726447938.pcd.bin"
+  },
+  {
+    "token": "001233a5147c49c1ac2de7dd4385a2b4",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-06-15-06-32-0400__LIDAR_TOP__1533583261695932.pcd.bin"
+  },
+  {
+    "token": "01b88e31b6424c65a63a27f3c61b5fc0",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-50-34+0800__LIDAR_TOP__1531886333398384.pcd.bin"
+  },
+  {
+    "token": "8c9978cf66b2440fb5b04dd0b31337cf",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-22-45+0800__LIDAR_TOP__1532402824547955.pcd.bin"
+  },
+  {
+    "token": "2b1a99ba0f9a496794b500470cb6f965",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-50-34+0800__LIDAR_TOP__1531886096198346.pcd.bin"
+  },
+  {
+    "token": "ed3a0bae8e0a4b1f81230876df4684e6",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-50-34+0800__LIDAR_TOP__1531886045548282.pcd.bin"
+  },
+  {
+    "token": "c22e5ef002994751a3c38e7d25505c0a",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532707934300488.pcd.bin"
+  },
+  {
+    "token": "de4b2730f1464e9dad9c16eabd6f9283",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-21-11-53-44-0400__LIDAR_TOP__1534867377448093.pcd.bin"
+  },
+  {
+    "token": "01f269b98fad4d7581126b36bbcf2647",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-17-04-15+0800__LIDAR_TOP__1533114278297644.pcd.bin"
+  },
+  {
+    "token": "8929dc0c7a16492dbd7e5945133ad231",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-21-11-53-44-0400__LIDAR_TOP__1534867515398448.pcd.bin"
+  },
+  {
+    "token": "a6de8467f35b44ffa486763c3c77f460",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-15-10-21+0800__LIDAR_TOP__1533107694047511.pcd.bin"
+  },
+  {
+    "token": "467be966096e4753a4b3dd05d55caabb",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-05-21-11-06-59-0400__LIDAR_TOP__1526915702897660.pcd.bin"
+  },
+  {
+    "token": "4ab6921c8b324510ad35e7b782314f3b",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-36-48+0800__LIDAR_TOP__1532662955947981.pcd.bin"
+  },
+  {
+    "token": "0c222f123aec4eeba63e8f04ef918a94",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-32-59+0800__LIDAR_TOP__1533112627145539.pcd.bin"
+  },
+  {
+    "token": "e9f415e7e89b4e99a062759539211335",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-32-59+0800__LIDAR_TOP__1533112754447557.pcd.bin"
+  },
+  {
+    "token": "e1a20669a398465186da8e32c5eb1933",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-17-13-57+0800__LIDAR_TOP__1533114918547677.pcd.bin"
+  },
+  {
+    "token": "c41786c57569467e9097caf273245b0b",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-36-48+0800__LIDAR_TOP__1532662806448004.pcd.bin"
+  },
+  {
+    "token": "28609b4fe71f463592e8650003af377a",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532707921148500.pcd.bin"
+  },
+  {
+    "token": "13df6f5b05244046be30db6fd3dc43c4",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-50-34+0800__LIDAR_TOP__1531886016448183.pcd.bin"
+  },
+  {
+    "token": "7334d90c6b4245489390ce5b6d984a66",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729127447123.pcd.bin"
+  },
+  {
+    "token": "908d6cb85fc745d482674e6e18d3c291",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153519697146.pcd.bin"
+  },
+  {
+    "token": "518d6bf5446240b290dff596d9650c6d",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153418547802.pcd.bin"
+  },
+  {
+    "token": "6ccd16500f6842bf9071c39fda82cba1",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-32-59+0800__LIDAR_TOP__1533112539697085.pcd.bin"
+  },
+  {
+    "token": "48682a8bc8df412bb0cd674322a580ed",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-13-19+0800__LIDAR_TOP__1532402307697089.pcd.bin"
+  },
+  {
+    "token": "8d6970cc486a432d8e47932db219ecd4",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-36-48+0800__LIDAR_TOP__1532662953449130.pcd.bin"
+  },
+  {
+    "token": "3d69c66c5f0b43a0a1eb2dda001019ef",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-32-59+0800__LIDAR_TOP__1533112402697314.pcd.bin"
+  },
+  {
+    "token": "4d115b042b1a48518630dc4bbd93a0ba",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532622031301523.pcd.bin"
+  },
+  {
+    "token": "b9b1399be3b442c7bef4e5a3b80baec0",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-18-34+0800__LIDAR_TOP__1531884163948867.pcd.bin"
+  },
+  {
+    "token": "a7848a060d844dd0a5f11acd8d4eba2e",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-32-59+0800__LIDAR_TOP__1533112831147007.pcd.bin"
+  },
+  {
+    "token": "67d8786505a34d8e85a6b67d53cf1e83",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-06-15-06-32-0400__LIDAR_TOP__1533582469146644.pcd.bin"
+  },
+  {
+    "token": "6c2cffac3c944f61b24698651e7bb149",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-22-45+0800__LIDAR_TOP__1532402830148908.pcd.bin"
+  },
+  {
+    "token": "e9373762f4a049ffaf86524d049e2f60",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-50-34+0800__LIDAR_TOP__1531886014448165.pcd.bin"
+  },
+  {
+    "token": "3e63ced3bcda4ea699788c988f6bf0b5",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532621829148898.pcd.bin"
+  },
+  {
+    "token": "95c40417a4684ee48fe005f698daf0b3",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-36-48+0800__LIDAR_TOP__1532662813799022.pcd.bin"
+  },
+  {
+    "token": "9d87b7f073a74b989fd3022dd470f19f",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708671948750.pcd.bin"
+  },
+  {
+    "token": "69aa43d3c4f24b82a88f92a9f31a33f2",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-13-19+0800__LIDAR_TOP__1532402306148245.pcd.bin"
+  },
+  {
+    "token": "ba9ccc74f059452c9fa681064b241166",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-41-59+0800__LIDAR_TOP__1533112981446585.pcd.bin"
+  },
+  {
+    "token": "ae1d34afd1014fabb4b579d0b5427075",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-36-48+0800__LIDAR_TOP__1532662745398933.pcd.bin"
+  },
+  {
+    "token": "ba6a9283ae89455d98c83865bcff0f6d",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729298446271.pcd.bin"
+  },
+  {
+    "token": "c46181dab7464faaaf91b6d46dcc2481",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708431448537.pcd.bin"
+  },
+  {
+    "token": "0f64d178fbce4d98b2023f5f23bf44b2",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-21-11-53-44-0400__LIDAR_TOP__1534867400448492.pcd.bin"
+  },
+  {
+    "token": "496ba47029dd4e328db238c687292eb1",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729562947068.pcd.bin"
+  },
+  {
+    "token": "3bf2a7eda55a4e11b9459f122506ae35",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153736446567.pcd.bin"
+  },
+  {
+    "token": "c4ac74683b624a9fb84f32ae63ad1fb1",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532622003547610.pcd.bin"
+  },
+  {
+    "token": "0589675644684ad1b8d4b3acfddd5853",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153358048022.pcd.bin"
+  },
+  {
+    "token": "6e56a749cc4747c0908becbb20aad765",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-17-13-57+0800__LIDAR_TOP__1533115303546884.pcd.bin"
+  },
+  {
+    "token": "957237c4298e41ef853ef86daa1b62ed",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-18-34+0800__LIDAR_TOP__1531884299399251.pcd.bin"
+  },
+  {
+    "token": "f53086e0d245442d8a178a3a92f916a6",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-41-59+0800__LIDAR_TOP__1533112954549469.pcd.bin"
+  },
+  {
+    "token": "425c4eb6803840c69a3a30a0ba1cc22a",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-50-34+0800__LIDAR_TOP__1531885876899234.pcd.bin"
+  },
+  {
+    "token": "b991bdda566b40b4823d358e1c5dae73",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708057147471.pcd.bin"
+  },
+  {
+    "token": "62153bb9836e4272b6299cc5ed35238d",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535728842047698.pcd.bin"
+  },
+  {
+    "token": "607279ae2dad4092a74e674915547a90",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-41-59+0800__LIDAR_TOP__1533113388897011.pcd.bin"
+  },
+  {
+    "token": "520375944f044941a9f2b9f943be61e6",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-21-11-53-44-0400__LIDAR_TOP__1534867165949047.pcd.bin"
+  },
+  {
+    "token": "529af72cc5a244b0b5db3cb673305058",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-22-45+0800__LIDAR_TOP__1532402894947537.pcd.bin"
+  },
+  {
+    "token": "a64563bba8304a728170ede8ff56d538",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-06-15-06-32-0400__LIDAR_TOP__1533582781396796.pcd.bin"
+  },
+  {
+    "token": "c0a52d4925f941e5a8c4f3c8f0537bb4",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-05-21-11-06-59-0400__LIDAR_TOP__1526915270447665.pcd.bin"
+  },
+  {
+    "token": "c2f5a31a22ff465f8726b61cbeadaad7",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729279946962.pcd.bin"
+  },
+  {
+    "token": "17de43f8f02a4bfab63530d6c1969b55",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-21-11-53-44-0400__LIDAR_TOP__1534867160948062.pcd.bin"
+  },
+  {
+    "token": "ccbe5a11d2b942c0a4d2a8425645affd",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-21-11-53-44-0400__LIDAR_TOP__1534867162448243.pcd.bin"
+  },
+  {
+    "token": "bbc3b047723042b58199aeefc8cd92ca",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-13-19+0800__LIDAR_TOP__1532402186196792.pcd.bin"
+  },
+  {
+    "token": "bc48918ff146468e8183634acfb2da89",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-21-11-53-44-0400__LIDAR_TOP__1534867101698403.pcd.bin"
+  },
+  {
+    "token": "ae956885e85142a997b1f3049f15d79a",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729215446347.pcd.bin"
+  },
+  {
+    "token": "3562d55358234057b4ed77ed74ffdfef",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532622151197406.pcd.bin"
+  },
+  {
+    "token": "97abc991e27d4b778d8d5204151c9aaf",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153708397646.pcd.bin"
+  },
+  {
+    "token": "b0c912afaa17463091b1d394fcf4ff14",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708449147107.pcd.bin"
+  },
+  {
+    "token": "52d9624d4b954b00a2df70caffb8a885",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708175049119.pcd.bin"
+  },
+  {
+    "token": "422d69725b194db883e14955544d1aa2",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-50-34+0800__LIDAR_TOP__1531885872947797.pcd.bin"
+  },
+  {
+    "token": "9031e14bf0cc4c5ea842085784de1a77",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153639148202.pcd.bin"
+  },
+  {
+    "token": "f45fd13bad6e4e4abc9fce8512103b85",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532621758149914.pcd.bin"
+  },
+  {
+    "token": "7c0f29ca9ef44ddaa3f189b225142784",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729157448562.pcd.bin"
+  },
+  {
+    "token": "16c84f95205042908ad8fc84c7ca2a21",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-21-11-53-44-0400__LIDAR_TOP__1534867240197774.pcd.bin"
+  },
+  {
+    "token": "eff6ae6c2d6f421098f55b2a4155d891",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-15-10-21+0800__LIDAR_TOP__1533107713447546.pcd.bin"
+  },
+  {
+    "token": "4315c3a2e06549c9ba7e739e0462dd61",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-21-11-53-44-0400__LIDAR_TOP__1534867368947465.pcd.bin"
+  },
+  {
+    "token": "8f21dd95a608432691856af3640427de",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-18-34+0800__LIDAR_TOP__1531884166448257.pcd.bin"
+  },
+  {
+    "token": "8f205305187243ed861679f801c77f80",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-32-59+0800__LIDAR_TOP__1533112750696871.pcd.bin"
+  },
+  {
+    "token": "6f3f08bad806444c883434344deba913",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-32-59+0800__LIDAR_TOP__1533112388197036.pcd.bin"
+  },
+  {
+    "token": "29f104ead35947edb5ae39e9f743a959",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-36-48+0800__LIDAR_TOP__1532662758447698.pcd.bin"
+  },
+  {
+    "token": "516f654705b541e4b76c76a3eab7bd59",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708007048104.pcd.bin"
+  },
+  {
+    "token": "0b969e5b82534239b7ca8cdf8367420d",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-36-48+0800__LIDAR_TOP__1532662887548428.pcd.bin"
+  },
+  {
+    "token": "c261d50907d84bddb96a71b5317c15c6",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-21-11-53-44-0400__LIDAR_TOP__1534867517898944.pcd.bin"
+  },
+  {
+    "token": "e18faf329faf44c5af38c6c521ab193b",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729330897288.pcd.bin"
+  },
+  {
+    "token": "c3ab1d795aee49e98520ccf3564d6a8b",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-17-04-15+0800__LIDAR_TOP__1533114558146920.pcd.bin"
+  },
+  {
+    "token": "096fc6757cc045d6bf35d7ca4d860835",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-18-34+0800__LIDAR_TOP__1531884545449420.pcd.bin"
+  },
+  {
+    "token": "6db063c7125e41e0b63ff759fa7145ee",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532622067398484.pcd.bin"
+  },
+  {
+    "token": "db92b59b35ba4304adf624a6a06814e9",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708066198300.pcd.bin"
+  },
+  {
+    "token": "17a22356016d4632be391e2efce2307c",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-21-11-53-44-0400__LIDAR_TOP__1534867224198975.pcd.bin"
+  },
+  {
+    "token": "0778f3f985d74e14a5958dfb93f29f72",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729220049731.pcd.bin"
+  },
+  {
+    "token": "352a5c54acae4e779c046b01e0476e72",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-17-04-15+0800__LIDAR_TOP__1533114271697492.pcd.bin"
+  },
+  {
+    "token": "fad66f580e424d94ae32694ddf268768",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-06-15-06-32-0400__LIDAR_TOP__1533582779797081.pcd.bin"
+  },
+  {
+    "token": "cf3f60c90d1943febde7d0cdfb0097dd",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-03-52+0800__LIDAR_TOP__1532401561048220.pcd.bin"
+  },
+  {
+    "token": "db7dde5435144b1c937572f647db0b8d",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-32-59+0800__LIDAR_TOP__1533112771797771.pcd.bin"
+  },
+  {
+    "token": "bf45ad497c4b474f8f3d6072c7769aba",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729541447995.pcd.bin"
+  },
+  {
+    "token": "4800b15305044e8694b3e7e2cff131c5",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-05-21-11-06-59-0400__LIDAR_TOP__1526915330547194.pcd.bin"
+  },
+  {
+    "token": "c3e4887be9654dda9d80227baa4971dc",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-36-48+0800__LIDAR_TOP__1532663148198418.pcd.bin"
+  },
+  {
+    "token": "4d46e807d61441aa9aa987690213fcea",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729209395840.pcd.bin"
+  },
+  {
+    "token": "160f6ef2448c46d1bc2dad21ca527167",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708006047809.pcd.bin"
+  },
+  {
+    "token": "0d5e83b19cbf463ea11ecd61849d1ae4",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532622078549516.pcd.bin"
+  },
+  {
+    "token": "7c51d47cd5c64d49a5439de550912898",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153521796742.pcd.bin"
+  },
+  {
+    "token": "0c8d8301d94349329cacdcda99464cdc",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-13-19+0800__LIDAR_TOP__1532402163298192.pcd.bin"
+  },
+  {
+    "token": "469c2f481fc148f0bcfb35de60aaece7",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729210397260.pcd.bin"
+  },
+  {
+    "token": "e4880d09e6304d35a28f081c06603016",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532621948698935.pcd.bin"
+  },
+  {
+    "token": "a87acd618b0449a99e3477b5a728e648",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-50-34+0800__LIDAR_TOP__1531886105148026.pcd.bin"
+  },
+  {
+    "token": "af4f3b2f9e6141328937846fac905c50",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-05-21-11-06-59-0400__LIDAR_TOP__1526915324547624.pcd.bin"
+  },
+  {
+    "token": "de4c3ff1b6b74047a5bad37611638df6",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729204447964.pcd.bin"
+  },
+  {
+    "token": "9697eae95cc6412e8514d8e6acc21d66",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-17-04-15+0800__LIDAR_TOP__1533114328146986.pcd.bin"
+  },
+  {
+    "token": "2f4765d645de43ec9795d0004a314e21",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729297447067.pcd.bin"
+  },
+  {
+    "token": "6cc6dd787e6147eba5b90f940514bac2",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-06-15-06-32-0400__LIDAR_TOP__1533582550796805.pcd.bin"
+  },
+  {
+    "token": "05ee2450c43b440e836f4e5e96e9ad36",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153437647842.pcd.bin"
+  },
+  {
+    "token": "b5753dd735c640cc8c4709a86ebe840f",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-18-34+0800__LIDAR_TOP__1531884161949379.pcd.bin"
+  },
+  {
+    "token": "afb1193387184219945c0f4b280ac488",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-22-45+0800__LIDAR_TOP__1532402596196996.pcd.bin"
+  },
+  {
+    "token": "f778eb12170544188d3c0d7ae17ba748",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532621691698463.pcd.bin"
+  },
+  {
+    "token": "3e43551170134488b94aed28070ddefb",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-50-34+0800__LIDAR_TOP__1531885922698735.pcd.bin"
+  },
+  {
+    "token": "d93eb0cf56ff47c2a769b4fa56c74aaa",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-05-21-11-06-59-0400__LIDAR_TOP__1526915724947476.pcd.bin"
+  },
+  {
+    "token": "aadf98061bef45cc878524aebb748763",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-41-59+0800__LIDAR_TOP__1533113036047564.pcd.bin"
+  },
+  {
+    "token": "3b450864e4af48949e06f3ca2f5573a4",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153729947623.pcd.bin"
+  },
+  {
+    "token": "07963799cc9d4a19bd0d9076e4a00da4",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-22-45+0800__LIDAR_TOP__1532402931697833.pcd.bin"
+  },
+  {
+    "token": "ef4ac7c286fc4a1b9d9b1bd59d7fc3d0",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-24-31+0800__LIDAR_TOP__1532662217947801.pcd.bin"
+  },
+  {
+    "token": "0172c386ab1c458e854300ec25ca17ac",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-13-19+0800__LIDAR_TOP__1532402042547684.pcd.bin"
+  },
+  {
+    "token": "31fc3ff6429343fd9b660d0d31316bc0",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729166548111.pcd.bin"
+  },
+  {
+    "token": "820f6b33bd4b4acfaf034b31f022fdb8",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-15-10-21+0800__LIDAR_TOP__1533107525896697.pcd.bin"
+  },
+  {
+    "token": "391618da4e914065b7b8ab4edd16fdf3",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532707965948808.pcd.bin"
+  },
+  {
+    "token": "06d7bb9ab24c4d4db0c5f8ee87af1f48",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-28-16-16-48-0400__LIDAR_TOP__1535488247698045.pcd.bin"
+  },
+  {
+    "token": "d5cd0ec07b384690aa49fc4603c6b8a2",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532621800698625.pcd.bin"
+  },
+  {
+    "token": "09b5d864bc224fd681f7c9f28d555887",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153411947848.pcd.bin"
+  },
+  {
+    "token": "0ddb154d9f0d4798acb34e7fa51cc6a5",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153683396103.pcd.bin"
+  },
+  {
+    "token": "142a47064277411c89495b0a1286a2dd",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-05-21-11-06-59-0400__LIDAR_TOP__1526915288948029.pcd.bin"
+  },
+  {
+    "token": "9d5d4492c7e4404fad0cd6e0592e63e9",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532621931899433.pcd.bin"
+  },
+  {
+    "token": "4b59281668084fcc8ad7fa10ee7d1f0b",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-50-34+0800__LIDAR_TOP__1531885907648241.pcd.bin"
+  },
+  {
+    "token": "bb76a1cac1be4e32813746b1edebfe75",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-17-13-57+0800__LIDAR_TOP__1533114923048223.pcd.bin"
+  },
+  {
+    "token": "cf46dba19084420893a7f40634e388f4",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-41-59+0800__LIDAR_TOP__1533112953549164.pcd.bin"
+  },
+  {
+    "token": "6fbbcae93d8a4660bcf441e69bbb697c",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-36-48+0800__LIDAR_TOP__1532662853949475.pcd.bin"
+  },
+  {
+    "token": "812242a56ff345bfa41764eb4f226c73",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-05-21-11-06-59-0400__LIDAR_TOP__1526915457047864.pcd.bin"
+  },
+  {
+    "token": "953dbb03a3e9425db4f5014482381257",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708646198984.pcd.bin"
+  },
+  {
+    "token": "31b56019e3a24b9eb79a2eb9a7095394",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-36-48+0800__LIDAR_TOP__1532662860448990.pcd.bin"
+  },
+  {
+    "token": "c8b9cb83a2874f158791d15f9b92e689",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-13-19+0800__LIDAR_TOP__1532402323448779.pcd.bin"
+  },
+  {
+    "token": "febf633341b64d6baa8cbee5d205c7c9",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-15-10-21+0800__LIDAR_TOP__1533107686046710.pcd.bin"
+  },
+  {
+    "token": "01d2ae88654240b9b12f58daad567d6f",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729519645853.pcd.bin"
+  },
+  {
+    "token": "11bd10562e1640fcb81a0593273d5d29",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-13-19+0800__LIDAR_TOP__1532402188796803.pcd.bin"
+  },
+  {
+    "token": "8e5195448996420993a656f86761a68f",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-36-48+0800__LIDAR_TOP__1532662889549041.pcd.bin"
+  },
+  {
+    "token": "af1f023ac2774bc4b2c6fea5c0bf4f00",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-17-04-15+0800__LIDAR_TOP__1533114332546901.pcd.bin"
+  },
+  {
+    "token": "1fb4ea635d6e4f6c963adf770b31a0be",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-07-57+0800__LIDAR_TOP__1531883546548810.pcd.bin"
+  },
+  {
+    "token": "f6227e2daa2d49ffb7a840a62792ddd2",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-06-15-06-32-0400__LIDAR_TOP__1533582609198259.pcd.bin"
+  },
+  {
+    "token": "21a04069fdfd440d866c536c9e6b7deb",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153430798270.pcd.bin"
+  },
+  {
+    "token": "851b403b5412478d8b595f783e19156a",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535728942948055.pcd.bin"
+  },
+  {
+    "token": "c670710ce88d49ad969ef2b99f2475dd",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532621918199288.pcd.bin"
+  },
+  {
+    "token": "073410a6eab94ce9835097eabc51b131",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532622001048820.pcd.bin"
+  },
+  {
+    "token": "184acadf5587491cb9232572cfdd4a29",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532621814948325.pcd.bin"
+  },
+  {
+    "token": "b2eef0f4c54e46e3acadbc8baee45b01",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-17-04-15+0800__LIDAR_TOP__1533114572197644.pcd.bin"
+  },
+  {
+    "token": "6654936842d74abda63a66154d4c4684",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532707864047604.pcd.bin"
+  },
+  {
+    "token": "ea27ad8e4fd54869b9182563b148d4ba",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532622076048472.pcd.bin"
+  },
+  {
+    "token": "302178f040f24126aae85475b36bea4d",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708329550125.pcd.bin"
+  },
+  {
+    "token": "b96f1d4ac9de46ecbbd8cbc931451e90",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535728843047445.pcd.bin"
+  },
+  {
+    "token": "496e0f5a791f4db8919a37b9997a63bb",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-22-45+0800__LIDAR_TOP__1532402744446138.pcd.bin"
+  },
+  {
+    "token": "4bfb817be0d3420e9250fcc9521c5e1c",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153685397809.pcd.bin"
+  },
+  {
+    "token": "012307f8a0da4ee68eaff5874ecfcd82",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729091947642.pcd.bin"
+  },
+  {
+    "token": "d385bb143fd84202a190119912c8b706",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729174197163.pcd.bin"
+  },
+  {
+    "token": "99a1a73c04fc4db9b3ba890681e711b0",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-17-13-57+0800__LIDAR_TOP__1533115033396946.pcd.bin"
+  },
+  {
+    "token": "4af1f19314174f8d864b48b573899ef9",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-21-11-53-44-0400__LIDAR_TOP__1534867149948666.pcd.bin"
+  },
+  {
+    "token": "5ae7b756ee974120ad034b6bd2f34285",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532622155699069.pcd.bin"
+  },
+  {
+    "token": "fea202e292c249c498518208e541282e",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532621762198109.pcd.bin"
+  },
+  {
+    "token": "fb57ae7924f74fcaada382632a6a851b",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729122948229.pcd.bin"
+  },
+  {
+    "token": "187932efa0cc46cda0c0a7e7d39f223c",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-13-19+0800__LIDAR_TOP__1532402004798742.pcd.bin"
+  },
+  {
+    "token": "30b796bc826944fc8f4a285c6baf2975",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-05-21-11-06-59-0400__LIDAR_TOP__1526915682445889.pcd.bin"
+  },
+  {
+    "token": "cc314cef845242599148e195eb9c573b",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-17-04-15+0800__LIDAR_TOP__1533114343196908.pcd.bin"
+  },
+  {
+    "token": "fca441dd95d84465aa86f67793a7cb29",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153487199132.pcd.bin"
+  },
+  {
+    "token": "45c53c79d18a41b49c81144e40fbbeb2",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-50-34+0800__LIDAR_TOP__1531886102798496.pcd.bin"
+  },
+  {
+    "token": "3632e7debb2944ab9b92ca1bf105d859",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729105448175.pcd.bin"
+  },
+  {
+    "token": "834a8fb0962c4744991e55a39488049b",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-17-04-15+0800__LIDAR_TOP__1533114573697273.pcd.bin"
+  },
+  {
+    "token": "5dc3c5af83d24955858693ca29e32954",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153474397547.pcd.bin"
+  },
+  {
+    "token": "b700d835808340a49f956c121fb23ba1",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-15-10-21+0800__LIDAR_TOP__1533107920396828.pcd.bin"
+  },
+  {
+    "token": "4ef27509322e4df5839ba79f490fd062",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-32-59+0800__LIDAR_TOP__1533112864647554.pcd.bin"
+  },
+  {
+    "token": "14ea02597dcc43c0bc57ed2698ac28f7",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-15-10-21+0800__LIDAR_TOP__1533107719896736.pcd.bin"
+  },
+  {
+    "token": "6d62c08a571148b69ce69a8fca44b72f",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-22-45+0800__LIDAR_TOP__1532402931198511.pcd.bin"
+  },
+  {
+    "token": "61c3511af4ff432ab37054c032e75e4d",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-36-48+0800__LIDAR_TOP__1532662758947017.pcd.bin"
+  },
+  {
+    "token": "b1c28bc8d8bf4ad1a9fb26fadc7ff44d",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532621699697560.pcd.bin"
+  },
+  {
+    "token": "8f17daa9bc824e648ae8ee6f2d692f25",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-22-45+0800__LIDAR_TOP__1532402732949535.pcd.bin"
+  },
+  {
+    "token": "df9f1d93edb54311aa5c2e28f8ec64ea",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153304197978.pcd.bin"
+  },
+  {
+    "token": "c1f7b37441564f2f8c647281faa26946",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-50-34+0800__LIDAR_TOP__1531885924148583.pcd.bin"
+  },
+  {
+    "token": "a6b7ad3d0fa145779857815e8833919a",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-36-48+0800__LIDAR_TOP__1532662808948470.pcd.bin"
+  },
+  {
+    "token": "a49664f5bf044b578606732bdf39e732",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153432198372.pcd.bin"
+  },
+  {
+    "token": "3eae6c7b351a422e99795117a43eeaef",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-05-21-11-06-59-0400__LIDAR_TOP__1526915393697452.pcd.bin"
+  },
+  {
+    "token": "7e5501c1873f4485a4dd729ad43d9632",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532707829047402.pcd.bin"
+  },
+  {
+    "token": "bb849418f7c641c6974dccc3d8efc29a",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153250298164.pcd.bin"
+  },
+  {
+    "token": "0953d151c7e14be08779e54c8bdf6a82",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-17-04-15+0800__LIDAR_TOP__1533114270697754.pcd.bin"
+  },
+  {
+    "token": "b9a08932292343ddb0c5e1fb282388a1",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-41-59+0800__LIDAR_TOP__1533112995947948.pcd.bin"
+  },
+  {
+    "token": "21be63c5b38f47c5907969ccd7825c74",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-50-34+0800__LIDAR_TOP__1531885982449436.pcd.bin"
+  },
+  {
+    "token": "9b80e2647b524bbc982a79c2beb28ddb",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153485797947.pcd.bin"
+  },
+  {
+    "token": "fe18a1b0fc32497d854eb44f52413f3d",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532621866197822.pcd.bin"
+  },
+  {
+    "token": "ff433a890e394ea4bdfea56ad36899bc",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708714448150.pcd.bin"
+  },
+  {
+    "token": "cfb15ea2d4594f1e8739126c7557eb36",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-13-19+0800__LIDAR_TOP__1532402003798481.pcd.bin"
+  },
+  {
+    "token": "12b86bc7813d44358fe5ba027388c1b9",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-05-21-11-06-59-0400__LIDAR_TOP__1526915291447961.pcd.bin"
+  },
+  {
+    "token": "e40d48ebdd754b27aadcc97e4c23890e",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-03-52+0800__LIDAR_TOP__1532401500647201.pcd.bin"
+  },
+  {
+    "token": "c275eed4152a49c683189c24471b5c99",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532621757200244.pcd.bin"
+  },
+  {
+    "token": "6d3165335a764a06a3ecf206bbcd92a2",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153531195985.pcd.bin"
+  },
+  {
+    "token": "ebeb9413624e4e75a0807ab0bb29e06d",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-32-59+0800__LIDAR_TOP__1533112549647605.pcd.bin"
+  },
+  {
+    "token": "f159bc15ff384dc4a7db7acbe6bee52c",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532707721148248.pcd.bin"
+  },
+  {
+    "token": "35b94ee6d1b2455f8bdb1b22814bb300",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-21-11-53-44-0400__LIDAR_TOP__1534867338548401.pcd.bin"
+  },
+  {
+    "token": "74da5ac8ce8744bca3770f60dc173061",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153414396912.pcd.bin"
+  },
+  {
+    "token": "eb16532003324bed9a6fee40adf6fcfd",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-13-19+0800__LIDAR_TOP__1532402485648060.pcd.bin"
+  },
+  {
+    "token": "6fb414b87aa84b53acf0e489fc8ee00d",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532621827448000.pcd.bin"
+  },
+  {
+    "token": "69d19e3679f345a087ab2f7549e0d106",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708059547287.pcd.bin"
+  },
+  {
+    "token": "e5afa3232c584b25a94f55cbf24e1af7",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729255147789.pcd.bin"
+  },
+  {
+    "token": "b7dd44b8f7a14e2683b405b4b8891c48",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729306446487.pcd.bin"
+  },
+  {
+    "token": "5277b534acde4ac9920d096f5d67d956",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708389454169.pcd.bin"
+  },
+  {
+    "token": "6e640f93b0ae4e00a7ce842e5e6cc894",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-05-21-11-06-59-0400__LIDAR_TOP__1526915687447961.pcd.bin"
+  },
+  {
+    "token": "37fa35d549c2453b8c5df86975bbda48",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-21-11-53-44-0400__LIDAR_TOP__1534867439898892.pcd.bin"
+  },
+  {
+    "token": "ff34447a245b48f3af8fc28b3d1164e5",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729233947834.pcd.bin"
+  },
+  {
+    "token": "f6d1d2d705ac4cbea956d5dbcaeab48c",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729219549876.pcd.bin"
+  },
+  {
+    "token": "b8df2a59179741e4be3079d74d78032f",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-32-59+0800__LIDAR_TOP__1533112635196656.pcd.bin"
+  },
+  {
+    "token": "ef7328a4a83e43e0bd231d7c6caf0ebd",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-32-59+0800__LIDAR_TOP__1533112774647198.pcd.bin"
+  },
+  {
+    "token": "7b513576aceb4a5e90de5bcba4fa1ac0",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-17-13-57+0800__LIDAR_TOP__1533115160197973.pcd.bin"
+  },
+  {
+    "token": "ce67d40fe3614d10b0069ba61fd7e714",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-50-34+0800__LIDAR_TOP__1531885912698980.pcd.bin"
+  },
+  {
+    "token": "1b328a4a95194bf4ae5dc8a52511ac3c",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-17-13-57+0800__LIDAR_TOP__1533115038897827.pcd.bin"
+  },
+  {
+    "token": "a7eee696aee7453882b5fff08a9d7276",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532622237698661.pcd.bin"
+  },
+  {
+    "token": "b5e3e36973614f2a8d35e3773bd04c17",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-05-21-11-06-59-0400__LIDAR_TOP__1526915677548854.pcd.bin"
+  },
+  {
+    "token": "e33b08881e94407ea7e7a49c5a236fba",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-17-04-15+0800__LIDAR_TOP__1533114306696015.pcd.bin"
+  },
+  {
+    "token": "c901c3d3f96a4ca4bc91274221796b27",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-32-59+0800__LIDAR_TOP__1533112538696773.pcd.bin"
+  },
+  {
+    "token": "65faf2b52cf84e978d37c99dc36c9193",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-13-19+0800__LIDAR_TOP__1532402288197489.pcd.bin"
+  },
+  {
+    "token": "adfac195424742adb22df1ebb486f26d",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-24-31+0800__LIDAR_TOP__1532662155448396.pcd.bin"
+  },
+  {
+    "token": "3fc4f57c44724c17b9eb2b2541665521",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-32-59+0800__LIDAR_TOP__1533112852697541.pcd.bin"
+  },
+  {
+    "token": "570ac04eb7984651a7ef58bf83e4becc",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708642397923.pcd.bin"
+  },
+  {
+    "token": "dd0d193b74884c818ba270a2c89a26b9",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532621807198594.pcd.bin"
+  },
+  {
+    "token": "9b0885f5d299485bb65d816a3f2c062e",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153649448193.pcd.bin"
+  },
+  {
+    "token": "537dc65ae0b348eb8c2f43ea470dfa70",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532621753699133.pcd.bin"
+  },
+  {
+    "token": "1e06a71c145d424da47f9a8892ee53f7",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532621845198027.pcd.bin"
+  },
+  {
+    "token": "06e4b15828414114adf4f6349b6df51a",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729318549677.pcd.bin"
+  },
+  {
+    "token": "d7e32be34a834a1eb640551d57d5f3ee",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729082396899.pcd.bin"
+  },
+  {
+    "token": "93b26fb5cf3f4a1f9df7b79f19400f7f",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-36-48+0800__LIDAR_TOP__1532662848947931.pcd.bin"
+  },
+  {
+    "token": "da8b828f07fe4efc9693bb99c53989aa",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532621753198704.pcd.bin"
+  },
+  {
+    "token": "9cd43199de444d9cb9d495b8feb02c80",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-17-13-57+0800__LIDAR_TOP__1533115030047099.pcd.bin"
+  },
+  {
+    "token": "071490f8aa044c5d9aec95c48aeff0bc",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-32-59+0800__LIDAR_TOP__1533112851147056.pcd.bin"
+  },
+  {
+    "token": "016769943c9b428cac6ed77c40da87d9",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729160447802.pcd.bin"
+  },
+  {
+    "token": "aa4916d9c99f4311bafdccc4758f501c",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-22-45+0800__LIDAR_TOP__1532402862297466.pcd.bin"
+  },
+  {
+    "token": "da75ed2986144812ad86bd6906e10f33",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-41-59+0800__LIDAR_TOP__1533113242397383.pcd.bin"
+  },
+  {
+    "token": "376ab692ce904d1da3729f6b10162e48",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-06-15-06-32-0400__LIDAR_TOP__1533582464147336.pcd.bin"
+  },
+  {
+    "token": "093959f2d5c248329ad931d5a8f281e3",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-36-48+0800__LIDAR_TOP__1532662891049243.pcd.bin"
+  },
+  {
+    "token": "ad2d971ca7644191b24cc15a07e0901f",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532707978398117.pcd.bin"
+  },
+  {
+    "token": "4d9b376ba19947509de87e6a1212c9a9",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-24-31+0800__LIDAR_TOP__1532662214448133.pcd.bin"
+  },
+  {
+    "token": "cea12631d30749adb636026a1cb1073b",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-28-16-16-48-0400__LIDAR_TOP__1535487895646950.pcd.bin"
+  },
+  {
+    "token": "4178020000be46c583df0c445ebe1845",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-17-13-57+0800__LIDAR_TOP__1533115026947267.pcd.bin"
+  },
+  {
+    "token": "62a7b6c81a2b4a358d751d2e4aa518ec",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153305647294.pcd.bin"
+  },
+  {
+    "token": "a6955b233da94a449f6ef87ee05a1808",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-36-48+0800__LIDAR_TOP__1532663012399133.pcd.bin"
+  },
+  {
+    "token": "f4cd97e9bb394239adf08cf040bda0dd",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-05-21-11-06-59-0400__LIDAR_TOP__1526915672797293.pcd.bin"
+  },
+  {
+    "token": "5afaa21f8521427a9b1813a42f4bb2e8",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-41-59+0800__LIDAR_TOP__1533113050197768.pcd.bin"
+  },
+  {
+    "token": "86e82320e6b84e8589c2ae1df033fb37",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-15-10-21+0800__LIDAR_TOP__1533107659046770.pcd.bin"
+  },
+  {
+    "token": "2aa3ef631e044f0ab9b50fd17103a8a0",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532621998049550.pcd.bin"
+  },
+  {
+    "token": "3747bae44e174abb85e39ec07d389628",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-06-15-06-32-0400__LIDAR_TOP__1533582455699193.pcd.bin"
+  },
+  {
+    "token": "c4960d2c6dc64e71812cf21818f14f64",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708325447130.pcd.bin"
+  },
+  {
+    "token": "27fac0b7b3884a4cb2dc396e98a1b47e",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532621846199148.pcd.bin"
+  },
+  {
+    "token": "3863a84c04d64baf97f0219b6b776662",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-50-34+0800__LIDAR_TOP__1531885863549126.pcd.bin"
+  },
+  {
+    "token": "7c78dd53f40a4d02966a33eec97cbffd",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708319548696.pcd.bin"
+  },
+  {
+    "token": "ff019abdbe694de6bb07e016d4f925d0",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535728928948167.pcd.bin"
+  },
+  {
+    "token": "0931c8fcd9ee4231b7843634a2c940c5",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-50-34+0800__LIDAR_TOP__1531886227448430.pcd.bin"
+  },
+  {
+    "token": "7501c5dea869488a9bdd8818b820c5e4",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-41-59+0800__LIDAR_TOP__1533112937446426.pcd.bin"
+  },
+  {
+    "token": "539fb15ae32a45ef989be010318a88c7",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729564446709.pcd.bin"
+  },
+  {
+    "token": "4a678d3821e14ea299edc2a40982ae80",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729422446498.pcd.bin"
+  },
+  {
+    "token": "46f9536263464905badbda2dbed5ef30",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535728932946632.pcd.bin"
+  },
+  {
+    "token": "fecfa24f56964c85a925be43a27586e7",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532621933449374.pcd.bin"
+  },
+  {
+    "token": "f127adc1b2174a85af8cbdff9d96cbdc",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-21-11-53-44-0400__LIDAR_TOP__1534867104699299.pcd.bin"
+  },
+  {
+    "token": "58fd3ce8e99f46548a839be212399321",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708589197623.pcd.bin"
+  },
+  {
+    "token": "be752c8eee3c47d8a86a3876c109c9fd",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-15-10-21+0800__LIDAR_TOP__1533107514447098.pcd.bin"
+  },
+  {
+    "token": "b4a03615be09445397c0787e4d482d3c",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153722447798.pcd.bin"
+  },
+  {
+    "token": "739b3f17a895405da1b9f692eae93a6e",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-21-11-53-44-0400__LIDAR_TOP__1534867516399303.pcd.bin"
+  },
+  {
+    "token": "c0b84ef06e1c4ce2ba62bbadb2d4b82b",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708635948304.pcd.bin"
+  },
+  {
+    "token": "40cc28a1776e4845b888ae61ebf0dac0",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-05-21-11-06-59-0400__LIDAR_TOP__1526915269947803.pcd.bin"
+  },
+  {
+    "token": "5a47c40fc1e549e0b1c071eeca6765b2",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-41-59+0800__LIDAR_TOP__1533112967947692.pcd.bin"
+  },
+  {
+    "token": "8456f3fc52674a8b85e8909338201eb6",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-05-21-11-06-59-0400__LIDAR_TOP__1526915324047715.pcd.bin"
+  },
+  {
+    "token": "a0356ed961cd44e7b3cb15ffc0356729",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-50-34+0800__LIDAR_TOP__1531886235449207.pcd.bin"
+  },
+  {
+    "token": "57a3cfa1a8fc4bb39736b936290e3c9b",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-13-19+0800__LIDAR_TOP__1532402319296574.pcd.bin"
+  },
+  {
+    "token": "82e061332ffb4ee0a55db4ca55aa22e9",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-32-59+0800__LIDAR_TOP__1533112794047242.pcd.bin"
+  },
+  {
+    "token": "e45464c014ac4bd78a0c07aed73889f5",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-06-15-06-32-0400__LIDAR_TOP__1533583194697367.pcd.bin"
+  },
+  {
+    "token": "e014a0b6982547e09a360b4dcbd9c89f",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-17-13-57+0800__LIDAR_TOP__1533115180047601.pcd.bin"
+  },
+  {
+    "token": "f7da96241d3641a59743d0583ff1c2de",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-06-15-06-32-0400__LIDAR_TOP__1533582543697896.pcd.bin"
+  },
+  {
+    "token": "f5b53039ea58480baa1abd5c1462c665",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-13-19+0800__LIDAR_TOP__1532402340549088.pcd.bin"
+  },
+  {
+    "token": "fec57af143e04a338ad3dae25b0ea269",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-17-04-15+0800__LIDAR_TOP__1533114324796597.pcd.bin"
+  },
+  {
+    "token": "06fbc71813c14359990a89ffd4d7c1f0",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708549398273.pcd.bin"
+  },
+  {
+    "token": "983799c5c0b24235b6f248a36368ae60",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-06-15-06-32-0400__LIDAR_TOP__1533582552897482.pcd.bin"
+  },
+  {
+    "token": "b5609d2e18db4fd9a429e66241e41bb8",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-21-11-53-44-0400__LIDAR_TOP__1534867349898608.pcd.bin"
+  },
+  {
+    "token": "bf5e6ae6bac14f8ba6d1dd9593042bff",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-36-48+0800__LIDAR_TOP__1532662964398845.pcd.bin"
+  },
+  {
+    "token": "0d69e8e6e8bf4aaeab4e5a59de7e7b82",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708551449229.pcd.bin"
+  },
+  {
+    "token": "510a33a236b94e95a6b0608b4b6e40bf",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-36-48+0800__LIDAR_TOP__1532662862949436.pcd.bin"
+  },
+  {
+    "token": "31115990c97c4e96b1a60e6e4f48c7a7",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-22-45+0800__LIDAR_TOP__1532402873547996.pcd.bin"
+  },
+  {
+    "token": "f853fc73e2e64eb69d94050cb6865c1a",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-32-59+0800__LIDAR_TOP__1533112403196650.pcd.bin"
+  },
+  {
+    "token": "1cb7f90fdd2445df8914c9b25df76567",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153305197733.pcd.bin"
+  },
+  {
+    "token": "36084b9570a84397b4005bca7601172a",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-36-48+0800__LIDAR_TOP__1532663156299285.pcd.bin"
+  },
+  {
+    "token": "98b28f62554f453f9eb7b772032c4088",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-22-45+0800__LIDAR_TOP__1532402872197104.pcd.bin"
+  },
+  {
+    "token": "f028454df186424f8f7bb593245600b8",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-32-59+0800__LIDAR_TOP__1533112752047160.pcd.bin"
+  },
+  {
+    "token": "44faac05f57f40c8a2e7b35ae8d18356",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-50-34+0800__LIDAR_TOP__1531886088397230.pcd.bin"
+  },
+  {
+    "token": "1d7096ebb8c14711b28d458552bb5f92",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-17-13-57+0800__LIDAR_TOP__1533115293947440.pcd.bin"
+  },
+  {
+    "token": "96b53e36bc3d4406acaa1ab896083450",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708581048638.pcd.bin"
+  },
+  {
+    "token": "202d2c7e5e764ab6a0ffbc728d06ce56",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-05-21-11-06-59-0400__LIDAR_TOP__1526915733946363.pcd.bin"
+  },
+  {
+    "token": "3453495001d34383a30558316e0f93d4",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-18-34+0800__LIDAR_TOP__1531884172399197.pcd.bin"
+  },
+  {
+    "token": "766e77122bcc46c79b11586c776b3847",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535728854447278.pcd.bin"
+  },
+  {
+    "token": "2d6ad6a0bdd0402fad1c8c377713c982",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-13-19+0800__LIDAR_TOP__1532402015297801.pcd.bin"
+  },
+  {
+    "token": "a391aafb0430429ba064888fc57c95c6",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729204948397.pcd.bin"
+  },
+  {
+    "token": "acb85c6aa6a840eeae081c6d0cdc0fff",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-05-21-11-06-59-0400__LIDAR_TOP__1526915267447861.pcd.bin"
+  },
+  {
+    "token": "d5f217a71b4f4b2b982180732ca98106",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-50-34+0800__LIDAR_TOP__1531886257046183.pcd.bin"
+  },
+  {
+    "token": "0ab93e09df364884b8efd55346a6dd53",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535728967446947.pcd.bin"
+  },
+  {
+    "token": "4ead9f868a38425b87cc7e8d45d65ad3",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153261448071.pcd.bin"
+  },
+  {
+    "token": "2024ccf700ce4d1da574412bd55c89c2",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-50-34+0800__LIDAR_TOP__1531886327949528.pcd.bin"
+  },
+  {
+    "token": "4609e91c5a904739830abfa0a701b711",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-41-59+0800__LIDAR_TOP__1533113026397285.pcd.bin"
+  },
+  {
+    "token": "f8509d93a250451fa4b7cd45f0957256",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708677947754.pcd.bin"
+  },
+  {
+    "token": "41baf7ca24e844e098dd3d7dfd3b4a89",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729543449155.pcd.bin"
+  },
+  {
+    "token": "482d19e875c04d49a48eb18fa62bca71",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-50-34+0800__LIDAR_TOP__1531885920647784.pcd.bin"
+  },
+  {
+    "token": "2424eabd83b7469f9e42e37a834fb563",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-24-31+0800__LIDAR_TOP__1532662155947713.pcd.bin"
+  },
+  {
+    "token": "8c5f2fea55b1420999875307fc1fc5d9",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153310147827.pcd.bin"
+  },
+  {
+    "token": "d1645f3a6b284b89a03d47543f54bb8d",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-18-34+0800__LIDAR_TOP__1531884533448543.pcd.bin"
+  },
+  {
+    "token": "1aa2fe92f1684625ac1c1e3ff8feab5e",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-36-48+0800__LIDAR_TOP__1532662806947832.pcd.bin"
+  },
+  {
+    "token": "b5c53b9ad9af424fbe70b85dd5980104",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153549947973.pcd.bin"
+  },
+  {
+    "token": "27609e96ded148269d627c28e5f4cc03",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-05-21-11-06-59-0400__LIDAR_TOP__1526915723947730.pcd.bin"
+  },
+  {
+    "token": "5a1a323888154d58b369ea2c5de0a7b7",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-18-34+0800__LIDAR_TOP__1531884540548536.pcd.bin"
+  },
+  {
+    "token": "c691de1c1e7549a7bd8fabacdcb304d3",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-24-31+0800__LIDAR_TOP__1532662215947755.pcd.bin"
+  },
+  {
+    "token": "b52a90d6d6864c57b23eca43c6a36c8c",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-13-19+0800__LIDAR_TOP__1532402491297629.pcd.bin"
+  },
+  {
+    "token": "0633b7ad40784bf5a9355343c2740185",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532622248197166.pcd.bin"
+  },
+  {
+    "token": "21ecea6f9bea42939c9a5f46dc15e39f",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-36-48+0800__LIDAR_TOP__1532662728948374.pcd.bin"
+  },
+  {
+    "token": "51d2dd96e11d4a91a38524b276cee913",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532622142697874.pcd.bin"
+  },
+  {
+    "token": "32b9006fc8084c88a229c22305cb0376",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153524197701.pcd.bin"
+  },
+  {
+    "token": "af15a7559fb6497c842944f86656eca4",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-50-34+0800__LIDAR_TOP__1531885914199750.pcd.bin"
+  },
+  {
+    "token": "23fb6ff26407459a819af126e20d7c3f",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-06-15-06-32-0400__LIDAR_TOP__1533583211697259.pcd.bin"
+  },
+  {
+    "token": "ab40c55de4c84016a066562e327eb917",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729083397206.pcd.bin"
+  },
+  {
+    "token": "6a27b9122ae745bd8215e2c964bded7c",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-28-16-16-48-0400__LIDAR_TOP__1535488256547612.pcd.bin"
+  },
+  {
+    "token": "0e7e6dd7d57f466da64f753ab5be8a9b",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535728815949074.pcd.bin"
+  },
+  {
+    "token": "d609038999ee4a23b14d10d5343f2460",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-06-15-06-32-0400__LIDAR_TOP__1533582890697126.pcd.bin"
+  },
+  {
+    "token": "6807e72b21174e50b9d8170033dfcdce",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-32-59+0800__LIDAR_TOP__1533112542798089.pcd.bin"
+  },
+  {
+    "token": "c9d68c9ab91c4b0189ac8e72eca22ff6",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-03-52+0800__LIDAR_TOP__1532401609698140.pcd.bin"
+  },
+  {
+    "token": "cbf0e5103868440994fa2f23d55d7c3d",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-15-10-21+0800__LIDAR_TOP__1533107722397186.pcd.bin"
+  },
+  {
+    "token": "a74675bc11c64a5b8e33098720ad2dcd",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-05-21-11-06-59-0400__LIDAR_TOP__1526915321547801.pcd.bin"
+  },
+  {
+    "token": "835242689095463d8823c20c4861bfa3",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-24-31+0800__LIDAR_TOP__1532662085398823.pcd.bin"
+  },
+  {
+    "token": "122c12bab11042019a9519206915e569",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-41-59+0800__LIDAR_TOP__1533113041547268.pcd.bin"
+  },
+  {
+    "token": "67b303c6cb1a46129917aec157088367",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-32-59+0800__LIDAR_TOP__1533112735897402.pcd.bin"
+  },
+  {
+    "token": "57e6f6777e5b4d6fabbb3c5caa3cc435",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729333396108.pcd.bin"
+  },
+  {
+    "token": "892791b58eed42cdb7e3aa0d6bbdca0a",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532707857050877.pcd.bin"
+  },
+  {
+    "token": "505f2659cd624818bf6f7dfaf468e631",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-32-59+0800__LIDAR_TOP__1533112703796928.pcd.bin"
+  },
+  {
+    "token": "5c567657e47a4474a1b574296baa4222",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-21-11-53-44-0400__LIDAR_TOP__1534867386947985.pcd.bin"
+  },
+  {
+    "token": "52b16c3d37494892a27d66a1bce8f04b",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-07-57+0800__LIDAR_TOP__1531883533950168.pcd.bin"
+  },
+  {
+    "token": "c403fd73371a4eaebbec5e89fec3ddcc",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-28-16-16-48-0400__LIDAR_TOP__1535487886196286.pcd.bin"
+  },
+  {
+    "token": "2f5d377b5891485ca800010cb4e9066d",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-06-15-06-32-0400__LIDAR_TOP__1533583363696674.pcd.bin"
+  },
+  {
+    "token": "8aa12980dc8b4cc096f5fbc3b584815e",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-05-21-11-06-59-0400__LIDAR_TOP__1526915361947576.pcd.bin"
+  },
+  {
+    "token": "be31c51b698e42f5aeee6132e283cffe",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-06-15-06-32-0400__LIDAR_TOP__1533583047696416.pcd.bin"
+  },
+  {
+    "token": "6097cb38a25a4c67b7f66bb3f100ab77",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-21-11-53-44-0400__LIDAR_TOP__1534867373898139.pcd.bin"
+  },
+  {
+    "token": "df0c93f519ae4d1dae89c328dfbf6390",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-50-34+0800__LIDAR_TOP__1531886092199925.pcd.bin"
+  },
+  {
+    "token": "1c91c106958f49ea832e17768a91e09d",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-15-10-21+0800__LIDAR_TOP__1533107916446462.pcd.bin"
+  },
+  {
+    "token": "db6e224309aa4c36bd174285ededc10c",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-36-48+0800__LIDAR_TOP__1532663090448949.pcd.bin"
+  },
+  {
+    "token": "fce2559203ba4daab9e294b5e4eac9ea",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729088898056.pcd.bin"
+  },
+  {
+    "token": "4ac6c116a2b7449781fa300fb4dccf1c",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729518197095.pcd.bin"
+  },
+  {
+    "token": "658a6690e61343fa98b5f9663cfb8435",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532621703149155.pcd.bin"
+  },
+  {
+    "token": "d3f0950cc56543ef916925727dbe8182",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-13-19+0800__LIDAR_TOP__1532402142946999.pcd.bin"
+  },
+  {
+    "token": "f4d20a9c86b84f1f891875e115eab8e0",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-36-48+0800__LIDAR_TOP__1532662951448523.pcd.bin"
+  },
+  {
+    "token": "7e74200eba6745bda341dcfa3155dc95",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-21-11-53-44-0400__LIDAR_TOP__1534867113149054.pcd.bin"
+  },
+  {
+    "token": "18e358a6ccd446e5a5b3eddd8346cf34",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535728817897154.pcd.bin"
+  },
+  {
+    "token": "1b392ad089f54229a0c4e758080c5b17",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708443447783.pcd.bin"
+  },
+  {
+    "token": "f7bfd30598794699882fd3a31a392a70",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532621940198834.pcd.bin"
+  },
+  {
+    "token": "3c9300fa33e74a339430d938fd3b63d1",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-36-48+0800__LIDAR_TOP__1532662673048012.pcd.bin"
+  },
+  {
+    "token": "60cdce11bec04f6e9a016da725f1f76a",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153564797155.pcd.bin"
+  },
+  {
+    "token": "66e20d5f59f14df08085f57be4722b76",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153458896386.pcd.bin"
+  },
+  {
+    "token": "509ab804cd3c41609dbcb4e0bdf9f8e0",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-32-59+0800__LIDAR_TOP__1533112764647452.pcd.bin"
+  },
+  {
+    "token": "a6232864d3794a6895ed79ae92cadb90",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-50-34+0800__LIDAR_TOP__1531886083549944.pcd.bin"
+  },
+  {
+    "token": "5606cf3c8d684ee8a8ca243815dae3b9",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532621947198408.pcd.bin"
+  },
+  {
+    "token": "f8e0b448a06348259c01edd1e21c09b4",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-24-31+0800__LIDAR_TOP__1532662151397934.pcd.bin"
+  },
+  {
+    "token": "a0999ed782d24da7b525484cc172bffe",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708394046276.pcd.bin"
+  },
+  {
+    "token": "bb9ca5d95e5f4a6593319d55f659020a",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-15-10-21+0800__LIDAR_TOP__1533107923897033.pcd.bin"
+  },
+  {
+    "token": "68787ee3f9b44a469303829246f5f671",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532621702199164.pcd.bin"
+  },
+  {
+    "token": "5488345f91fd47c1b986722161e30721",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-32-59+0800__LIDAR_TOP__1533112860647454.pcd.bin"
+  },
+  {
+    "token": "065ffae9d0a94471a4afc2d43ad58dac",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-50-34+0800__LIDAR_TOP__1531886209448471.pcd.bin"
+  },
+  {
+    "token": "f68b6582822e4ec2b3058f11f2236e5d",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-36-48+0800__LIDAR_TOP__1532662962899218.pcd.bin"
+  },
+  {
+    "token": "4a6cc691042340d98ec92458871322d2",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-28-16-16-48-0400__LIDAR_TOP__1535488260947523.pcd.bin"
+  },
+  {
+    "token": "b316d21bbad94049878d0bc3996ebb54",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729222048124.pcd.bin"
+  },
+  {
+    "token": "890f245a27dd45f9801d9d2e0665ce66",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708463647952.pcd.bin"
+  },
+  {
+    "token": "1273e4b1e525437aa23c6336f4ef41ac",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708055149086.pcd.bin"
+  },
+  {
+    "token": "7c3e0307d3494c218c753c45937fcc3d",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-13-19+0800__LIDAR_TOP__1532402338546838.pcd.bin"
+  },
+  {
+    "token": "0b76bb19276c4586b326ba2dd877db4e",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-28-16-16-48-0400__LIDAR_TOP__1535487890797491.pcd.bin"
+  },
+  {
+    "token": "e3517311e6ea48f5bb16b95f2dbb9985",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729220549609.pcd.bin"
+  },
+  {
+    "token": "16928eed66504c4b8d9e6cec7a200e76",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535728822897584.pcd.bin"
+  },
+  {
+    "token": "967980b995534aa4bdd3f75b95106352",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-36-48+0800__LIDAR_TOP__1532663024948543.pcd.bin"
+  },
+  {
+    "token": "a542598b82e64f46b46d749d95ca3933",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-07-57+0800__LIDAR_TOP__1531883535448683.pcd.bin"
+  },
+  {
+    "token": "2f0cfa2145594038893e1bdb38ef981e",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-22-45+0800__LIDAR_TOP__1532402830697982.pcd.bin"
+  },
+  {
+    "token": "079b072da192490ba37a0868d23a6614",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-18-34+0800__LIDAR_TOP__1531884285898708.pcd.bin"
+  },
+  {
+    "token": "563b33478d40485dadcebca5ea822381",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532621702699602.pcd.bin"
+  },
+  {
+    "token": "b7091d80cc4e45ecb59f4dd81934d962",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-06-15-06-32-0400__LIDAR_TOP__1533583372446696.pcd.bin"
+  },
+  {
+    "token": "6e33a16c80ab4c4ba80e8fd8bd1ec875",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532622005548222.pcd.bin"
+  },
+  {
+    "token": "4c8d4e8ab6e44709bfe3c514039a3f5c",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153439647305.pcd.bin"
+  },
+  {
+    "token": "26beb61af1d84ee8bcaa774aaca793a0",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729130798078.pcd.bin"
+  },
+  {
+    "token": "832e9aae1c2b46f7a64b33927736197c",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-18-34+0800__LIDAR_TOP__1531884279949423.pcd.bin"
+  },
+  {
+    "token": "cb2098001f284825b37f4d981b70b194",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-18-34+0800__LIDAR_TOP__1531884393548493.pcd.bin"
+  },
+  {
+    "token": "652004054bd545cb9cc8fced1a0dbf87",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-21-11-53-44-0400__LIDAR_TOP__1534867151448197.pcd.bin"
+  },
+  {
+    "token": "5aaa0a0a1da543dabf98ddf53f85b1c6",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532621794148714.pcd.bin"
+  },
+  {
+    "token": "520998f9775e484c9f48b175874f592a",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708225448131.pcd.bin"
+  },
+  {
+    "token": "8ecec2966b7f45d6b0e9a497e1ad04ad",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-13-19+0800__LIDAR_TOP__1532402480648709.pcd.bin"
+  },
+  {
+    "token": "2fab6d8ff60d415092b52cf5aa8f0a77",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-36-48+0800__LIDAR_TOP__1532662893548618.pcd.bin"
+  },
+  {
+    "token": "8758faaf339f4adb812284c0da66e2e8",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532622153197470.pcd.bin"
+  },
+  {
+    "token": "afb552dd87df4a41866751fe3da8b6b1",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729081896479.pcd.bin"
+  },
+  {
+    "token": "194615ca5ba34839b9aece9885123579",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-13-19+0800__LIDAR_TOP__1532402013697582.pcd.bin"
+  },
+  {
+    "token": "b2113d189f7247d5b05f42baac17a714",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-05-21-11-06-59-0400__LIDAR_TOP__1526915417047823.pcd.bin"
+  },
+  {
+    "token": "56c67d34af1a47f1a6de7d820b2ea0b5",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-21-11-53-44-0400__LIDAR_TOP__1534867451698586.pcd.bin"
+  },
+  {
+    "token": "d814951a06174f9da4ae9a2a459c14ba",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-17-04-15+0800__LIDAR_TOP__1533114318195967.pcd.bin"
+  },
+  {
+    "token": "173fae921b11432d85cddd69fb570ba6",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708430048445.pcd.bin"
+  },
+  {
+    "token": "adda9219e5dd4b24ae820cbcfcf504cc",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153291547371.pcd.bin"
+  },
+  {
+    "token": "ec456af5fe71490b8caa23785fe1d7bb",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-13-19+0800__LIDAR_TOP__1532402186696665.pcd.bin"
+  },
+  {
+    "token": "2b5ff1b1cf4f49aa83a4bc98f02e1828",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532621767697862.pcd.bin"
+  },
+  {
+    "token": "6a8fcd27a98641b2a811e3df1e277351",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-32-59+0800__LIDAR_TOP__1533112532697707.pcd.bin"
+  },
+  {
+    "token": "1b05ec3f1e6d411e84f6270b7b54031c",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535728840548088.pcd.bin"
+  },
+  {
+    "token": "387d0f069fad4176aeabf66856880ae7",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-22-45+0800__LIDAR_TOP__1532402740147971.pcd.bin"
+  },
+  {
+    "token": "89982b75098e4625b5913b21f57841c3",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-05-21-11-06-59-0400__LIDAR_TOP__1526915425898490.pcd.bin"
+  },
+  {
+    "token": "cdceec5f811243b89a48d4b42d11aeb4",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-41-59+0800__LIDAR_TOP__1533113247897089.pcd.bin"
+  },
+  {
+    "token": "21de85a2e9ee47d0bffcbb0b4892ba41",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-32-59+0800__LIDAR_TOP__1533112705297676.pcd.bin"
+  },
+  {
+    "token": "d633556abb7b485e8b1e07b90b4bcf41",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532621872648628.pcd.bin"
+  },
+  {
+    "token": "041d47ddaaff4fbc929a72c318e6ae76",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153343797132.pcd.bin"
+  },
+  {
+    "token": "37bce8d3b9ed4edba8809d9fb99231ff",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-05-21-11-06-59-0400__LIDAR_TOP__1526915659047419.pcd.bin"
+  },
+  {
+    "token": "c6d67d001d2f4763a5ad2b9feb80b13c",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-50-34+0800__LIDAR_TOP__1531886009948722.pcd.bin"
+  },
+  {
+    "token": "799ef73fb42247ea8951dbc773c441ce",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729298896963.pcd.bin"
+  },
+  {
+    "token": "2a6fbd17c1cd4d77b2ee40b3df01412c",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729257648832.pcd.bin"
+  },
+  {
+    "token": "0b6506536ee14259a9e7c9a2860eae1a",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-36-48+0800__LIDAR_TOP__1532663010949844.pcd.bin"
+  },
+  {
+    "token": "765623b03cb342d99a29c95070de62b3",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-36-48+0800__LIDAR_TOP__1532663023449487.pcd.bin"
+  },
+  {
+    "token": "155a5109b4594be0aaf98105928459af",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-07-57+0800__LIDAR_TOP__1531883541548949.pcd.bin"
+  },
+  {
+    "token": "3fb7c369139d4c4db8120b79df9b4945",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-13-19+0800__LIDAR_TOP__1532402146448348.pcd.bin"
+  },
+  {
+    "token": "2dfc252339614b80b0570aa5a63d3104",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-03-52+0800__LIDAR_TOP__1532401495197802.pcd.bin"
+  },
+  {
+    "token": "8bcdc7083af745d595cb019661f802f1",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-15-10-21+0800__LIDAR_TOP__1533107765446258.pcd.bin"
+  },
+  {
+    "token": "2a89fa307d594f559233f3be62644e2b",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-15-10-21+0800__LIDAR_TOP__1533107516446610.pcd.bin"
+  },
+  {
+    "token": "16394b41f1de43d5bfd16e8828d6a492",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-15-10-21+0800__LIDAR_TOP__1533107923397733.pcd.bin"
+  },
+  {
+    "token": "d62d99bfe50c476e9daa6e94239f6897",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-28-16-16-48-0400__LIDAR_TOP__1535487902546802.pcd.bin"
+  },
+  {
+    "token": "5b4b12df740a40178b262f24952f0c06",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-50-34+0800__LIDAR_TOP__1531886326449342.pcd.bin"
+  },
+  {
+    "token": "3516bc72f1da484d8f3560ef010258cf",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532621835197733.pcd.bin"
+  },
+  {
+    "token": "99220ce545964f24be7e9ee2432d2ea9",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-07-57+0800__LIDAR_TOP__1531883728449504.pcd.bin"
+  },
+  {
+    "token": "0bb1f66fc57f4242865431cccb517a71",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-21-11-53-44-0400__LIDAR_TOP__1534867160447645.pcd.bin"
+  },
+  {
+    "token": "f1f26973121d48d6aab998b74b7e08ad",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-15-10-21+0800__LIDAR_TOP__1533107906947762.pcd.bin"
+  },
+  {
+    "token": "301bd61afbce45c7bd8aee21e9a1cd54",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153288447468.pcd.bin"
+  },
+  {
+    "token": "8949700354fa4e1c8fda3b6b24d032e0",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708009549156.pcd.bin"
+  },
+  {
+    "token": "62c2fda3d7d44f29aba71d33dda26ba5",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-22-45+0800__LIDAR_TOP__1532402759447391.pcd.bin"
+  },
+  {
+    "token": "89b63a538fe34885842e901c60406cec",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-21-11-53-44-0400__LIDAR_TOP__1534867310448062.pcd.bin"
+  },
+  {
+    "token": "31a976360d604423aad9ddc3522bb55c",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-50-34+0800__LIDAR_TOP__1531886006948326.pcd.bin"
+  },
+  {
+    "token": "95697cc5b28d4b82ac2f01b28294653d",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-22-45+0800__LIDAR_TOP__1532402874047860.pcd.bin"
+  },
+  {
+    "token": "79bac56b9e70460191a7f22f2ad2f3df",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532622236697235.pcd.bin"
+  },
+  {
+    "token": "c223171d8b0944e6a5fc69c907fc4c6e",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-06-15-06-32-0400__LIDAR_TOP__1533583049648328.pcd.bin"
+  },
+  {
+    "token": "a55d9b1436f74030820d4eb4a51f7d7d",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-06-15-06-32-0400__LIDAR_TOP__1533582551396748.pcd.bin"
+  },
+  {
+    "token": "521e40edc1a4490caf3e15260fd20039",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-06-15-06-32-0400__LIDAR_TOP__1533583263647307.pcd.bin"
+  },
+  {
+    "token": "b0f191469bd946ca9827786b4e1ba970",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-36-48+0800__LIDAR_TOP__1532663020948430.pcd.bin"
+  },
+  {
+    "token": "02fe2f92b14142179e2d0892ff18ed55",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535728948446674.pcd.bin"
+  },
+  {
+    "token": "380c3459ee114b279ec0b0ef2af481d8",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729539052412.pcd.bin"
+  },
+  {
+    "token": "6b405451629b471e840e904eb9e4ce83",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-50-34+0800__LIDAR_TOP__1531886142048175.pcd.bin"
+  },
+  {
+    "token": "9f1e1a45ec97413f853f157d433a7822",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-41-59+0800__LIDAR_TOP__1533113018397023.pcd.bin"
+  },
+  {
+    "token": "f7ccc61684b743479810d8312153d55f",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708719449106.pcd.bin"
+  },
+  {
+    "token": "593e6eb4a71d47c6b17b21b6832e0485",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708637947955.pcd.bin"
+  },
+  {
+    "token": "ba6ff5f6845343e9a43d0098e857b110",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532621840197614.pcd.bin"
+  },
+  {
+    "token": "8277d627f8b64f3986e39110cd71e9f9",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-32-59+0800__LIDAR_TOP__1533112779546406.pcd.bin"
+  },
+  {
+    "token": "64df287c4a834b3dba28ae8867907c02",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-21-11-53-44-0400__LIDAR_TOP__1534867318947616.pcd.bin"
+  },
+  {
+    "token": "cfa388a9cf9249148a97dd5a15fda2a9",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532621873648389.pcd.bin"
+  },
+  {
+    "token": "ffff00b7be2349a58467daabdc890bf7",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-06-15-06-32-0400__LIDAR_TOP__1533582771796803.pcd.bin"
+  },
+  {
+    "token": "0004a8b492324b1db45be9d67e5cd8ab",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-50-34+0800__LIDAR_TOP__1531886131548008.pcd.bin"
+  },
+  {
+    "token": "197b48e3e1e04643b46f2f7ec9c5fc62",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729229447876.pcd.bin"
+  },
+  {
+    "token": "ded3ba116e224e3bba559e4e74afee6d",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535728929448054.pcd.bin"
+  },
+  {
+    "token": "37c5a4b3b84d4bf3b5d25ab979266dea",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153759047719.pcd.bin"
+  },
+  {
+    "token": "9ed1ff49dc76408ca3615ac4e769fc05",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153673947656.pcd.bin"
+  },
+  {
+    "token": "79d645fb68fc4a86a56fb064ed02796a",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708719950444.pcd.bin"
+  },
+  {
+    "token": "e6e6a7045f204da2b4fac4e50b615209",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532621842197668.pcd.bin"
+  },
+  {
+    "token": "6cb670f6d99c4898a93310462cd4a42b",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-03-52+0800__LIDAR_TOP__1532401560049503.pcd.bin"
+  },
+  {
+    "token": "6a50cc4684cf467b8bb34a895cfb55a8",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-05-21-11-06-59-0400__LIDAR_TOP__1526915367947193.pcd.bin"
+  },
+  {
+    "token": "d14a36f92b4a4b09b625d4ee62369ed5",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153292297164.pcd.bin"
+  },
+  {
+    "token": "62136764bd1d431b9919a02c3b5cf7ed",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-06-15-06-32-0400__LIDAR_TOP__1533582787147008.pcd.bin"
+  },
+  {
+    "token": "1f6039f4b69d4735baa59a382461cbcd",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-36-48+0800__LIDAR_TOP__1532662810949081.pcd.bin"
+  },
+  {
+    "token": "2c9ed2a6bbc64d8eaa29c392757c3ba4",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-17-04-15+0800__LIDAR_TOP__1533114273197672.pcd.bin"
+  },
+  {
+    "token": "ab24ec44bd4a4a9d8143c4f0368a1e25",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-24-31+0800__LIDAR_TOP__1532662161049316.pcd.bin"
+  },
+  {
+    "token": "980870917f2045b5ae80fc998a73e27e",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-18-34+0800__LIDAR_TOP__1531884302797725.pcd.bin"
+  },
+  {
+    "token": "22d64bb53ed74b7ca805134d034f5252",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-41-59+0800__LIDAR_TOP__1533113238897686.pcd.bin"
+  },
+  {
+    "token": "9f82fd0517d244fbae9603a5190c701b",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-05-21-11-06-59-0400__LIDAR_TOP__1526915625397617.pcd.bin"
+  },
+  {
+    "token": "178c7ceaf4c143c99987f3ac986925ef",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153708898069.pcd.bin"
+  },
+  {
+    "token": "64d9b3ce8cca45ca81ffba7b9110b151",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-24-31+0800__LIDAR_TOP__1532661914448969.pcd.bin"
+  },
+  {
+    "token": "9399401526e84c72a723d45f7cac80e9",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-36-48+0800__LIDAR_TOP__1532663144047898.pcd.bin"
+  },
+  {
+    "token": "f27a6041ba5c41009b5bc4dbf7bfc370",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153749197296.pcd.bin"
+  },
+  {
+    "token": "2b89ed9645e140ae833f902644b83eb2",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708242398000.pcd.bin"
+  },
+  {
+    "token": "6e0eeee168dd4cdabab246c3f774f8f8",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-36-48+0800__LIDAR_TOP__1532662767548883.pcd.bin"
+  },
+  {
+    "token": "bd10d8d1303e4e15b1aa59d51b32c547",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-22-45+0800__LIDAR_TOP__1532402944198088.pcd.bin"
+  },
+  {
+    "token": "6991aef10e0b49f79a08ad4d56857fb6",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153245797627.pcd.bin"
+  },
+  {
+    "token": "3a322481b4064e27a634d5fcf721e347",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-32-59+0800__LIDAR_TOP__1533112796197156.pcd.bin"
+  },
+  {
+    "token": "a6646f04cb1043e3a559cea4040f4625",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-05-21-11-06-59-0400__LIDAR_TOP__1526915383047441.pcd.bin"
+  },
+  {
+    "token": "e77af78a3ee54f4d94e266232be0dbcb",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-18-34+0800__LIDAR_TOP__1531884116948921.pcd.bin"
+  },
+  {
+    "token": "f01a7d07bfee4e55978b97e7fcd54e34",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-06-15-06-32-0400__LIDAR_TOP__1533582472148111.pcd.bin"
+  },
+  {
+    "token": "6d83e1aaf6944eebb475688685894dcb",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-50-34+0800__LIDAR_TOP__1531886059399373.pcd.bin"
+  },
+  {
+    "token": "128bca7e5ae849a59268617ce3515158",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-32-59+0800__LIDAR_TOP__1533112758947527.pcd.bin"
+  },
+  {
+    "token": "0b3810df5dfe47b3b178d3ad117b5f3d",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-13-19+0800__LIDAR_TOP__1532402145448617.pcd.bin"
+  },
+  {
+    "token": "e6cdb9d0edea4b388751d061b550f17f",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532622140298564.pcd.bin"
+  },
+  {
+    "token": "95e64ec418874c5e80fd35807c54f2e3",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-50-34+0800__LIDAR_TOP__1531886176698306.pcd.bin"
+  },
+  {
+    "token": "64c1e07d64984ccb9249d46eaf142df4",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-36-48+0800__LIDAR_TOP__1532662817298161.pcd.bin"
+  },
+  {
+    "token": "40171dfc0b4c47e49fbe1101559dbd71",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-17-04-15+0800__LIDAR_TOP__1533114394898126.pcd.bin"
+  },
+  {
+    "token": "d06b0db8f33549d4ab7e9665e52b2b91",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-06-15-06-32-0400__LIDAR_TOP__1533583212196564.pcd.bin"
+  },
+  {
+    "token": "ca4f45021c134c11a6e2254909dac2f1",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-21-11-53-44-0400__LIDAR_TOP__1534867414548462.pcd.bin"
+  },
+  {
+    "token": "401102a87aa14a9ab4836c7e9600881f",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-06-15-06-32-0400__LIDAR_TOP__1533582602796091.pcd.bin"
+  },
+  {
+    "token": "2806074c61b5403bb4de41f9335a90f7",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-21-11-53-44-0400__LIDAR_TOP__1534867304948355.pcd.bin"
+  },
+  {
+    "token": "aa339b18f6a74a9ca423e1609461a7a6",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-21-11-53-44-0400__LIDAR_TOP__1534867334447096.pcd.bin"
+  },
+  {
+    "token": "1d683b5b2791462aa4baeddb4b5d6dbe",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-21-11-53-44-0400__LIDAR_TOP__1534867384948997.pcd.bin"
+  },
+  {
+    "token": "b90bb0fb4c0c42dbba6fe2c78a716e6b",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708448397847.pcd.bin"
+  },
+  {
+    "token": "3b73a3bd8e024a4d85e542cdee506586",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532622025299413.pcd.bin"
+  },
+  {
+    "token": "c0b8b510a76d48f09bc14a5eeacb74af",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-18-34+0800__LIDAR_TOP__1531883985948699.pcd.bin"
+  },
+  {
+    "token": "f2d37c58a031444eb8e116beb8e18ab6",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-41-59+0800__LIDAR_TOP__1533112949546293.pcd.bin"
+  },
+  {
+    "token": "a8114a530e434dd984eb048cbf7f335c",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535728957046864.pcd.bin"
+  },
+  {
+    "token": "c8eefa4f3d4d4585b14e52fe9fac45be",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532621826047359.pcd.bin"
+  },
+  {
+    "token": "f4e4c2ef9ac644478a7684147646bb8b",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532707816948141.pcd.bin"
+  },
+  {
+    "token": "1a471f5540364d9da841d8df873700c0",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729093947126.pcd.bin"
+  },
+  {
+    "token": "e77642c963934823ad316635a7d7cdbe",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-15-10-21+0800__LIDAR_TOP__1533107510946846.pcd.bin"
+  },
+  {
+    "token": "8a7a607ae6824559bf7231116a1f99c8",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153470897856.pcd.bin"
+  },
+  {
+    "token": "637291b485ed4b42b8e79f602f4bcc1b",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535728828948635.pcd.bin"
+  },
+  {
+    "token": "45491dc175304f2495bc9f9ed0af66ec",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-05-21-11-06-59-0400__LIDAR_TOP__1526915415547637.pcd.bin"
+  },
+  {
+    "token": "b7a7359a935e482a9016cecc4b157284",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-36-48+0800__LIDAR_TOP__1532662713448887.pcd.bin"
+  },
+  {
+    "token": "3d2bae6de6ac470fa0471a787872db04",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-13-19+0800__LIDAR_TOP__1532402294146774.pcd.bin"
+  },
+  {
+    "token": "21f06cd0989147e2986c1cc8672e0449",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729283548960.pcd.bin"
+  },
+  {
+    "token": "9382137755e84a4ab7c655e97b94773c",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-50-34+0800__LIDAR_TOP__1531886056949234.pcd.bin"
+  },
+  {
+    "token": "efb24ecaa2ff47ea8f9a84fd7aac9afc",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-06-15-06-32-0400__LIDAR_TOP__1533582902197041.pcd.bin"
+  },
+  {
+    "token": "eeb8796c08c54b64975eaa9201f8fcc7",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-17-04-15+0800__LIDAR_TOP__1533114277297313.pcd.bin"
+  },
+  {
+    "token": "cc01041aad594daaa68d0b166f0f5ec2",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-17-13-57+0800__LIDAR_TOP__1533115192398636.pcd.bin"
+  },
+  {
+    "token": "15bbe7d83fc64c168d6941bf654dc34f",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532707815947807.pcd.bin"
+  },
+  {
+    "token": "df690c0cb439499b9fc2656360e4102c",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-32-59+0800__LIDAR_TOP__1533112862197432.pcd.bin"
+  },
+  {
+    "token": "f5e2c08b187b4bd9b56aecb5c3cb818c",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-05-21-11-06-59-0400__LIDAR_TOP__1526915734947226.pcd.bin"
+  },
+  {
+    "token": "b77058bbe6da4337a452f7daa573fb74",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153300697764.pcd.bin"
+  },
+  {
+    "token": "38af7ee2858248e1835fe3f1025f015e",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729277546804.pcd.bin"
+  },
+  {
+    "token": "d8da9db7d2d64e748e29a674b797538c",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-32-59+0800__LIDAR_TOP__1533112748697299.pcd.bin"
+  },
+  {
+    "token": "d1db886ad6174440a1abccff76a77360",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-13-19+0800__LIDAR_TOP__1532402009197025.pcd.bin"
+  },
+  {
+    "token": "5ac678934d75443b9467510c5cb8b57e",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153421148820.pcd.bin"
+  },
+  {
+    "token": "bc078b11af4346d898abe136689035e3",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-06-15-06-32-0400__LIDAR_TOP__1533583374447893.pcd.bin"
+  },
+  {
+    "token": "510620c90207420f816b45232610dfd8",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729151547888.pcd.bin"
+  },
+  {
+    "token": "d5c7af2e330f496f988092dcc5fe1276",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153710947333.pcd.bin"
+  },
+  {
+    "token": "31c6005720cd4d6c9d712e63299e0267",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-13-19+0800__LIDAR_TOP__1532402056698497.pcd.bin"
+  },
+  {
+    "token": "16c1d0667e3342f2a21a8f078ccce828",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-50-34+0800__LIDAR_TOP__1531886120448981.pcd.bin"
+  },
+  {
+    "token": "2456c6e77f2e4a52b032ed980b677849",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-13-19+0800__LIDAR_TOP__1532402002648304.pcd.bin"
+  },
+  {
+    "token": "ce72d90100fd4b1fa77c84a20b21a5e2",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729145447106.pcd.bin"
+  },
+  {
+    "token": "564b71ffd9c24b1fbfcd632ce8716ff1",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153256547727.pcd.bin"
+  },
+  {
+    "token": "ec438dc934614d4b96fc0d5b8b05fec5",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532622150797065.pcd.bin"
+  },
+  {
+    "token": "7cb9797aa431458bb0a3c727f09acfdd",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535728946897306.pcd.bin"
+  },
+  {
+    "token": "6de491b9500240cfa6dc8195fa394f05",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-13-19+0800__LIDAR_TOP__1532402312197668.pcd.bin"
+  },
+  {
+    "token": "2222983c8bcf43eba05396b89d284317",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532621925548138.pcd.bin"
+  },
+  {
+    "token": "967a379bce874658b71d037cd2ac9c67",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708066698182.pcd.bin"
+  },
+  {
+    "token": "ec37ed72fb7b47d6b9a09ac896467684",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-03-52+0800__LIDAR_TOP__1532401766947855.pcd.bin"
+  },
+  {
+    "token": "095db92dff0a4fba949dac709a1b190f",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-21-11-53-44-0400__LIDAR_TOP__1534867237697844.pcd.bin"
+  },
+  {
+    "token": "6d53ecafce934d4391e593db6d4f6516",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535728935398535.pcd.bin"
+  },
+  {
+    "token": "0cc5b74223d049b6bc951515e9b500cb",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-36-48+0800__LIDAR_TOP__1532662961449390.pcd.bin"
+  },
+  {
+    "token": "b1d1cf67f064450ea2553f33fb8b6189",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532622075048132.pcd.bin"
+  },
+  {
+    "token": "b4cc46a236ab465e9524a4683e61022f",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-05-21-11-06-59-0400__LIDAR_TOP__1526915360947830.pcd.bin"
+  },
+  {
+    "token": "f65fec19412a4c308e98eb464ae781e3",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153449697386.pcd.bin"
+  },
+  {
+    "token": "077e9f43491440919073e16f20d02b10",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-17-04-15+0800__LIDAR_TOP__1533114331647242.pcd.bin"
+  },
+  {
+    "token": "d36145ffab7146118d3b5ece5d2acd68",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-41-59+0800__LIDAR_TOP__1533112937946845.pcd.bin"
+  },
+  {
+    "token": "0227d290bc8349b9b1b4fba3de8cfaa3",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-13-19+0800__LIDAR_TOP__1532402297199136.pcd.bin"
+  },
+  {
+    "token": "a1bf18ab38f04b5e86b5309b092e2d1d",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-36-48+0800__LIDAR_TOP__1532663149698602.pcd.bin"
+  },
+  {
+    "token": "8dff75ec0782443fbeb9a7b195e77bef",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-50-34+0800__LIDAR_TOP__1531886101799299.pcd.bin"
+  },
+  {
+    "token": "c3ed2cf320f94b16b818e73fe24238df",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708323449280.pcd.bin"
+  },
+  {
+    "token": "2a02b98b540141c6a5ad0c473100e0ca",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729558447856.pcd.bin"
+  },
+  {
+    "token": "cc1dc30e515240009ecf72989f59c5f0",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-36-48+0800__LIDAR_TOP__1532662680548312.pcd.bin"
+  },
+  {
+    "token": "4facac80d23942c1a768236c80debb4f",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708216948570.pcd.bin"
+  },
+  {
+    "token": "589a8b89ef2e48e3b1ea9a7ab0e7caa4",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-17-13-57+0800__LIDAR_TOP__1533115291946829.pcd.bin"
+  },
+  {
+    "token": "cdd0ee1ea54a4d3eb453ba49de603465",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-15-10-21+0800__LIDAR_TOP__1533107793697557.pcd.bin"
+  },
+  {
+    "token": "e47a538d75014cbbaf3d48dc6e0fb102",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-50-34+0800__LIDAR_TOP__1531886016898293.pcd.bin"
+  },
+  {
+    "token": "54ba101f0d304a8f8b4432caacedf99f",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-18-34+0800__LIDAR_TOP__1531884280949183.pcd.bin"
+  },
+  {
+    "token": "d39922d153634b54a4fc7f3f10938e83",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-32-59+0800__LIDAR_TOP__1533112731947079.pcd.bin"
+  },
+  {
+    "token": "a58e4607a4d146848d01a9e382e57331",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532621821948262.pcd.bin"
+  },
+  {
+    "token": "ded37094e0aa4058916e05d38a0e80cf",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-32-59+0800__LIDAR_TOP__1533112710198013.pcd.bin"
+  },
+  {
+    "token": "9f5c56c4d5394bbf908a96ed6042a15c",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-22-45+0800__LIDAR_TOP__1532402731448848.pcd.bin"
+  },
+  {
+    "token": "3e153ccac8aa4aaf8e0c678be02762af",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-05-21-11-06-59-0400__LIDAR_TOP__1526915381047920.pcd.bin"
+  },
+  {
+    "token": "6e222ed9ec4c496e866f10913fc9e7bc",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708436398629.pcd.bin"
+  },
+  {
+    "token": "c665c95f653d42129cc82d48c203d419",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153461947070.pcd.bin"
+  },
+  {
+    "token": "48ec05c4979d4c94be5c4fa5f4e1311a",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-50-34+0800__LIDAR_TOP__1531886396199746.pcd.bin"
+  },
+  {
+    "token": "930a1212ffaf4bca9fd03fdecda2e8af",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-21-11-53-44-0400__LIDAR_TOP__1534867370898842.pcd.bin"
+  },
+  {
+    "token": "3a678662b45242358fb8dededbc5b61d",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153352200167.pcd.bin"
+  },
+  {
+    "token": "e9f4ff4f90b949b1bb4354ba8a0a665a",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-21-11-53-44-0400__LIDAR_TOP__1534867216449236.pcd.bin"
+  },
+  {
+    "token": "0a35a668ec8543b8b8213b588ca6ce94",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153682395782.pcd.bin"
+  },
+  {
+    "token": "db0ee702373a43eb9e5713daa2e4c441",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-21-11-53-44-0400__LIDAR_TOP__1534867042397224.pcd.bin"
+  },
+  {
+    "token": "be070ce58d20481daccbd2ffd9cdb900",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-05-21-11-06-59-0400__LIDAR_TOP__1526915709447477.pcd.bin"
+  },
+  {
+    "token": "693b3fea2aab4d67b893759226227098",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-32-59+0800__LIDAR_TOP__1533112550197248.pcd.bin"
+  },
+  {
+    "token": "aec5268454844bd59bf79c2d0ae868b0",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729218547896.pcd.bin"
+  },
+  {
+    "token": "b1bfdfccad584ad7b1bc95c6fd584806",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729327449021.pcd.bin"
+  },
+  {
+    "token": "47a47bf843164dce91c391989fa7363f",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-50-34+0800__LIDAR_TOP__1531886255548782.pcd.bin"
+  },
+  {
+    "token": "06941d046e4941c5b466040c00b309d5",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-36-48+0800__LIDAR_TOP__1532663157299041.pcd.bin"
+  },
+  {
+    "token": "755ae5bfcee34bb7884a0c4403636d47",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-24-31+0800__LIDAR_TOP__1532661913949084.pcd.bin"
+  },
+  {
+    "token": "f9dcd594b2fb455bbca7b708d7a0e2c6",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-03-52+0800__LIDAR_TOP__1532401621447435.pcd.bin"
+  },
+  {
+    "token": "2aabe6ffde824797bc0200875549fa71",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729103548181.pcd.bin"
+  },
+  {
+    "token": "d76489d81a244f86bdf8591fa9360dc6",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-21-11-53-44-0400__LIDAR_TOP__1534867282448368.pcd.bin"
+  },
+  {
+    "token": "1c2b0ba6279e4c91bb200904c871be87",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532621822448694.pcd.bin"
+  },
+  {
+    "token": "691c304219874d0aa83c421a00c0e528",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153311697784.pcd.bin"
+  },
+  {
+    "token": "4c6f26652fa24ea89ada58ea6c0971d9",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-05-21-11-06-59-0400__LIDAR_TOP__1526915416547939.pcd.bin"
+  },
+  {
+    "token": "0adf06fd1bf3480c99af9465a59314d4",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-03-52+0800__LIDAR_TOP__1532401498199237.pcd.bin"
+  },
+  {
+    "token": "aabc5b01953f41158d3069c0733ea152",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-22-45+0800__LIDAR_TOP__1532402936699359.pcd.bin"
+  },
+  {
+    "token": "45336f9f82d745268200b0e50edc9667",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-13-19+0800__LIDAR_TOP__1532402420048154.pcd.bin"
+  },
+  {
+    "token": "5301923a3cae4ce1924f7c2cf72c166c",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-18-34+0800__LIDAR_TOP__1531884281947806.pcd.bin"
+  },
+  {
+    "token": "b79cd3515ea748cabe8e069c38fe4cc5",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-36-48+0800__LIDAR_TOP__1532663104048997.pcd.bin"
+  },
+  {
+    "token": "2254982ad09c4dc19fcaa890a1e16114",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729330397987.pcd.bin"
+  },
+  {
+    "token": "9d5889fe4b6e44ecaa8c998313342789",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-05-21-11-06-59-0400__LIDAR_TOP__1526915326547132.pcd.bin"
+  },
+  {
+    "token": "3a6b799cfa744c3cad8a37ee6aaa529e",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-18-34+0800__LIDAR_TOP__1531884527950988.pcd.bin"
+  },
+  {
+    "token": "bfbbae7d468a4695b2d1478120293e08",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-50-34+0800__LIDAR_TOP__1531886243548972.pcd.bin"
+  },
+  {
+    "token": "83d3a16f371b46b29f9aaf37c2e63633",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-18-34+0800__LIDAR_TOP__1531884404948875.pcd.bin"
+  },
+  {
+    "token": "3b01413109774c8da3742ba1b71caac3",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153522797049.pcd.bin"
+  },
+  {
+    "token": "d9bb59fda9d74aefbf9695c382251da2",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532621845698463.pcd.bin"
+  },
+  {
+    "token": "0643ba894c6e421a9ff0f0fcbc4e7c89",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-50-34+0800__LIDAR_TOP__1531886059949561.pcd.bin"
+  },
+  {
+    "token": "f155db9be8714cfdaf70dc594fa1ad21",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-18-34+0800__LIDAR_TOP__1531884159949288.pcd.bin"
+  },
+  {
+    "token": "05ba8c16e08b437d9739975b92c0385f",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-03-52+0800__LIDAR_TOP__1532401618397317.pcd.bin"
+  },
+  {
+    "token": "0529814fcd884e42bcfe308f8ab63cd7",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-21-11-53-44-0400__LIDAR_TOP__1534867162948122.pcd.bin"
+  },
+  {
+    "token": "4ef0a17dc9f44568ab65ea3aa2ce2e16",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-18-34+0800__LIDAR_TOP__1531884410398855.pcd.bin"
+  },
+  {
+    "token": "f9fbff6874234418a4a8ccd51bdb7069",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708715948297.pcd.bin"
+  },
+  {
+    "token": "7d376698a65c496d802686f4515b6d2f",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-36-48+0800__LIDAR_TOP__1532662706448970.pcd.bin"
+  },
+  {
+    "token": "843b0da920b54ebb843541cf4206a2eb",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-05-21-11-06-59-0400__LIDAR_TOP__1526915293947373.pcd.bin"
+  },
+  {
+    "token": "82b2ab97306b4e079ec8debe30314bfc",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-18-34+0800__LIDAR_TOP__1531884277148664.pcd.bin"
+  },
+  {
+    "token": "7408b2a9eb8f4897ac78480d83dc72ab",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-03-52+0800__LIDAR_TOP__1532401771448409.pcd.bin"
+  },
+  {
+    "token": "36c043e9b2ef4fada68b7e0d2bce7259",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-36-48+0800__LIDAR_TOP__1532663016947787.pcd.bin"
+  },
+  {
+    "token": "c890408738d6464c9acc9a2ebe8d41f3",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-06-15-06-32-0400__LIDAR_TOP__1533582534197502.pcd.bin"
+  },
+  {
+    "token": "047a9a7286ae400aae95f8221905fd37",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-05-21-11-06-59-0400__LIDAR_TOP__1526915360447955.pcd.bin"
+  },
+  {
+    "token": "e67096f8a2d34d628e35c338e7478124",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-15-10-21+0800__LIDAR_TOP__1533107687947765.pcd.bin"
+  },
+  {
+    "token": "ca4f0ca57ef349ffb7dc668ce8946c5c",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153678448755.pcd.bin"
+  },
+  {
+    "token": "bf7479f5cc2a445b98e3a8f725ef08c3",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-50-34+0800__LIDAR_TOP__1531886095199156.pcd.bin"
+  },
+  {
+    "token": "d2d7f3a8b9824dd1bfbf1273317bb9da",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-06-15-06-32-0400__LIDAR_TOP__1533582775198083.pcd.bin"
+  },
+  {
+    "token": "0a161b6bd0324d2bbf9ceea4d6739c62",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-41-59+0800__LIDAR_TOP__1533112965396911.pcd.bin"
+  },
+  {
+    "token": "e9636f2b36654420a1341cb1885ad3bd",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-05-21-11-06-59-0400__LIDAR_TOP__1526915391147204.pcd.bin"
+  },
+  {
+    "token": "ce7af157d9194096a4c5928ea4b730e6",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708672948449.pcd.bin"
+  },
+  {
+    "token": "2eecbf3a83b248a99cd9010f545d7a45",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-21-11-53-44-0400__LIDAR_TOP__1534867337446369.pcd.bin"
+  },
+  {
+    "token": "b9b6e2e529304b14a01190c6f2525d39",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-05-21-11-06-59-0400__LIDAR_TOP__1526915384047730.pcd.bin"
+  },
+  {
+    "token": "73b2fad5d4804e0f9c03c8336d773529",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-36-48+0800__LIDAR_TOP__1532662676047222.pcd.bin"
+  },
+  {
+    "token": "9041909fcb4f450baad4e58a44de5c1d",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-50-34+0800__LIDAR_TOP__1531886222549204.pcd.bin"
+  },
+  {
+    "token": "0bc681fcbba8441eae633c4f366d1aaf",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729171697239.pcd.bin"
+  },
+  {
+    "token": "efd66e53d2d44f3485ba67079a1290c1",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532707766697246.pcd.bin"
+  },
+  {
+    "token": "3748cdc086a946f983a3f66e9ac188c6",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-17-13-57+0800__LIDAR_TOP__1533115039297580.pcd.bin"
+  },
+  {
+    "token": "15aa5245560a4f08816607a87d2070e1",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-21-11-53-44-0400__LIDAR_TOP__1534867383448258.pcd.bin"
+  },
+  {
+    "token": "e2270fa87abe4f2fabecc3f6d6c584b8",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708190948391.pcd.bin"
+  },
+  {
+    "token": "71c5b1adb45a44d8b13c7799c99b5953",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532707962051470.pcd.bin"
+  },
+  {
+    "token": "e00e346a3bfd4e5ea5a2a047610975b8",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-32-59+0800__LIDAR_TOP__1533112700297797.pcd.bin"
+  },
+  {
+    "token": "bf2b1e83fc2b405c95263dc7577e83e6",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708213897926.pcd.bin"
+  },
+  {
+    "token": "eb709c7e587d4830bfd25547ddff45eb",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532621992698534.pcd.bin"
+  },
+  {
+    "token": "ab7cdd285fa646b88f2e671597f85985",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708222448310.pcd.bin"
+  },
+  {
+    "token": "fe2ff37796dc427ea86cdf41fa138360",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535728926949823.pcd.bin"
+  },
+  {
+    "token": "af9582dff3954257b4ad255f5bec8385",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-21-11-53-44-0400__LIDAR_TOP__1534867368447601.pcd.bin"
+  },
+  {
+    "token": "467ecbd57c584270be5906739ba28c07",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729217446402.pcd.bin"
+  },
+  {
+    "token": "e450c978a9e94fe69e5b4d81a4e1cc93",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-41-59+0800__LIDAR_TOP__1533113030397377.pcd.bin"
+  },
+  {
+    "token": "6b7f882fb2654afe93f3a2a117b95b89",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-24-31+0800__LIDAR_TOP__1532661926948060.pcd.bin"
+  },
+  {
+    "token": "7cbec9f3889c44e882fe88d6e8228f88",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532707856549456.pcd.bin"
+  },
+  {
+    "token": "002506ac15e2453e8135a305b6d07337",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708712948511.pcd.bin"
+  },
+  {
+    "token": "2d5780ef215b42e3be7de74470c06fbd",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-17-13-57+0800__LIDAR_TOP__1533115196447277.pcd.bin"
+  },
+  {
+    "token": "62a84ca117b243d7a66a252bdcfb5ce6",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-41-59+0800__LIDAR_TOP__1533112970397859.pcd.bin"
+  },
+  {
+    "token": "2d69303980c1421fafc5c597d58b487d",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729180697762.pcd.bin"
+  },
+  {
+    "token": "e890fe9eda5d494388d01d524caf393d",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-03-52+0800__LIDAR_TOP__1532401506047956.pcd.bin"
+  },
+  {
+    "token": "69f4adad77b54edbaa4253b674d92c61",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-17-04-15+0800__LIDAR_TOP__1533114308697177.pcd.bin"
+  },
+  {
+    "token": "d9250c36ed4b4456a82504d93b82adf0",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-22-45+0800__LIDAR_TOP__1532402862697244.pcd.bin"
+  },
+  {
+    "token": "6376ccd4b0224786b3d3e52890ffe92a",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729130298196.pcd.bin"
+  },
+  {
+    "token": "f582c6d34c8b403c8f3b66a8bb896892",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-22-45+0800__LIDAR_TOP__1532402935197541.pcd.bin"
+  },
+  {
+    "token": "f538ed621e7441bea19e60930dda8d43",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-22-45+0800__LIDAR_TOP__1532402725948505.pcd.bin"
+  },
+  {
+    "token": "1498605d7b3e45a2b2f632efd47a68f3",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532621700697319.pcd.bin"
+  },
+  {
+    "token": "e13fa5da0e2d4bcfabcc878f56e2e73d",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-05-21-11-06-59-0400__LIDAR_TOP__1526915641049734.pcd.bin"
+  },
+  {
+    "token": "0303db795d0f45f3b18e2bcb6f81f457",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-06-15-06-32-0400__LIDAR_TOP__1533583058797626.pcd.bin"
+  },
+  {
+    "token": "29f76e706b284a84a9cb01112d890b17",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708675949449.pcd.bin"
+  },
+  {
+    "token": "d63f1cd07e0647f381f8660aa2cbd0fe",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-21-11-53-44-0400__LIDAR_TOP__1534867518398259.pcd.bin"
+  },
+  {
+    "token": "0e2b06b669f94d2aa00de2ab41a022e5",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532621858648811.pcd.bin"
+  },
+  {
+    "token": "651e4bb28f27415bb4ef89888a67146d",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-32-59+0800__LIDAR_TOP__1533112866147201.pcd.bin"
+  },
+  {
+    "token": "7941e183537f4a27befa5bcfd9953d7f",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-32-59+0800__LIDAR_TOP__1533112722197779.pcd.bin"
+  },
+  {
+    "token": "629a9a2fc2aa40c2845f68a3894fcf95",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532621839198413.pcd.bin"
+  },
+  {
+    "token": "f7a89f9834ef4b8d84166d4c44df787a",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708239299221.pcd.bin"
+  },
+  {
+    "token": "be8b9bbe312c4967ba75facbaec05b20",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-15-10-21+0800__LIDAR_TOP__1533107666546558.pcd.bin"
+  },
+  {
+    "token": "8ed4b3deb5ea41cf8ffdb48e7a912411",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-41-59+0800__LIDAR_TOP__1533112989046993.pcd.bin"
+  },
+  {
+    "token": "020c7fc15fd44c9d8293edba0bd73891",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-15-10-21+0800__LIDAR_TOP__1533107513446775.pcd.bin"
+  },
+  {
+    "token": "f565f7b338984f48a59bbc8408010275",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-21-11-53-44-0400__LIDAR_TOP__1534867520948492.pcd.bin"
+  },
+  {
+    "token": "eae996e490f64899b9b24e4af4091068",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-22-45+0800__LIDAR_TOP__1532402751197775.pcd.bin"
+  },
+  {
+    "token": "a3cbe09178124c1f95044faa9cd70db4",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-41-59+0800__LIDAR_TOP__1533112983947641.pcd.bin"
+  },
+  {
+    "token": "0000fa1a7bfb46dc872045096181303e",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-05-21-11-06-59-0400__LIDAR_TOP__1526915244548143.pcd.bin"
+  },
+  {
+    "token": "9eb40cfcc29544efa3f0fe44c806ecf2",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-41-59+0800__LIDAR_TOP__1533112953048755.pcd.bin"
+  },
+  {
+    "token": "03609115989947ed8bf6ef8a5ff9b0e9",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-32-59+0800__LIDAR_TOP__1533112404196952.pcd.bin"
+  },
+  {
+    "token": "a3e58f4b55724da293306fe7921d869a",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-21-11-53-44-0400__LIDAR_TOP__1534867155898456.pcd.bin"
+  },
+  {
+    "token": "53968838f25b4e65ba1587a3db78bdff",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153696197113.pcd.bin"
+  },
+  {
+    "token": "e773233850044575a7652472c7e7f25f",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-13-19+0800__LIDAR_TOP__1532402178448183.pcd.bin"
+  },
+  {
+    "token": "d18b62ca2e6a4aac91fa63feb1bbfb90",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-32-59+0800__LIDAR_TOP__1533112394646788.pcd.bin"
+  },
+  {
+    "token": "64df13b6f41c44f3ad10497a28cb5378",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708542949666.pcd.bin"
+  },
+  {
+    "token": "ee2347c4601f4ea4935a51e961e670b2",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-18-34+0800__LIDAR_TOP__1531883986448607.pcd.bin"
+  },
+  {
+    "token": "b41c37d5599740a09ab30ad8ab4cc6b2",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-05-21-11-06-59-0400__LIDAR_TOP__1526915779697155.pcd.bin"
+  },
+  {
+    "token": "095e8fd9007541f2954008e223652a69",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-36-48+0800__LIDAR_TOP__1532663150198474.pcd.bin"
+  },
+  {
+    "token": "dc85f7e165ff4c21b5c2aefcb2954f43",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-32-59+0800__LIDAR_TOP__1533112699197386.pcd.bin"
+  },
+  {
+    "token": "a756f349ca704da9af46c7fc3b4513ed",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729125946973.pcd.bin"
+  },
+  {
+    "token": "ff31b00d67a5444d974bc22f493299c4",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-41-59+0800__LIDAR_TOP__1533112989546903.pcd.bin"
+  },
+  {
+    "token": "5f94e00eb73b4cc4aaecd923a955a7c7",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-41-59+0800__LIDAR_TOP__1533112961447655.pcd.bin"
+  },
+  {
+    "token": "64da725385d142c085375abd7de151a2",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-50-34+0800__LIDAR_TOP__1531886017448488.pcd.bin"
+  },
+  {
+    "token": "dec1a6a6d3fe467aae037366fd2e3cd6",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708691647906.pcd.bin"
+  },
+  {
+    "token": "a20611b361db4c50807f3f8c58b13fa4",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153687798753.pcd.bin"
+  },
+  {
+    "token": "512d26f5ecc241bdb0962878edc7b733",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708593698152.pcd.bin"
+  },
+  {
+    "token": "7fbc7f17fac4420682a3618b82e26a4a",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-18-34+0800__LIDAR_TOP__1531884288198474.pcd.bin"
+  },
+  {
+    "token": "79291513f7244f0996d60c351fd96186",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-07-57+0800__LIDAR_TOP__1531883534949354.pcd.bin"
+  },
+  {
+    "token": "a24ec99405964d0c95bdd49cdc60b374",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-50-34+0800__LIDAR_TOP__1531886226449235.pcd.bin"
+  },
+  {
+    "token": "d2e5837b85da448b85d0f93787bb95ea",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-13-19+0800__LIDAR_TOP__1532402166148685.pcd.bin"
+  },
+  {
+    "token": "ebe0091ee280405eab470606d23a1e7f",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729404546608.pcd.bin"
+  },
+  {
+    "token": "91f1f1f6764c419d9f265726b9589174",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-05-21-11-06-59-0400__LIDAR_TOP__1526915260947847.pcd.bin"
+  },
+  {
+    "token": "c36ed1360204465e9d8dd924713c9228",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-18-34+0800__LIDAR_TOP__1531884002899157.pcd.bin"
+  },
+  {
+    "token": "70aa5e418e7d414fbbae6511b725f4c2",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-21-11-53-44-0400__LIDAR_TOP__1534867248898054.pcd.bin"
+  },
+  {
+    "token": "a35d438094f646eeac96600569f3fa24",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-06-15-06-32-0400__LIDAR_TOP__1533583337197147.pcd.bin"
+  },
+  {
+    "token": "34f381dab11b4350912812746937d9a3",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708394547884.pcd.bin"
+  },
+  {
+    "token": "2a3ee3998046411d9fde10907ecdbca7",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-21-11-53-44-0400__LIDAR_TOP__1534867521448369.pcd.bin"
+  },
+  {
+    "token": "d832b12a025840e390de7e82a92fe3ff",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729273048238.pcd.bin"
+  },
+  {
+    "token": "84233b3f56fc4b7aa17c7d473d698be8",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-50-34+0800__LIDAR_TOP__1531886094199396.pcd.bin"
+  },
+  {
+    "token": "6a0847a37faf4989b50a1744b7261b80",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708176549835.pcd.bin"
+  },
+  {
+    "token": "638b66ed56b74a88b2d4c525a3d671ba",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153275797944.pcd.bin"
+  },
+  {
+    "token": "52e2b7f0d3ec4f72aacae1eddc32f3d6",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708594699452.pcd.bin"
+  },
+  {
+    "token": "9ac4e3c6fccd4377a24f61c1261bade8",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535728838548558.pcd.bin"
+  },
+  {
+    "token": "9e577ae751a24a26bfaee84ddae2efc4",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-36-48+0800__LIDAR_TOP__1532662894048485.pcd.bin"
+  },
+  {
+    "token": "02c6ceb8b4a4423f80f3c9e3c6803620",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-22-45+0800__LIDAR_TOP__1532402870647717.pcd.bin"
+  },
+  {
+    "token": "4c021f6e50a34014bd9c2e68dbb62b93",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-05-21-11-06-59-0400__LIDAR_TOP__1526915688397929.pcd.bin"
+  },
+  {
+    "token": "1aaf26a6ebaf4197b0c1406844038c1c",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-15-10-21+0800__LIDAR_TOP__1533107712447221.pcd.bin"
+  },
+  {
+    "token": "14ace89160334e8aa19743192f4d7281",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-32-59+0800__LIDAR_TOP__1533112746797888.pcd.bin"
+  },
+  {
+    "token": "187a9b0ea42f419397372852edafe88f",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-21-11-53-44-0400__LIDAR_TOP__1534867321949635.pcd.bin"
+  },
+  {
+    "token": "51eb5ff1a54945e3be60674964c3bf0a",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-41-59+0800__LIDAR_TOP__1533113253397381.pcd.bin"
+  },
+  {
+    "token": "1ab22e4f90214dd4ab90f58bcd68d09a",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-18-34+0800__LIDAR_TOP__1531884306799513.pcd.bin"
+  },
+  {
+    "token": "c36d6749bcf2409ea42a55486b59389c",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153763947502.pcd.bin"
+  },
+  {
+    "token": "eedbb1eb72254a37b8a5db4314ff654a",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532622141797664.pcd.bin"
+  },
+  {
+    "token": "d95b90fd0c244b1cb9a393531cf9be0e",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532621940698150.pcd.bin"
+  },
+  {
+    "token": "bf809ead5d4e4b799108953c8906f601",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532621704647827.pcd.bin"
+  },
+  {
+    "token": "196bb52c999c45ffa25e7b991a626469",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-06-15-06-32-0400__LIDAR_TOP__1533583330197210.pcd.bin"
+  },
+  {
+    "token": "6f8a7a9e954e4dc7a85e95bb39e7c7a6",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-13-19+0800__LIDAR_TOP__1532402480148854.pcd.bin"
+  },
+  {
+    "token": "83a33e5189bc43068502463f9ff9ca42",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-32-59+0800__LIDAR_TOP__1533112402196881.pcd.bin"
+  },
+  {
+    "token": "2b8632b586294397a276a076a219786a",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153548397449.pcd.bin"
+  },
+  {
+    "token": "b7631bdf8f2b49f4be997d42947d9d3b",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-50-34+0800__LIDAR_TOP__1531886061448108.pcd.bin"
+  },
+  {
+    "token": "1f6d1f6114c94bf7ac246f29594c7bfe",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729037447308.pcd.bin"
+  },
+  {
+    "token": "309567aa5a9344b1928bc0508bc1aa13",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535728858447935.pcd.bin"
+  },
+  {
+    "token": "21799083b946441aa3f09d7192839f34",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-13-19+0800__LIDAR_TOP__1532402342398160.pcd.bin"
+  },
+  {
+    "token": "7b177bc2beb14baab6298141572bf24d",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-06-15-06-32-0400__LIDAR_TOP__1533583273697373.pcd.bin"
+  },
+  {
+    "token": "f44f75cfe903495fa103134958e58276",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-50-34+0800__LIDAR_TOP__1531885875898397.pcd.bin"
+  },
+  {
+    "token": "fa4ec37d04694eed9eb1faaf459add9b",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532622148801036.pcd.bin"
+  },
+  {
+    "token": "c2c3367a7d00412d9b0d95084fefaf80",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-32-59+0800__LIDAR_TOP__1533112735396982.pcd.bin"
+  },
+  {
+    "token": "e131dcedc87b4d9ca9387df07da96eda",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532622065948070.pcd.bin"
+  },
+  {
+    "token": "47c50eb71e204789b18f005f2183cfbb",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535728804898194.pcd.bin"
+  },
+  {
+    "token": "b7d12080bfd3473eb4b0dd2a2c7674be",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-13-19+0800__LIDAR_TOP__1532402149397829.pcd.bin"
+  },
+  {
+    "token": "6a83a97466c54a969b8c6749d424004b",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708701804134.pcd.bin"
+  },
+  {
+    "token": "06d6db2e150645469ccadadfa5a73527",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-05-21-11-06-59-0400__LIDAR_TOP__1526915645447330.pcd.bin"
+  },
+  {
+    "token": "36c8a22587bc4904b08a4aeff8617fc6",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-32-59+0800__LIDAR_TOP__1533112845697597.pcd.bin"
+  },
+  {
+    "token": "6e9276fd741143fba89140a75f46a0aa",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532707771198355.pcd.bin"
+  },
+  {
+    "token": "d9d8a48f3dce4c418799698bd21ab3e3",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-17-13-57+0800__LIDAR_TOP__1533115036397301.pcd.bin"
+  },
+  {
+    "token": "c2f883983314423bb5e464760425ff6e",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729154445981.pcd.bin"
+  },
+  {
+    "token": "0ceed6a96376414082698cbe01733b0e",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-32-59+0800__LIDAR_TOP__1533112788197493.pcd.bin"
+  },
+  {
+    "token": "cc8c248d13cd43b69663bb0872466c84",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-36-48+0800__LIDAR_TOP__1532662686949927.pcd.bin"
+  },
+  {
+    "token": "66c07d6c7bb34f3287f3844f5dbc1ae0",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-06-15-06-32-0400__LIDAR_TOP__1533582496196907.pcd.bin"
+  },
+  {
+    "token": "cb6d4aafa89b47b98dcced22a82857bb",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-50-34+0800__LIDAR_TOP__1531886002549534.pcd.bin"
+  },
+  {
+    "token": "d58d2f3f57c44c478fa340a6e2982460",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-18-34+0800__LIDAR_TOP__1531883994449369.pcd.bin"
+  },
+  {
+    "token": "a44236bc6ba64ca8879d2cf4a437e19e",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-03-52+0800__LIDAR_TOP__1532401572148259.pcd.bin"
+  },
+  {
+    "token": "c38c91ae1f44431486d224bf57f38150",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-05-21-11-06-59-0400__LIDAR_TOP__1526915653948570.pcd.bin"
+  },
+  {
+    "token": "8a444740848d442ca3ebd6297267c9d8",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-15-10-21+0800__LIDAR_TOP__1533107509047989.pcd.bin"
+  },
+  {
+    "token": "2a47f65a34cc48e9b0b7de00a16e693a",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-17-13-57+0800__LIDAR_TOP__1533115185546241.pcd.bin"
+  },
+  {
+    "token": "23928f24854d4fa68ce1a793187f7d8b",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708011899849.pcd.bin"
+  },
+  {
+    "token": "32b83886dfb1425cbdd96cb722d33693",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-21-11-53-44-0400__LIDAR_TOP__1534867443447793.pcd.bin"
+  },
+  {
+    "token": "9467d4a2a63d40b2893f33b891151805",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-31-11-19-57-0400__LIDAR_TOP__1535729536447021.pcd.bin"
+  },
+  {
+    "token": "5563632d8d4c427ea5e6b530ff5897b2",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532707772797519.pcd.bin"
+  },
+  {
+    "token": "0c44e1fd2c5a49348de356546e6a8d24",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-36-48+0800__LIDAR_TOP__1532663146148075.pcd.bin"
+  },
+  {
+    "token": "caa6205d7ad14ec0b7c559a879595ea5",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708196448686.pcd.bin"
+  },
+  {
+    "token": "a6db95301be94a4cb62efce2f514d635",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-17-04-15+0800__LIDAR_TOP__1533114309147822.pcd.bin"
+  },
+  {
+    "token": "71ef22428edd4359b561253a5c6f5ba1",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-36-48+0800__LIDAR_TOP__1532663030447734.pcd.bin"
+  },
+  {
+    "token": "7a3e878e69c641ebb89cb3fc6eff46fe",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-27-12-07-38-0400__LIDAR_TOP__1532708433397709.pcd.bin"
+  },
+  {
+    "token": "505308bbf2f74dd584cd5c8402017e9d",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-50-34+0800__LIDAR_TOP__1531886244549846.pcd.bin"
+  },
+  {
+    "token": "3ef0315788b541e5badf571256804e1b",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-15-10-21+0800__LIDAR_TOP__1533107691447478.pcd.bin"
+  },
+  {
+    "token": "035ca10d04d142ee951747aad30f110c",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-36-48+0800__LIDAR_TOP__1532662803947479.pcd.bin"
+  },
+  {
+    "token": "f0e12fd31e224fd78822cd33e713b8af",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153679897499.pcd.bin"
+  },
+  {
+    "token": "bbf05d9216954f1f837cd689f8e16e46",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-05-21-11-06-59-0400__LIDAR_TOP__1526915649947874.pcd.bin"
+  },
+  {
+    "token": "3ca8438717e34a7fa8f943cd8b462d3e",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-50-34+0800__LIDAR_TOP__1531886215398322.pcd.bin"
+  },
+  {
+    "token": "517f25787d624442a89de7fbdde2c482",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-50-34+0800__LIDAR_TOP__1531886147399166.pcd.bin"
+  },
+  {
+    "token": "6a9baa75f227483dbed5e29d5b2da73c",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-21-11-53-44-0400__LIDAR_TOP__1534867449197488.pcd.bin"
+  },
+  {
+    "token": "2d54a31f303e4956bbc1a29a6b385c71",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-24-11-03-52+0800__LIDAR_TOP__1532401505548069.pcd.bin"
+  },
+  {
+    "token": "ac6986a4fc4d432da91d425c006ffcde",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532622142198127.pcd.bin"
+  },
+  {
+    "token": "5a77888b5f9942c2a3348aff9d628979",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-50-34+0800__LIDAR_TOP__1531885912199110.pcd.bin"
+  },
+  {
+    "token": "0a86400ffe1d4a66965bfbcaf65ffdd5",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-50-34+0800__LIDAR_TOP__1531886013948260.pcd.bin"
+  },
+  {
+    "token": "459a854ae66148c78687bfeb6f0b473d",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-27-11-36-48+0800__LIDAR_TOP__1532662958447903.pcd.bin"
+  },
+  {
+    "token": "691e33c6f2f74f64b9fdcea12f0ebc2e",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-01-15-52-19-0400__LIDAR_TOP__1533153697196876.pcd.bin"
+  },
+  {
+    "token": "8fa45874c36649d19313eecd5f1b002b",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-50-34+0800__LIDAR_TOP__1531886097198115.pcd.bin"
+  },
+  {
+    "token": "34a61a033e85499bb8344f261fc9587a",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-21-11-53-44-0400__LIDAR_TOP__1534867441898462.pcd.bin"
+  },
+  {
+    "token": "87b83f60f1184e6db46d67b7079ea49f",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-16-41-59+0800__LIDAR_TOP__1533113389897850.pcd.bin"
+  },
+  {
+    "token": "52e4b5ddccc24a8ba1b49726addaabe6",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-08-01-15-10-21+0800__LIDAR_TOP__1533107691947336.pcd.bin"
+  },
+  {
+    "token": "da54e89a6a9943598fd7a27d30646541",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-50-34+0800__LIDAR_TOP__1531885989548346.pcd.bin"
+  },
+  {
+    "token": "c2c9a8cfba3c44c299abd128ea3894a4",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-07-26-12-13-50-0400__LIDAR_TOP__1532621934648788.pcd.bin"
+  },
+  {
+    "token": "b1ad4bf4b0c74d6597370070317593ca",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-18-34+0800__LIDAR_TOP__1531884296049395.pcd.bin"
+  },
+  {
+    "token": "373f3ac4ab114a75a412e29ccd0e3247",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n015-2018-07-18-11-50-34+0800__LIDAR_TOP__1531885867948465.pcd.bin"
+  },
+  {
+    "token": "ed08d552447e452a98ffa82ed866a66b",
+    "path": "/data2/yoshida/v1.0-trainval-root/samples/LIDAR_TOP/n008-2018-08-21-11-53-44-0400__LIDAR_TOP__1534867035448746.pcd.bin"
   }
 ]

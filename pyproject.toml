@@ -11,6 +11,7 @@ dependencies = [
     "numpy>=1.26.4,<2.0.0",
     "open3d>=0.18.0",
     "simple-pcd-viewer",
+    "blosc2"
 ]
 
 [build-system]
