@@ -1,4 +1,3 @@
-
 import numpy as np
 import open3d as o3d
 import argparse
@@ -47,12 +46,13 @@ def get_peak_time_and_amplitude(signal: np.ndarray) -> Tuple[float, float]:
     return interpolated_time, peak_amplitude
 
 class HistMatrixVisualizer:
-    def __init__(self, dataset_root_path: str, frame_index: int = 0, pcd_directory_path: str = None, data: dict = None, amplitude_to_intensity_ratio: float = 255.0/10.0, use_answer_matrix: bool = False):
+    def __init__(self, dataset_root_path: str, frame_index: int = 0, pcd_directory_path: str = None, data: dict = None, amplitude_to_intensity_ratio: float = 255.0/10.0, use_answer_matrix: bool = False, sor_params: Tuple[float, float] = None):
         self.dataset_root_path = dataset_root_path
         self.frame_index = frame_index
         self.pcd_directory_path = pcd_directory_path
         self.is_prediction = use_answer_matrix
         self.amplitude_to_intensity_ratio = amplitude_to_intensity_ratio
+        self.sor_params = sor_params
         print(f"amplitude_to_intensity_ratio: {self.amplitude_to_intensity_ratio}")
 
         if data is None:
@@ -163,9 +163,20 @@ class HistMatrixVisualizer:
 
     def visualize(self, frame_index: int = 0):
         reconstructed_pcd = self._reconstruct_point_cloud(frame_index)
-        reconstructed_pcd.paint_uniform_color([1, 0, 0])  # Red for reconstructed
 
-        geometries = [reconstructed_pcd]
+        if self.sor_params:
+            print(f"Applying Statistical Outlier Removal with nb_neighbors={self.sor_params[0]}, std_ratio={self.sor_params[1]}...")
+            nb_neighbors = int(self.sor_params[0])
+            std_ratio = self.sor_params[1]
+            filtered_pcd, ind = reconstructed_pcd.remove_statistical_outlier(nb_neighbors=nb_neighbors, std_ratio=std_ratio)
+            print(f"Filtered out {len(reconstructed_pcd.points) - len(ind)} points.")
+            display_pcd = filtered_pcd
+        else:
+            display_pcd = reconstructed_pcd
+
+        display_pcd.paint_uniform_color([1, 0, 0])  # Red for reconstructed
+
+        geometries = [display_pcd]
 
         if self.original_bin_path and os.path.exists(self.original_bin_path):
             print(f"Loading original BIN for comparison: {self.original_bin_path}")
@@ -223,6 +234,7 @@ if __name__ == '__main__':
     parser.add_argument("--output-pcd-dir", type=str, default=None, help="Path to the directory to save reconstructed .pcd files. If provided, visualization is skipped.")
     parser.add_argument("--amplitude-to-intensity-ratio", type=float, default=1.0, help="Ratio to convert signal amplitude to intensity for reconstructed PCD.")
     parser.add_argument("--use-answer-matrix", action='store_true', help="Use answer_matrix.bl2 instead of signal.bl2 for reconstruction.")
+    parser.add_argument("--sor", nargs=2, type=float, metavar=('NB_NEIGHBORS', 'STD_RATIO'), help="Apply Statistical Outlier Removal with given nb_neighbors and std_ratio.")
 
     args = parser.parse_args()
 
@@ -231,7 +243,8 @@ if __name__ == '__main__':
         frame_index=args.frame,
         pcd_directory_path=args.pcd_directory,
         amplitude_to_intensity_ratio=args.amplitude_to_intensity_ratio,
-        use_answer_matrix=args.use_answer_matrix
+        use_answer_matrix=args.use_answer_matrix,
+        sor_params=args.sor
     )
 
     if args.output_pcd_dir:
