@@ -8,7 +8,7 @@ if __name__ == '__main__':
     # IMPORTANT: Replace this with the absolute root path of your dataset structure.
     #root = 'C:/Users/nextr/spaal2-core/my_new_dataset' 
     root = '/data2/yoshida/1010_dataset'  # Example for Linux/Mac
-    split = 'train'
+    split = 'val'
     dataset_name = 'nuscenes'
     scan_type = 'horizontal'
     sync_angle = 1

@@ -10,7 +10,7 @@ class HistMatrixDataset(Dataset):
         """
         Args:
             root_path (string): Path to the absolute root of the dataset.
-            split (string): 'train', 'val', or 'test'.
+            split (string): 'train', 'val'.
             dataset_name (string): e.g., 'nuscenes'.
             scan_type (string): e.g., 'horizontal'.
             sync_angle (float): The synchronization angle.
