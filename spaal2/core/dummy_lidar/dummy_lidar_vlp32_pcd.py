@@ -34,7 +34,7 @@ class PcdLidarVLP32c:
     vertical_angles: list[float] = [fa.v_angle for fa in fire_angles]
 
 
-    def __init__(self, pcd_file_path: Optional[str], lidar_position: np.ndarray, lidar_rotation: np.ndarray, base_timestamp: PreciseDuration = PreciseDuration(nanoseconds=0), amplitude: float = 1.0, pulse_width: PreciseDuration = PreciseDuration(nanoseconds=10), time_resolution_ns: float = 1.0, intensity_to_amplitude_ratio: float = 40.0/255.0, initial_point_offset: int = 0) -> None:
+    def __init__(self, pcd_file_path: Optional[str], lidar_position: np.ndarray, lidar_rotation: np.ndarray, base_timestamp: PreciseDuration = PreciseDuration(nanoseconds=0), amplitude: float = 1.0, pulse_width: PreciseDuration = PreciseDuration(nanoseconds=10), time_resolution_ns: float = 1.0, intensity_to_amplitude_ratio: float = 40.0/255.0, initial_point_offset: int = 0, scan_mode: str = 'horizontal') -> None:
         self.index: int = 0
         self.max_index: int = int(360 / 0.2 * 32)
         self.accept_window = PreciseDuration(nanoseconds=800)
@@ -49,6 +49,7 @@ class PcdLidarVLP32c:
         self.intensity_to_amplitude_ratio = intensity_to_amplitude_ratio
         self.intensities: Optional[np.ndarray] = None
         self.initial_point_offset = initial_point_offset
+        self.scan_mode = scan_mode
 
         self.sync_angle_step = 0.2  # degrees
 
@@ -351,8 +352,12 @@ class PcdLidarVLP32c:
 
     def _get_current_angle(self) -> tuple[int, int]:
         # Determine which altitude ring and azimuth step we are on based on the new ideal scan pattern
-        altitude_index = self.index // self.horizontal_steps
-        azimuth_index_in_ring = self.index % self.horizontal_steps
+        if self.scan_mode == 'vertical':
+            azimuth_index_in_ring = self.index // 32
+            altitude_index = self.index % 32
+        else:  # horizontal
+            altitude_index = self.index // self.horizontal_steps
+            azimuth_index_in_ring = self.index % self.horizontal_steps
 
         # Get the corresponding vertical angle from the pre-sorted list
         v_angle = self.sorted_vertical_angles[altitude_index]
@@ -374,16 +379,37 @@ class PcdLidarVLP32c:
 
     def _get_current_timestamp(self) -> int:
         horizontal_steps_per_ring = self.max_index // 32
-        azimuth_step_index = self.index % horizontal_steps_per_ring
-        current_azimuth_deg = azimuth_step_index * 0.2 + 8 # 8というのはsync_angleが45の時にぴったりになるようにadhocに調整した値
-        altitude_step_index = self.index // horizontal_steps_per_ring
+        
+        if self.scan_mode == 'vertical':
+            num_vertical_channels = 32
+            azimuth_step_index = self.index // num_vertical_channels
+            altitude_step_index = self.index % num_vertical_channels
+            
+            # Get current vertical angle from the pre-sorted list
+            current_vertical_angle = self.sorted_vertical_angles[altitude_step_index]
 
-        # 水平角がself.sync_angle_step度増加するごとにタイムスタンプをtime_increase_per_step ns増加させる
-        time_increase_per_step = 20  # ns
-        timestamp = (current_azimuth_deg // self.sync_angle_step) * time_increase_per_step
+            # Timestamp logic similar to horizontal mode, but for vertical direction
+            time_increase_per_step = 20  # ns
+            timestamp = (current_vertical_angle // self.sync_angle_step) * time_increase_per_step
 
-        # 高度リングが変わるごとに5060nsの時間を追加
-        timestamp += altitude_step_index * 50234
+            # Add a large time jump for each new azimuth column
+            time_jump_per_azimuth = 50234
+            timestamp += azimuth_step_index * time_jump_per_azimuth
+            
+            # current_azimuth_deg is needed for perturbation, though it's commented out.
+            current_azimuth_deg = azimuth_step_index * 0.2 + 8
+
+        else: # horizontal
+            azimuth_step_index = self.index % horizontal_steps_per_ring
+            altitude_step_index = self.index // horizontal_steps_per_ring
+            current_azimuth_deg = azimuth_step_index * 0.2 + 8 # 8というのはsync_angleが45の時にぴったりになるようにadhocに調整した値
+
+            # 水平角がself.sync_angle_step度増加するごとにタイムスタンプをtime_increase_per_step ns増加させる
+            time_increase_per_step = 20  # ns
+            timestamp = (current_azimuth_deg // self.sync_angle_step) * time_increase_per_step
+
+            # 高度リングが変わるごとに50234nsの時間を追加
+            timestamp += altitude_step_index * 50234
 
         # Check for azimuth-based time perturbation
         # time_perturbation = 0.0

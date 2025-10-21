@@ -17,3 +17,5 @@ original_bin/*
 pcd_ascii/*
 pcd_reconstructed_11/*
 my_new_dataset/*
+pcd_datasets/*
+sony_data/*

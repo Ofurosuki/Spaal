@@ -115,6 +115,7 @@ class HistMatrixVisualizer:
         frame_data = self.hist_matrix[frame_index]
         
         is_prediction_local = len(frame_data.shape) == 2
+        print(f"Reconstructing point cloud for frame {frame_index}, is_prediction: {is_prediction_local}")
         
         if is_prediction_local:
             channels, horizontal_resolution = frame_data.shape
@@ -173,7 +174,7 @@ class HistMatrixVisualizer:
             display_pcd = filtered_pcd
         else:
             display_pcd = reconstructed_pcd
-
+        print(f"Number of points in reconstructed PCD: {len(display_pcd.points)}")
         display_pcd.paint_uniform_color([1, 0, 0])  # Red for reconstructed
 
         geometries = [display_pcd]
@@ -194,6 +195,7 @@ class HistMatrixVisualizer:
             pcd_file_to_load = self.pcd_files[frame_index]
             print(f"Loading original PCD for comparison: {pcd_file_to_load}")
             original_pcd = o3d.io.read_point_cloud(pcd_file_to_load)
+            print(f"Number of points in original PCD: {len(original_pcd.points)}")
             original_pcd.paint_uniform_color([0, 0, 1])  # Blue for original
             geometries.append(original_pcd)
         elif self.pcd_directory_path:

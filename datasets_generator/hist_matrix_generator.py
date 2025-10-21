@@ -65,7 +65,7 @@ class LidarSignalDatasetGenerator:
                  outdoor_distance: float = 50.0, outdoor_ratio: float = 0.8,
                  spoofer_type: str = "adaptive_hfr_perturbation",
                  spoofer_frequency: float = 10 * 1e6,
-                 spoofer_duration_ms: float = 10,
+                 spoofer_duration_ms: float = 100,
                  spoofer_distance_m: float = 10.0,
                  spoofer_pulse_width_ns: float = 5,
                  spoofer_perturbation_ns: float = 20.0,
@@ -132,7 +132,8 @@ class LidarSignalDatasetGenerator:
                 amplitude=lidar_amplitude_range[0],
                 pulse_width=PreciseDuration(nanoseconds=lidar_pulse_width_ns),
                 time_resolution_ns=self.time_resolution_ns,
-                initial_point_offset=self.initial_point_offset
+                initial_point_offset=self.initial_point_offset,
+                scan_mode='vertical'
             )
             if self.lidar_type == "PCD_VLP32c":
                 self.lidar.set_sync_angle_step(self.sync_angle_step_deg)  # Use the new parameter
@@ -221,7 +222,7 @@ class LidarSignalDatasetGenerator:
                 target_azimuth = internal_angle_deg * 100
                 target_altitude = self.spoofer_altitude_deg * 100
                 target_point = (target_azimuth, target_altitude)
-                print(f"Target spoofer trigger point at az={target_azimuth/100} deg, alt={target_altitude/100} deg")
+                #print(f"Target spoofer trigger point at az={target_azimuth/100} deg, alt={target_altitude/100} deg")
 
                 available_points = list(current_lidar.depth_map.keys())
                 
@@ -239,14 +240,14 @@ class LidarSignalDatasetGenerator:
                         azimuth_distances = [abs(az - target_azimuth) for az, alt in points_on_same_altitude]
                         closest_index_on_alt = np.argmin(azimuth_distances)
                         actual_trigger_point = points_on_same_altitude[closest_index_on_alt]
-                        #print(f"Target spoofer point at az={target_azimuth/100}, alt={target_altitude/100} deg not found. Using closest point on same altitude ring: az={actual_trigger_point[0]/100}, alt={actual_trigger_point[1]/100} deg")
+                        print(f"Target spoofer point at az={target_azimuth/100}, alt={target_altitude/100} deg not found. Using closest point on same altitude ring: az={actual_trigger_point[0]/100}, alt={actual_trigger_point[1]/100} deg")
                     else:
                         # Fallback: find the closest point to the target azimuth on the HIGHEST altitude ring.
                         new_target_altitude = self.sorted_vertical_angles[0] * 100
                         distances = [np.sqrt((az - target_azimuth)**2 + (alt - new_target_altitude)**2) for az, alt in available_points]
                         closest_index = np.argmin(distances)
                         actual_trigger_point = available_points[closest_index]
-                        #print(f"Target spoofer point at az={target_azimuth/100}, alt={target_altitude/100} deg not found. No points on target altitude ring. Using closest point to highest altitude ring: az={actual_trigger_point[0]/100}, alt={actual_trigger_point[1]/100} deg")
+                        print(f"Target spoofer point at az={target_azimuth/100}, alt={target_altitude/100} deg not found. No points on target altitude ring. Using closest point to highest altitude ring: az={actual_trigger_point[0]/100}, alt={actual_trigger_point[1]/100} deg")
 
             frame_data = np.zeros((self.channels, self.horizontal_resolution, self.samples_per_scan), dtype=np.float32)
             frame_labels = np.zeros((self.channels, self.horizontal_resolution, self.samples_per_scan), dtype=np.uint8)
