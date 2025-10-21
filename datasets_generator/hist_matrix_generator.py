@@ -283,8 +283,15 @@ class LidarSignalDatasetGenerator:
 
                             altitude_diff = abs(alt_key_ideal - alt_key_target)
 
-                            if azimuth_diff <= azimuth_tolerance and altitude_diff <= altitude_tolerance:
-                                self.spoofer.trigger(config, signal)
+                            # Scan mode-dependent trigger logic
+                            if current_lidar.scan_mode == 'vertical':
+                                # Vertical mode: trigger when altitude matches (azimuth changes slowly)
+                                if altitude_diff <= altitude_tolerance:
+                                    self.spoofer.trigger(config, signal)
+                            else:
+                                # Horizontal mode: trigger when both azimuth and altitude match
+                                if azimuth_diff <= azimuth_tolerance and altitude_diff <= altitude_tolerance:
+                                    self.spoofer.trigger(config, signal)
                         
                         external_signal = np.zeros_like(signal)
                         
