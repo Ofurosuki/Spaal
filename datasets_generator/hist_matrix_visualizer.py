@@ -7,6 +7,76 @@ from typing import Tuple
 import json
 import blosc2
 
+def create_grid_lines(max_radius: float = 100.0, grid_step: float = 10.0, num_radial_lines: int = 36):
+    """
+    Create a circular grid with concentric circles and radial lines.
+
+    Parameters:
+    -----------
+    max_radius : float
+        Maximum radius of the grid in meters
+    grid_step : float
+        Distance between concentric circles in meters
+    num_radial_lines : int
+        Number of radial lines (default 36 = every 10 degrees)
+
+    Returns:
+    --------
+    o3d.geometry.LineSet
+        Grid lines as an Open3D LineSet
+    """
+    points = []
+    lines = []
+
+    # Create concentric circles
+    num_circles = int(max_radius / grid_step)
+    points_per_circle = 100
+
+    for circle_idx in range(1, num_circles + 1):
+        radius = circle_idx * grid_step
+        start_point_idx = len(points)
+
+        # Create points for this circle
+        for i in range(points_per_circle):
+            angle = 2 * np.pi * i / points_per_circle
+            x = radius * np.cos(angle)
+            y = radius * np.sin(angle)
+            z = 0.0
+            points.append([x, y, z])
+
+        # Create lines connecting points in this circle
+        for i in range(points_per_circle):
+            next_i = (i + 1) % points_per_circle
+            lines.append([start_point_idx + i, start_point_idx + next_i])
+
+    # Create radial lines
+    for radial_idx in range(num_radial_lines):
+        angle = 2 * np.pi * radial_idx / num_radial_lines
+        start_point_idx = len(points)
+
+        # Create points along this radial line
+        for circle_idx in range(1, num_circles + 1):
+            radius = circle_idx * grid_step
+            x = radius * np.cos(angle)
+            y = radius * np.sin(angle)
+            z = 0.0
+            points.append([x, y, z])
+
+        # Create lines connecting points along this radial
+        for i in range(len(range(1, num_circles + 1)) - 1):
+            lines.append([start_point_idx + i, start_point_idx + i + 1])
+
+    # Create LineSet
+    line_set = o3d.geometry.LineSet()
+    line_set.points = o3d.utility.Vector3dVector(np.array(points))
+    line_set.lines = o3d.utility.Vector2iVector(np.array(lines))
+
+    # Set color to gray
+    colors = [[0.5, 0.5, 0.5] for _ in range(len(lines))]
+    line_set.colors = o3d.utility.Vector3dVector(colors)
+
+    return line_set
+
 def get_peak_time_and_amplitude(signal: np.ndarray) -> Tuple[float, float]:
     """
     Finds the interpolated time and amplitude of the highest peak in a signal.
@@ -46,13 +116,16 @@ def get_peak_time_and_amplitude(signal: np.ndarray) -> Tuple[float, float]:
     return interpolated_time, peak_amplitude
 
 class HistMatrixVisualizer:
-    def __init__(self, dataset_root_path: str, frame_index: int = 0, pcd_directory_path: str = None, data: dict = None, amplitude_to_intensity_ratio: float = 255.0/10.0, use_answer_matrix: bool = False, sor_params: Tuple[float, float] = None):
+    def __init__(self, dataset_root_path: str, frame_index: int = 0, pcd_directory_path: str = None, data: dict = None, amplitude_to_intensity_ratio: float = 255.0/10.0, use_answer_matrix: bool = False, sor_params: Tuple[float, float] = None, show_grid: bool = False, grid_max_radius: float = 100.0, grid_step: float = 10.0):
         self.dataset_root_path = dataset_root_path
         self.frame_index = frame_index
         self.pcd_directory_path = pcd_directory_path
         self.is_prediction = use_answer_matrix
         self.amplitude_to_intensity_ratio = amplitude_to_intensity_ratio
         self.sor_params = sor_params
+        self.show_grid = show_grid
+        self.grid_max_radius = grid_max_radius
+        self.grid_step = grid_step
         print(f"amplitude_to_intensity_ratio: {self.amplitude_to_intensity_ratio}")
 
         if data is None:
@@ -179,14 +252,54 @@ class HistMatrixVisualizer:
 
         geometries = [display_pcd]
 
+        # Add grid if requested
+        if self.show_grid:
+            grid = create_grid_lines(
+                max_radius=self.grid_max_radius,
+                grid_step=self.grid_step,
+                num_radial_lines=36
+            )
+            geometries.append(grid)
+            print(f"Added grid: max_radius={self.grid_max_radius}m, step={self.grid_step}m")
+
         if self.original_bin_path and os.path.exists(self.original_bin_path):
             print(f"Loading original BIN for comparison: {self.original_bin_path}")
             raw_data = np.fromfile(self.original_bin_path, dtype=np.float32)
-            if raw_data.size % 5 != 0:
+
+            # Detect the number of elements per point
+            # 4 for KITTI/HDL64E (x, y, z, intensity)
+            # 5 for nuScenes/VLP32c (x, y, z, intensity, ring)
+            if raw_data.size % 4 == 0 and raw_data.size % 5 != 0:
+                num_elements = 4
+            elif raw_data.size % 5 == 0 and raw_data.size % 4 != 0:
+                num_elements = 5
+            elif raw_data.size % 4 == 0 and raw_data.size % 5 == 0:
+                # Both divisible - use file path to determine format
+                if 'kitti' in self.original_bin_path.lower() or 'velodyne' in self.original_bin_path.lower():
+                    num_elements = 4
+                else:
+                    num_elements = 5
+            else:
+                # Try to trim to fit 4 elements first (KITTI format)
+                remainder_4 = raw_data.size % 4
+                remainder_5 = raw_data.size % 5
+                if remainder_4 < remainder_5:
+                    num_elements = 4
+                    raw_data = raw_data[:-(raw_data.size % 4)]
+                else:
+                    num_elements = 5
+                    raw_data = raw_data[:-(raw_data.size % 5)]
+                print(f"Warning: BIN file size does not match expected format. Trimmed to {num_elements} elements per point.")
+
+            # Trim if necessary
+            if num_elements == 4 and raw_data.size % 4 != 0:
+                raw_data = raw_data[:-(raw_data.size % 4)]
+            elif num_elements == 5 and raw_data.size % 5 != 0:
                 raw_data = raw_data[:-(raw_data.size % 5)]
-            
-            points = raw_data.reshape(-1, 5)[:, :3]
-            
+
+            points = raw_data.reshape(-1, num_elements)[:, :3]
+            print(f"Loaded original BIN with {len(points)} points ({num_elements} elements per point)")
+
             original_pcd = o3d.geometry.PointCloud()
             original_pcd.points = o3d.utility.Vector3dVector(points)
             original_pcd.paint_uniform_color([0, 0, 1])  # Blue for original
@@ -237,6 +350,9 @@ if __name__ == '__main__':
     parser.add_argument("--amplitude-to-intensity-ratio", type=float, default=1.0, help="Ratio to convert signal amplitude to intensity for reconstructed PCD.")
     parser.add_argument("--use-answer-matrix", action='store_true', help="Use answer_matrix.bl2 instead of signal.bl2 for reconstruction.")
     parser.add_argument("--sor", nargs=2, type=float, metavar=('NB_NEIGHBORS', 'STD_RATIO'), help="Apply Statistical Outlier Removal with given nb_neighbors and std_ratio.")
+    parser.add_argument("--show-grid", action='store_true', help="Display concentric circular grid centered at origin.")
+    parser.add_argument("--grid-max-radius", type=float, default=100.0, help="Maximum radius of the grid in meters (default: 100.0).")
+    parser.add_argument("--grid-step", type=float, default=10.0, help="Distance between grid circles in meters (default: 10.0).")
 
     args = parser.parse_args()
 
@@ -246,7 +362,10 @@ if __name__ == '__main__':
         pcd_directory_path=args.pcd_directory,
         amplitude_to_intensity_ratio=args.amplitude_to_intensity_ratio,
         use_answer_matrix=args.use_answer_matrix,
-        sor_params=args.sor
+        sor_params=args.sor,
+        show_grid=args.show_grid,
+        grid_max_radius=args.grid_max_radius,
+        grid_step=args.grid_step
     )
 
     if args.output_pcd_dir:

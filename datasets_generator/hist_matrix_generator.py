@@ -9,6 +9,7 @@ from spaal2.core import (
 from spaal2.core.dummy_lidar.dummy_lidar_vlp16 import DummyLidarVLP16
 from spaal2.core.dummy_lidar.dummy_lidar_vlp16_pcd import PcdLidarVLP16
 from spaal2.core.dummy_lidar.dummy_lidar_vlp32_pcd import PcdLidarVLP32c
+from spaal2.core.dummy_lidar.dummy_lidar_hdl64e import PcdLidarHDL64E
 from spaal2.core.dummy_spoofer.dummy_spoofer_adaptive_hfr_with_perturbation import DummySpooferAdaptiveHFRWithPerturbation
 from spaal2.core.dummy_spoofer.dummy_spoofer_off import DummySpooferOff
 from tqdm import tqdm
@@ -99,7 +100,7 @@ class LidarSignalDatasetGenerator:
             )
             self.channels = 16
             self.horizontal_resolution = 1800
-        elif self.lidar_type == "PCD_VLP16" or self.lidar_type == "PCD_VLP32c":
+        elif self.lidar_type == "PCD_VLP16" or self.lidar_type == "PCD_VLP32c" or self.lidar_type == "PCD_HDL64E":
             if self.json_path:
                 if not os.path.exists(self.json_path):
                     raise FileNotFoundError(f"Input JSON file not found at {self.json_path}")
@@ -111,9 +112,12 @@ class LidarSignalDatasetGenerator:
             elif self.pcd_directory:
                 if not os.path.isdir(self.pcd_directory):
                     raise ValueError(f"PCD directory path must be a valid directory. Provided: {self.pcd_directory}")
-                self.pcd_files = sorted(glob.glob(os.path.join(self.pcd_directory, '*.pcd')))
+                # Support both .pcd and .bin files
+                pcd_pattern = os.path.join(self.pcd_directory, '*.pcd')
+                bin_pattern = os.path.join(self.pcd_directory, '*.bin')
+                self.pcd_files = sorted(glob.glob(pcd_pattern) + glob.glob(bin_pattern))
                 if not self.pcd_files:
-                    raise ValueError(f"No PCD files found in {self.pcd_directory}")
+                    raise ValueError(f"No PCD or BIN files found in {self.pcd_directory}")
                 self.samples = [{'path': path, 'token': os.path.splitext(os.path.basename(path))[0]} for path in self.pcd_files]
             else:
                 raise ValueError("Either --json-path or --pcd-directory must be provided for PCD lidar types.")
@@ -121,9 +125,12 @@ class LidarSignalDatasetGenerator:
             if self.lidar_type == "PCD_VLP16":
                 lidar_class = PcdLidarVLP16
                 self.channels = 16
-            else:
+            elif self.lidar_type == "PCD_VLP32c":
                 lidar_class = PcdLidarVLP32c
                 self.channels = 32
+            else:  # PCD_HDL64E
+                lidar_class = PcdLidarHDL64E
+                self.channels = 64
 
             self.lidar = lidar_class(
                 pcd_file_path=None, # Initialized without a specific file
@@ -135,9 +142,9 @@ class LidarSignalDatasetGenerator:
                 initial_point_offset=self.initial_point_offset,
                 scan_mode='vertical'
             )
-            if self.lidar_type == "PCD_VLP32c":
+            if self.lidar_type == "PCD_VLP32c" or self.lidar_type == "PCD_HDL64E":
                 self.lidar.set_sync_angle_step(self.sync_angle_step_deg)  # Use the new parameter
-                print(f"Set VLP32c sync angle step to {self.sync_angle_step_deg} degrees.")
+                print(f"Set {self.lidar_type} sync angle step to {self.sync_angle_step_deg} degrees.")
                 #self.lidar.set_azimuth_time_perturbation([78,90,112],[20,20,20])
             self.lidar.set_pcd_files(self.pcd_files)
             
@@ -207,7 +214,7 @@ class LidarSignalDatasetGenerator:
             sample_info = self.samples[frame_idx]
             sample_token = sample_info['token']
             
-            if self.lidar_type in ["PCD_VLP16", "PCD_VLP32c"]:
+            if self.lidar_type in ["PCD_VLP16", "PCD_VLP32c", "PCD_HDL64E"]:
                 current_lidar = self.lidar.new_frame(frame_num=frame_idx, base_timestamp=PreciseDuration(nanoseconds=frame_idx * 10**9))
             else:
                 current_lidar = self.lidar.new_frame(base_timestamp=PreciseDuration(nanoseconds=frame_idx * 10**9))
@@ -351,7 +358,7 @@ if __name__ == '__main__':
     import time
 
     parser = argparse.ArgumentParser(description="Generate LiDAR signal datasets.")
-    parser.add_argument("--lidar-type", type=str, default="PCD_VLP32c", choices=["VLP16", "PCD_VLP16", "PCD_VLP32c"],
+    parser.add_argument("--lidar-type", type=str, default="PCD_VLP32c", choices=["VLP16", "PCD_VLP16", "PCD_VLP32c", "PCD_HDL64E"],
                         help="Type of LiDAR to use.")
     parser.add_argument("--pcd-directory", type=str, default=None,
                         help="Path to the directory containing PCD files, required if lidar-type starts with PCD.")
