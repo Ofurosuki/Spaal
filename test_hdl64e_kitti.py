@@ -3,7 +3,7 @@ from spaal2.core import PreciseDuration
 from spaal2.core.dummy_lidar import PcdLidarHDL64E
 
 # KITTI dataset bin file path
-bin_file_path = 'D:/testing/velodyne/000800.bin'
+bin_file_path = 'D:/testing/velodyne/000000.bin'
 
 # Initialize HDL-64E with KITTI data
 lidar_position = np.array([0.0, 0.0, 0.0])

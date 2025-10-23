@@ -5,10 +5,10 @@ class MeasurementConfig:
     """
     LiDAR測距の設定を保持するクラス
     """
-    def __init__(self, 
-                 start_timestamp: PreciseDuration, 
-                 accept_duration: PreciseDuration, 
-                 azimuth: int, 
+    def __init__(self,
+                 start_timestamp: PreciseDuration,
+                 accept_duration: PreciseDuration,
+                 azimuth: int,
                  altitude: int,
                  torelance_error: PreciseDuration = PreciseDuration(nanoseconds=0),
                  gt_intervals: list[int] = [],
@@ -16,7 +16,9 @@ class MeasurementConfig:
                  gt_amps_ratio: list[float] = [],
                  amp_torelance_error_ratio: float = 0.0,
                  num_accumulation: int = 1,
-                 accumulation_interval: PreciseDuration = PreciseDuration(nanoseconds=0),):
+                 accumulation_interval: PreciseDuration = PreciseDuration(nanoseconds=0),
+                 azimuth_deg: float = None,
+                 horizontal_index: int = None,):
         """
         Parameters
         ----------
@@ -43,6 +45,12 @@ class MeasurementConfig:
             積算回数, by default 1
         accumulation_interval : PreciseDuration, optional
             積算間隔, by default PreciseDuration(nanoseconds=0)
+        azimuth_deg : float, optional
+            実際の方位角(degrees), by default None
+            HDL-64Eのようにチャンネル毎にazimuthが異なる場合に使用
+        horizontal_index : int, optional
+            Channel内の水平方向index, by default None
+            Channel-based architectureで使用（collision回避）
         """
         self.start_timestamp = start_timestamp
         self.accept_duration = accept_duration
@@ -55,3 +63,5 @@ class MeasurementConfig:
         self.amp_torelance_error_ratio = amp_torelance_error_ratio
         self.num_accumulation = num_accumulation
         self.accumulation_interval = accumulation_interval
+        self.azimuth_deg = azimuth_deg
+        self.horizontal_index = horizontal_index

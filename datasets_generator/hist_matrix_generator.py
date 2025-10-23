@@ -58,7 +58,7 @@ def get_peak_time_and_amplitude(signal: np.ndarray) -> Tuple[float, float]:
     return interpolated_time, peak_amplitude
 
 class LidarSignalDatasetGenerator:
-    def __init__(self, 
+    def __init__(self,
                  lidar_type: str = "PCD_VLP32c",
                  pcd_directory: str = None,
                  json_path: str = None,
@@ -76,13 +76,25 @@ class LidarSignalDatasetGenerator:
                  time_resolution_ns: float = 1.0,
                  noise_ratio: float = 0.1,
                  sunlight_mean: float = 0.5,
-                 spoofer_angle_deg: float = 0.0, 
+                 spoofer_angle_deg: float = 0.0,
                  spoofer_altitude_deg: float = 8.0,
                  spoofer_width_deg: float = 90.0,
-                 sync_angle_step_deg: float = 0.2, 
-                 initial_point_offset: int = 0):
+                 sync_angle_step_deg: float = 0.2,
+                 initial_point_offset: int = 0,
+                 horizontal_resolution_deg: float = 0.1,
+                 output_horizontal_resolution_deg: float = None):
 
         self.lidar_type = lidar_type
+
+        # Auto-detect output_horizontal_resolution_deg if not provided
+        if output_horizontal_resolution_deg is None:
+            if lidar_type == "PCD_HDL64E":
+                output_horizontal_resolution_deg = 0.0818  # 4400 samples
+            elif lidar_type in ["PCD_VLP32c", "PCD_VLP16", "VLP16"]:
+                output_horizontal_resolution_deg = 0.2  # 1800 samples
+            else:
+                output_horizontal_resolution_deg = 0.2  # Default
+
         self.pcd_directory = pcd_directory
         self.json_path = json_path
         self.time_resolution_ns = time_resolution_ns
@@ -91,6 +103,8 @@ class LidarSignalDatasetGenerator:
         self.spoofer_width_deg = spoofer_width_deg
         self.sync_angle_step_deg = sync_angle_step_deg # Store the new parameter
         self.initial_point_offset = initial_point_offset
+        self.horizontal_resolution_deg = horizontal_resolution_deg
+        self.output_horizontal_resolution_deg = output_horizontal_resolution_deg
 
         if self.lidar_type == "VLP16":
             self.lidar = DummyLidarVLP16(
@@ -132,20 +146,32 @@ class LidarSignalDatasetGenerator:
                 lidar_class = PcdLidarHDL64E
                 self.channels = 64
 
-            self.lidar = lidar_class(
-                pcd_file_path=None, # Initialized without a specific file
-                lidar_position=np.array([0.0, 0.0, 0.0]),
-                lidar_rotation=np.array([0.0, 0.0, 0.0]),
-                amplitude=lidar_amplitude_range[0],
-                pulse_width=PreciseDuration(nanoseconds=lidar_pulse_width_ns),
-                time_resolution_ns=self.time_resolution_ns,
-                initial_point_offset=self.initial_point_offset,
-                scan_mode='vertical'
-            )
+            # Build initialization parameters (common to all PCD-based LiDARs)
+            init_params = {
+                'pcd_file_path': None,  # Initialized without a specific file
+                'lidar_position': np.array([0.0, 0.0, 0.0]),
+                'lidar_rotation': np.array([0.0, 0.0, 0.0]),
+                'amplitude': lidar_amplitude_range[0],
+                'pulse_width': PreciseDuration(nanoseconds=lidar_pulse_width_ns),
+                'time_resolution_ns': self.time_resolution_ns,
+                'initial_point_offset': self.initial_point_offset,
+                'scan_mode': 'horizontal',
+            }
+
+            # HDL64E-specific parameters
+            if self.lidar_type == "PCD_HDL64E":
+                init_params['horizontal_resolution_deg'] = self.horizontal_resolution_deg
+                init_params['output_horizontal_resolution_deg'] = self.output_horizontal_resolution_deg
+
+            self.lidar = lidar_class(**init_params)
             if self.lidar_type == "PCD_VLP32c" or self.lidar_type == "PCD_HDL64E":
                 self.lidar.set_sync_angle_step(self.sync_angle_step_deg)  # Use the new parameter
                 print(f"Set {self.lidar_type} sync angle step to {self.sync_angle_step_deg} degrees.")
                 #self.lidar.set_azimuth_time_perturbation([78,90,112],[20,20,20])
+
+            if self.lidar_type == "PCD_HDL64E":
+                expected_samples = int(360 / self.output_horizontal_resolution_deg)
+                print(f"HDL-64E output resolution: {self.output_horizontal_resolution_deg:.4f}° ({expected_samples} samples per channel)")
             self.lidar.set_pcd_files(self.pcd_files)
             
             # Load the first frame to determine horizontal_resolution
@@ -259,6 +285,7 @@ class LidarSignalDatasetGenerator:
             frame_data = np.zeros((self.channels, self.horizontal_resolution, self.samples_per_scan), dtype=np.float32)
             frame_labels = np.zeros((self.channels, self.horizontal_resolution, self.samples_per_scan), dtype=np.uint8)
             answer_matrix = np.zeros((self.channels, self.horizontal_resolution), dtype=np.float32)
+            azimuth_angles = np.full((self.channels, self.horizontal_resolution), np.nan, dtype=np.float32)
             
             try:
                 for scan_idx in range(current_lidar.max_index):
@@ -313,11 +340,14 @@ class LidarSignalDatasetGenerator:
 
                     signal = np.clip(signal, 0, 9)
 
-                    azimuth_deg = config.azimuth / 100.0
-                    
-                    normalized_azimuth = (azimuth_deg - current_lidar.initial_azimuth_offset + 360) % 360
-                    
-                    horizontal_index = int(normalized_azimuth / 360.0 * self.horizontal_resolution)
+                    # Use horizontal_index if available (channel-based architecture, collision-free)
+                    if hasattr(config, 'horizontal_index') and config.horizontal_index is not None:
+                        horizontal_index = config.horizontal_index
+                    else:
+                        # Fallback to old calculation for backward compatibility
+                        azimuth_deg = config.azimuth / 100.0
+                        normalized_azimuth = (azimuth_deg - current_lidar.initial_azimuth_offset + 360) % 360
+                        horizontal_index = int(normalized_azimuth / 360.0 * self.horizontal_resolution)
 
                     vertical_index = self.altitude_to_sorted_v_idx_map.get(config.altitude)
 
@@ -325,6 +355,9 @@ class LidarSignalDatasetGenerator:
                         frame_data[vertical_index, horizontal_index, :] = signal
                         frame_labels[vertical_index, horizontal_index, :] = current_labels
                         answer_matrix[vertical_index, horizontal_index] = true_peak_time
+                        # Store actual azimuth angle if available (for HDL-64E channel-based architecture)
+                        if hasattr(config, 'azimuth_deg') and config.azimuth_deg is not None:
+                            azimuth_angles[vertical_index, horizontal_index] = config.azimuth_deg
 
             except StopIteration:
                 pass
@@ -340,6 +373,8 @@ class LidarSignalDatasetGenerator:
                     f.write(blosc2.pack_array(frame_labels))
                 with open(os.path.join(frame_output_dir, 'answer_matrix.bl2'), 'wb') as f:
                     f.write(blosc2.pack_array(answer_matrix))
+                with open(os.path.join(frame_output_dir, 'angles.bl2'), 'wb') as f:
+                    f.write(blosc2.pack_array(azimuth_angles))
 
                 # Save config to json
                 config_data = {
@@ -385,6 +420,10 @@ if __name__ == '__main__':
                         help="Initial point offset to rotate the PCD point cloud.")
     parser.add_argument("--sync-angle", type=float, default=1.0,
                         help="Sync angle step in degrees for VLP32c. Default is 0.2 degrees.")
+    parser.add_argument("--horizontal-resolution-deg", type=float, default=0.1,
+                        help="Internal horizontal resolution in degrees for PCD-based LiDARs. Default is 0.1 degrees.")
+    parser.add_argument("--output-horizontal-resolution-deg", type=float, default=None,
+                        help="Output horizontal resolution in degrees (determines samples per channel). Auto-detected if not specified: HDL-64E=0.0818° (4400 samples), VLP32c/VLP16=0.2° (1800 samples).")
 
     args = parser.parse_args()
 
@@ -402,7 +441,9 @@ if __name__ == '__main__':
         spoofer_altitude_deg=args.spoofer_altitude,
         spoofer_width_deg=args.spoofer_width_deg,
         initial_point_offset=args.initial_point_offset,
-        sync_angle_step_deg=args.sync_angle
+        sync_angle_step_deg=args.sync_angle,
+        horizontal_resolution_deg=args.horizontal_resolution_deg,
+        output_horizontal_resolution_deg=args.output_horizontal_resolution_deg
     )
     
     print("\nStarting dataset generation...")

@@ -153,8 +153,22 @@ class HistMatrixVisualizer:
             
             hist_matrix_single_frame = blosc2.unpack_array(packed_data)
             self.hist_matrix = np.expand_dims(hist_matrix_single_frame, axis=0)
-            
+
+            # Try to load angles.bl2 if available (for HDL-64E channel-based architecture)
+            angles_file = os.path.join(sample_dir, 'angles.bl2')
+            if os.path.exists(angles_file):
+                with open(angles_file, 'rb') as f:
+                    angles_data = f.read()
+                azimuth_angles_single_frame = blosc2.unpack_array(angles_data)
+                self.azimuth_angles = np.expand_dims(azimuth_angles_single_frame, axis=0)
+                print(f"Loaded angles.bl2 with shape: {self.azimuth_angles.shape}")
+            else:
+                self.azimuth_angles = None
+
             data = config_data
+        else:
+            # Data provided directly - no angles.bl2 file available
+            self.azimuth_angles = None
 
         print(f"shape of hist_matrix: {self.hist_matrix.shape}")
 
@@ -212,9 +226,20 @@ class HistMatrixVisualizer:
                     intensity = 100 # Default intensity for predictions
 
                 distance_m = (highest_peak_time * self.time_resolution_ns) * 0.15
-                
+
                 altitude_deg = self.vertical_angles[v_idx]
-                azimuth_deg = (h_idx / horizontal_resolution) * self.fov + current_azimuth_offset
+
+                # Use actual azimuth angle from angles.bl2 if available, otherwise calculate synthetically
+                if self.azimuth_angles is not None and frame_index < len(self.azimuth_angles):
+                    actual_azimuth = self.azimuth_angles[frame_index, v_idx, h_idx]
+                    if not np.isnan(actual_azimuth):
+                        azimuth_deg = actual_azimuth
+                    else:
+                        # Fallback to synthetic calculation if angle is NaN
+                        azimuth_deg = (h_idx / horizontal_resolution) * self.fov + current_azimuth_offset
+                else:
+                    # No angles.bl2 file, use synthetic calculation
+                    azimuth_deg = (h_idx / horizontal_resolution) * self.fov + current_azimuth_offset
 
                 alpha = np.deg2rad(azimuth_deg)
                 omega = np.deg2rad(altitude_deg)

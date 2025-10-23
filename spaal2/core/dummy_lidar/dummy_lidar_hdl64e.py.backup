@@ -629,11 +629,7 @@ class PcdLidarHDL64E:
 
                             pulse_amplitude = self.amplitude
                             if pcd_intensity is not None:
-                                if pcd_intensity > 0:
-                                    pulse_amplitude = pcd_intensity * self.intensity_to_amplitude_ratio
-                                else:
-                                    # intensity=0の場合、デフォルト値を使用（検出可能な最小値）
-                                    pulse_amplitude = 0.05 * self.intensity_to_amplitude_ratio
+                                pulse_amplitude = pcd_intensity * self.intensity_to_amplitude_ratio
 
                             # Generate the Gaussian pulse
                             gaussian_pulse = pulse_amplitude * np.exp(-((pulse_indices - mu)**2) / (2 * (sigma**2)))
@@ -643,11 +639,7 @@ class PcdLidarHDL64E:
                         # Fallback for zero pulse width
                         pulse_amplitude = self.amplitude
                         if pcd_intensity is not None:
-                            if pcd_intensity > 0:
-                                pulse_amplitude = pcd_intensity * self.intensity_to_amplitude_ratio
-                            else:
-                                # intensity=0の場合、デフォルト値を使用（検出可能な最小値）
-                                pulse_amplitude = 0.05 * self.intensity_to_amplitude_ratio
+                            pulse_amplitude = pcd_intensity * self.intensity_to_amplitude_ratio
                         signal[time_of_flight_index] += pulse_amplitude
 
         # For MeasurementConfig compatibility: use synthetic azimuth if no actual data
