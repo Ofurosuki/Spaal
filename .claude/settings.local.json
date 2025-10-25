@@ -4,9 +4,13 @@
       "Bash(uv run python:*)",
       "Bash(pkill:*)",
       "Read(//d/testing/velodyne/**)",
-      "Bash(python:*)"
+      "Bash(python:*)",
+      "Bash(./test_hdl64e_generator.sh:*)"
     ],
     "deny": [],
-    "ask": []
+    "ask": [],
+    "additionalDirectories": [
+      "D:\\eval_cvpr2026"
+    ]
   }
 }

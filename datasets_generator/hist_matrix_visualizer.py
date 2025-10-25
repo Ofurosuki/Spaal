@@ -338,7 +338,9 @@ class HistMatrixVisualizer:
             geometries.append(original_pcd)
         elif self.pcd_directory_path:
              print(f"Warning: Frame index {frame_index} is out of bounds for the number of PCD files found ({len(self.pcd_files)}). Original PCD will not be displayed.")
-
+        # Add frame axes
+        frame_axes = o3d.geometry.TriangleMesh.create_coordinate_frame(size=10.0, origin=[0, 0, 0])
+        geometries.append(frame_axes)
         o3d.visualization.draw_geometries(geometries, window_name=f"Frame {frame_index}")
 
     def save_reconstructed_pcds(self, output_dir: str):

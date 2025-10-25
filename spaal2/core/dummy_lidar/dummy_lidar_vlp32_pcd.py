@@ -51,7 +51,8 @@ class PcdLidarVLP32c:
         self.initial_point_offset = initial_point_offset
         self.scan_mode = scan_mode
 
-        self.sync_angle_step = 0.2  # degrees
+        self.sync_angle_step = 0.2  # degrees (for horizontal mode)
+        self.sync_channel_step = 1  # channels (for vertical mode)
 
         # Create a sorted list of vertical angles for the new scan pattern
         self.sorted_vertical_angles = sorted(self.vertical_angles, reverse=True)
@@ -187,7 +188,12 @@ class PcdLidarVLP32c:
         self.pcd_files = pcd_files
     
     def set_sync_angle_step(self, angle_step: float):
+        """Set sync angle step for horizontal mode (in degrees)"""
         self.sync_angle_step = angle_step
+
+    def set_sync_channel_step(self, channel_step: int):
+        """Set sync channel step for vertical mode (in number of channels)"""
+        self.sync_channel_step = channel_step
 
     def set_azimuth_time_perturbation(self, thresholds_deg: list[float], times_ns: list[float]):
         """
@@ -350,7 +356,7 @@ class PcdLidarVLP32c:
         self.detected_point_indices = set()
         return self
 
-    def _get_current_angle(self) -> tuple[int, int]:
+    def _get_current_angle(self) -> tuple[int, int, int, float]:
         # Determine which altitude ring and azimuth step we are on based on the new ideal scan pattern
         if self.scan_mode == 'vertical':
             azimuth_index_in_ring = self.index // 32
@@ -366,16 +372,17 @@ class PcdLidarVLP32c:
         # Calculate the azimuth key based on the ideal horizontal step
         horizontal_resolution = 20  # 0.2 degrees * 100
         lidar_azimuth_deg = azimuth_index_in_ring * 0.2
-        
+
         # Apply the initial offset for the current frame to get the absolute angle
         absolute_azimuth_deg = lidar_azimuth_deg + self.initial_azimuth_offset
-        
+
         # Discretize the azimuth to create the lookup key for the depth map
         azimuth_index = round(absolute_azimuth_deg * 100 / horizontal_resolution)
         discretized_azimuth = (azimuth_index * horizontal_resolution)
         azimuth_key = int(discretized_azimuth % 36000)
 
-        return azimuth_key, altitude_key
+        # Return azimuth_key, altitude_key, horizontal_index, azimuth_deg
+        return azimuth_key, altitude_key, azimuth_index_in_ring, absolute_azimuth_deg
 
     def _get_current_timestamp(self) -> int:
         horizontal_steps_per_ring = self.max_index // 32
@@ -384,18 +391,18 @@ class PcdLidarVLP32c:
             num_vertical_channels = 32
             azimuth_step_index = self.index // num_vertical_channels
             altitude_step_index = self.index % num_vertical_channels
-            
+
             # Get current vertical angle from the pre-sorted list
             current_vertical_angle = self.sorted_vertical_angles[altitude_step_index]
 
-            # Timestamp logic similar to horizontal mode, but for vertical direction
+            # Timestamp logic: channel-based for vertical mode
             time_increase_per_step = 20  # ns
-            timestamp = (current_vertical_angle // self.sync_angle_step) * time_increase_per_step
+            timestamp = (altitude_step_index // self.sync_channel_step) * time_increase_per_step
 
             # Add a large time jump for each new azimuth column
             time_jump_per_azimuth = 50234
             timestamp += azimuth_step_index * time_jump_per_azimuth
-            
+
             # current_azimuth_deg is needed for perturbation, though it's commented out.
             current_azimuth_deg = azimuth_step_index * 0.2 + 8
 
@@ -425,7 +432,7 @@ class PcdLidarVLP32c:
     def scan(self) -> tuple[MeasurementConfig, npt.NDArray[np.float64]]:
         if self.index >= self.max_index:
             raise StopIteration()
-        azimuth, altitude = self._get_current_angle()
+        azimuth, altitude, horizontal_index, azimuth_deg = self._get_current_angle()
         timestamp = self._get_current_timestamp()
 
         depth_info = self.depth_map.get((azimuth, altitude))
@@ -485,6 +492,8 @@ class PcdLidarVLP32c:
             accept_duration=self.accept_window,
             azimuth=azimuth,
             altitude=altitude,
+            azimuth_deg=azimuth_deg,
+            horizontal_index=horizontal_index,
         ), signal
 
     def get_no_signal_points(self) -> np.ndarray:

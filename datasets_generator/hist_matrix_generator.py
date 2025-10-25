@@ -79,10 +79,11 @@ class LidarSignalDatasetGenerator:
                  spoofer_angle_deg: float = 0.0,
                  spoofer_altitude_deg: float = 8.0,
                  spoofer_width_deg: float = 90.0,
-                 sync_angle_step_deg: float = 0.2,
+                 sync_angle_range: tuple[float, float] = (0.2, 0.2),
                  initial_point_offset: int = 0,
                  horizontal_resolution_deg: float = 0.1,
-                 output_horizontal_resolution_deg: float = None):
+                 output_horizontal_resolution_deg: float = None,
+                 scan_mode: str = 'vertical'):
 
         self.lidar_type = lidar_type
 
@@ -101,10 +102,11 @@ class LidarSignalDatasetGenerator:
         self.spoofer_angle_deg = spoofer_angle_deg
         self.spoofer_altitude_deg = spoofer_altitude_deg
         self.spoofer_width_deg = spoofer_width_deg
-        self.sync_angle_step_deg = sync_angle_step_deg # Store the new parameter
+        self.sync_angle_range = sync_angle_range  # Store sync angle range (min, max)
         self.initial_point_offset = initial_point_offset
         self.horizontal_resolution_deg = horizontal_resolution_deg
         self.output_horizontal_resolution_deg = output_horizontal_resolution_deg
+        self.scan_mode = scan_mode  # Store scan mode
 
         if self.lidar_type == "VLP16":
             self.lidar = DummyLidarVLP16(
@@ -155,7 +157,7 @@ class LidarSignalDatasetGenerator:
                 'pulse_width': PreciseDuration(nanoseconds=lidar_pulse_width_ns),
                 'time_resolution_ns': self.time_resolution_ns,
                 'initial_point_offset': self.initial_point_offset,
-                'scan_mode': 'horizontal',
+                'scan_mode': self.scan_mode,
             }
 
             # HDL64E-specific parameters
@@ -165,8 +167,10 @@ class LidarSignalDatasetGenerator:
 
             self.lidar = lidar_class(**init_params)
             if self.lidar_type == "PCD_VLP32c" or self.lidar_type == "PCD_HDL64E":
-                self.lidar.set_sync_angle_step(self.sync_angle_step_deg)  # Use the new parameter
-                print(f"Set {self.lidar_type} sync angle step to {self.sync_angle_step_deg} degrees.")
+                if self.scan_mode == 'vertical':
+                    print(f"LiDAR {self.lidar_type} (vertical mode): sync range {int(self.sync_angle_range[0])}-{int(self.sync_angle_range[1])} channels")
+                else:
+                    print(f"LiDAR {self.lidar_type} (horizontal mode): sync range {self.sync_angle_range[0]:.2f}°-{self.sync_angle_range[1]:.2f}°")
                 #self.lidar.set_azimuth_time_perturbation([78,90,112],[20,20,20])
 
             if self.lidar_type == "PCD_HDL64E":
@@ -239,7 +243,21 @@ class LidarSignalDatasetGenerator:
             frame_idx = start_frame + i
             sample_info = self.samples[frame_idx]
             sample_token = sample_info['token']
-            
+
+            # Randomly select sync value from the specified range for each frame
+            if self.lidar_type in ["PCD_VLP32c", "PCD_HDL64E"]:
+                sync_value = np.random.uniform(self.sync_angle_range[0], self.sync_angle_range[1])
+
+                if self.scan_mode == 'vertical':
+                    # Vertical mode: interpret as channel steps (integer)
+                    sync_channel = int(sync_value)
+                    self.lidar.set_sync_channel_step(sync_channel)
+                    print(f"Frame {frame_idx}: Using sync {sync_channel} channels (range: {int(self.sync_angle_range[0])}-{int(self.sync_angle_range[1])} channels, vertical mode)")
+                else:
+                    # Horizontal mode: interpret as angle in degrees (float)
+                    self.lidar.set_sync_angle_step(sync_value)
+                    print(f"Frame {frame_idx}: Using sync {sync_value:.4f}° (range: {self.sync_angle_range[0]:.2f}°-{self.sync_angle_range[1]:.2f}°, horizontal mode)")
+
             if self.lidar_type in ["PCD_VLP16", "PCD_VLP32c", "PCD_HDL64E"]:
                 current_lidar = self.lidar.new_frame(frame_num=frame_idx, base_timestamp=PreciseDuration(nanoseconds=frame_idx * 10**9))
             else:
@@ -286,6 +304,7 @@ class LidarSignalDatasetGenerator:
             frame_labels = np.zeros((self.channels, self.horizontal_resolution, self.samples_per_scan), dtype=np.uint8)
             answer_matrix = np.zeros((self.channels, self.horizontal_resolution), dtype=np.float32)
             azimuth_angles = np.full((self.channels, self.horizontal_resolution), np.nan, dtype=np.float32)
+            timestamp_matrix = np.zeros((self.channels, self.horizontal_resolution), dtype=np.int64)
             
             try:
                 for scan_idx in range(current_lidar.max_index):
@@ -355,6 +374,7 @@ class LidarSignalDatasetGenerator:
                         frame_data[vertical_index, horizontal_index, :] = signal
                         frame_labels[vertical_index, horizontal_index, :] = current_labels
                         answer_matrix[vertical_index, horizontal_index] = true_peak_time
+                        timestamp_matrix[vertical_index, horizontal_index] = config.start_timestamp.in_nanoseconds
                         # Store actual azimuth angle if available (for HDL-64E channel-based architecture)
                         if hasattr(config, 'azimuth_deg') and config.azimuth_deg is not None:
                             azimuth_angles[vertical_index, horizontal_index] = config.azimuth_deg
@@ -375,6 +395,8 @@ class LidarSignalDatasetGenerator:
                     f.write(blosc2.pack_array(answer_matrix))
                 with open(os.path.join(frame_output_dir, 'angles.bl2'), 'wb') as f:
                     f.write(blosc2.pack_array(azimuth_angles))
+                with open(os.path.join(frame_output_dir, 'timestamps.bl2'), 'wb') as f:
+                    f.write(blosc2.pack_array(timestamp_matrix))
 
                 # Save config to json
                 config_data = {
@@ -418,8 +440,10 @@ if __name__ == '__main__':
                         help="Starting frame index (0-indexed) for processing PCD files.")
     parser.add_argument("--initial-point-offset", type=int, default=0,
                         help="Initial point offset to rotate the PCD point cloud.")
-    parser.add_argument("--sync-angle", type=float, default=1.0,
-                        help="Sync angle step in degrees for VLP32c. Default is 0.2 degrees.")
+    parser.add_argument("--sync-angle", type=float, nargs='+', default=[1.0],
+                        help="Sync value for timestamp calculation. In horizontal mode: angle in degrees. In vertical mode: number of channels. Provide one value for fixed, or two values (min max) for random selection per frame. Default is 1.0.")
+    parser.add_argument("--scan-mode", type=str, default='vertical', choices=['horizontal', 'vertical'],
+                        help="LiDAR scan mode: 'horizontal' (angle-based sync) or 'vertical' (channel-based sync). Default is 'vertical'.")
     parser.add_argument("--horizontal-resolution-deg", type=float, default=0.1,
                         help="Internal horizontal resolution in degrees for PCD-based LiDARs. Default is 0.1 degrees.")
     parser.add_argument("--output-horizontal-resolution-deg", type=float, default=None,
@@ -429,6 +453,14 @@ if __name__ == '__main__':
 
     if (args.lidar_type.startswith("PCD")) and not args.pcd_directory and not args.json_path:
         parser.error(f"--pcd-directory or --json-path is required when --lidar-type is {args.lidar_type}")
+
+    # Parse sync_angle argument
+    if len(args.sync_angle) == 1:
+        sync_angle_range = (args.sync_angle[0], args.sync_angle[0])  # Fixed angle
+    elif len(args.sync_angle) == 2:
+        sync_angle_range = (args.sync_angle[0], args.sync_angle[1])  # Range
+    else:
+        parser.error("--sync-angle must be either one value or two values (min max)")
 
     generator = LidarSignalDatasetGenerator(
         lidar_type=args.lidar_type,
@@ -441,9 +473,10 @@ if __name__ == '__main__':
         spoofer_altitude_deg=args.spoofer_altitude,
         spoofer_width_deg=args.spoofer_width_deg,
         initial_point_offset=args.initial_point_offset,
-        sync_angle_step_deg=args.sync_angle,
+        sync_angle_range=sync_angle_range,
         horizontal_resolution_deg=args.horizontal_resolution_deg,
-        output_horizontal_resolution_deg=args.output_horizontal_resolution_deg
+        output_horizontal_resolution_deg=args.output_horizontal_resolution_deg,
+        scan_mode=args.scan_mode
     )
     
     print("\nStarting dataset generation...")

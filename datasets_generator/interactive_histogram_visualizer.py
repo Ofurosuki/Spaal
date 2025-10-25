@@ -32,6 +32,7 @@ def visualize_interactive(dataset_root_path: str, frame_specifier: str):
     # 2. Load data from the dataset directory structure
     hist_matrices = []
     label_matrices = []
+    timestamp_matrices = []
     vertical_angles = None
 
     try:
@@ -42,7 +43,7 @@ def visualize_interactive(dataset_root_path: str, frame_specifier: str):
         for frame_index in frame_indices:
             if frame_index >= len(sample_dirs):
                 raise ValueError(f"Frame index {frame_index} is out of bounds for {len(sample_dirs)} sample directories.")
-            
+
             sample_dir = os.path.join(dataset_root_path, sample_dirs[frame_index])
             print(f"Loading data from {sample_dir}")
 
@@ -61,6 +62,13 @@ def visualize_interactive(dataset_root_path: str, frame_specifier: str):
             else:
                 label_matrices.append(None)
 
+            timestamps_path = os.path.join(sample_dir, 'timestamps.bl2')
+            if os.path.exists(timestamps_path):
+                with open(timestamps_path, 'rb') as f:
+                    timestamp_matrices.append(blosc2.unpack_array(f.read()))
+            else:
+                timestamp_matrices.append(None)
+
     except FileNotFoundError as e:
         print(f"Error: {e}")
         return
@@ -72,8 +80,11 @@ def visualize_interactive(dataset_root_path: str, frame_specifier: str):
     num_channels, num_horizontal_steps, num_samples = hist_matrices[0].shape
 
     # 4. Setup the initial Matplotlib plot
-    fig, ax = plt.subplots()
-    plt.subplots_adjust(left=0.3, bottom=0.3)
+    fig = plt.figure(figsize=(14, 8))
+    ax = plt.subplot2grid((1, 3), (0, 0), colspan=2)
+    ax_text = plt.subplot2grid((1, 3), (0, 2))
+    ax_text.axis('off')
+    plt.subplots_adjust(left=0.05, bottom=0.25, right=0.98, top=0.92)
 
     # Initial indices for the first plot
     initial_altitude_idx = 0
@@ -83,19 +94,15 @@ def visualize_interactive(dataset_root_path: str, frame_specifier: str):
     time_axis = np.arange(num_samples)
 
     # 5. Create widget axes
-    ax_altitude = plt.axes([0.3, 0.15, 0.6, 0.03])
-    ax_azimuth = plt.axes([0.3, 0.1, 0.6, 0.03])
-    
+    ax_altitude = plt.axes([0.15, 0.15, 0.5, 0.03])
+    ax_azimuth = plt.axes([0.15, 0.1, 0.5, 0.03])
+
     check_buttons = None
     if len(frame_indices) > 1:
-        ax_check = plt.axes([0.05, 0.4, 0.15, 0.5])
+        ax_check = plt.axes([0.02, 0.4, 0.08, 0.5])
         check_labels = [f'Frame {i}' for i in frame_indices]
         check_actives = [True] * len(frame_indices)
         check_buttons = CheckButtons(ax_check, check_labels, check_actives)
-    else:
-        plt.subplots_adjust(left=0.1, bottom=0.3)
-        ax_altitude.set_position([0.25, 0.15, 0.65, 0.03])
-        ax_azimuth.set_position([0.25, 0.1, 0.65, 0.03])
 
     # 6. Create the sliders for altitude and azimuth
     slider_altitude = Slider(
@@ -120,7 +127,9 @@ def visualize_interactive(dataset_root_path: str, frame_specifier: str):
     def draw_histogram(alt_idx, azi_idx):
         """Clears the axes and redraws the histogram(s) based on widget states."""
         ax.clear()
-        
+        ax_text.clear()
+        ax_text.axis('off')
+
         visibles = [True] * len(hist_matrices)
         if check_buttons:
             visibles = check_buttons.get_status()
@@ -138,20 +147,52 @@ def visualize_interactive(dataset_root_path: str, frame_specifier: str):
             if label_matrix is not None and label_matrix.shape == hist_matrices[visible_idx].shape:
                 labels = label_matrix[alt_idx, azi_idx, :]
                 bar_height = 10
-                ax.fill_between(time_axis, 0, bar_height, where=labels == 1, 
+                ax.fill_between(time_axis, 0, bar_height, where=labels == 1,
                                 color='skyblue', alpha=0.8, label='Genuine (1)')
-                ax.fill_between(time_axis, 0, bar_height, where=labels == 2, 
+                ax.fill_between(time_axis, 0, bar_height, where=labels == 2,
                                 color='pink', alpha=0.8, label='HFR (2)')
-        
+
         bar_height = 10
         ax.set_xlabel("Time Sample Index")
         ax.set_ylabel("Intensity")
         ax.set_ylim(0, bar_height)
         ax.grid(True)
         ax.legend(loc='upper right')
-        
+
         altitude_deg = vertical_angles[alt_idx]
-        fig.suptitle(f'Altitude Idx: {alt_idx} (~{altitude_deg:.2f} deg), Azimuth Idx: {azi_idx}')
+        title = f'Altitude Idx: {alt_idx} (~{altitude_deg:.2f} deg), Azimuth Idx: {azi_idx}'
+        fig.suptitle(title)
+
+        # Display detailed timestamp info in text area
+        if any(tm is not None for tm in timestamp_matrices):
+            text_lines = ["Timestamp Info\n" + "="*30 + "\n"]
+
+            # Show timestamps for current position
+            text_lines.append(f"Current (Alt {alt_idx}, Azi {azi_idx}):\n")
+            for i, timestamp_matrix in enumerate(timestamp_matrices):
+                if timestamp_matrix is not None and visibles[i]:
+                    ts = timestamp_matrix[alt_idx, azi_idx]
+                    text_lines.append(f"  Frame {frame_indices[i]}: {ts:,} ns\n")
+
+            # Show timestamps for nearby altitudes (same azimuth)
+            text_lines.append(f"\nNearby Altitudes (Azi {azi_idx}):\n")
+            alt_range = range(max(0, alt_idx - 3), min(num_channels, alt_idx + 4))
+            for nearby_alt in alt_range:
+                text_lines.append(f"  Alt {nearby_alt}:")
+                for i, timestamp_matrix in enumerate(timestamp_matrices):
+                    if timestamp_matrix is not None and visibles[i]:
+                        ts = timestamp_matrix[nearby_alt, azi_idx]
+                        if nearby_alt == alt_idx:
+                            text_lines.append(f" [{ts:,}]")
+                        else:
+                            text_lines.append(f" {ts:,}")
+                text_lines.append("\n")
+
+            ax_text.text(0.05, 0.95, ''.join(text_lines),
+                        verticalalignment='top',
+                        fontfamily='monospace',
+                        fontsize=8,
+                        transform=ax_text.transAxes)
 
     # 8. Define the single update function for all widgets
     def update(val):

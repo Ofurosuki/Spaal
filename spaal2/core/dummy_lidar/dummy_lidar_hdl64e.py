@@ -106,7 +106,8 @@ class PcdLidarHDL64E:
         self.initial_point_offset = initial_point_offset
         self.scan_mode = scan_mode
 
-        self.sync_angle_step = horizontal_resolution_deg  # degrees
+        self.sync_angle_step = horizontal_resolution_deg  # degrees (for horizontal mode)
+        self.sync_channel_step = 1  # channels (for vertical mode)
 
         # Create a sorted list of vertical angles for the new scan pattern
         self.sorted_vertical_angles = sorted(self.vertical_angles, reverse=True)
@@ -243,7 +244,7 @@ class PcdLidarHDL64E:
         self.channel_arrays, self.samples_per_channel = self._create_channel_arrays()
 
         # For backward compatibility, also create depth_map (will be deprecated)
-        # self.depth_map, self.original_point_indices_map = self._create_depth_map()
+        self.depth_map, self.original_point_indices_map = self._create_depth_map()
 
         self.no_signal_scan_angles: list[tuple[int, int]] = []
 
@@ -251,7 +252,12 @@ class PcdLidarHDL64E:
         self.pcd_files = pcd_files
 
     def set_sync_angle_step(self, angle_step: float):
+        """Set sync angle step for horizontal mode (in degrees)"""
         self.sync_angle_step = angle_step
+
+    def set_sync_channel_step(self, channel_step: int):
+        """Set sync channel step for vertical mode (in number of channels)"""
+        self.sync_channel_step = channel_step
 
     def set_azimuth_time_perturbation(self, thresholds_deg: list[float], times_ns: list[float]):
         """
@@ -553,9 +559,9 @@ class PcdLidarHDL64E:
             # Get current vertical angle from the pre-sorted list
             current_vertical_angle = self.sorted_vertical_angles[altitude_step_index]
 
-            # Timestamp logic similar to horizontal mode, but for vertical direction
+            # Timestamp logic: channel-based for vertical mode
             time_increase_per_step = 20  # ns
-            timestamp = (current_vertical_angle // self.sync_angle_step) * time_increase_per_step
+            timestamp = (altitude_step_index // self.sync_channel_step) * time_increase_per_step
 
             # Add a large time jump for each new azimuth column
             time_jump_per_azimuth = 50234
