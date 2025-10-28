@@ -5,7 +5,9 @@
       "Bash(pkill:*)",
       "Read(//d/testing/velodyne/**)",
       "Bash(python:*)",
-      "Bash(./test_hdl64e_generator.sh:*)"
+      "Bash(./test_hdl64e_generator.sh:*)",
+      "Bash(chmod:*)",
+      "Bash(./evaluate_denoised.sh:*)"
     ],
     "deny": [],
     "ask": [],

@@ -119,42 +119,50 @@ class AccuracyVisualizer:
             raise ValueError(f"Shape mismatch between GT distances {gt_distances.shape} and signal distances {signal_distances.shape}")
 
         abs_error = np.abs(gt_distances - signal_distances)
-        
+
         correct_points = []
         incorrect_points = []
-        
+        incorrect_gt_points = []
+
         num_channels, num_horizontal_steps = gt_distances.shape
 
         print("Reconstructing and classifying points...")
         for v_idx in range(num_channels):
             for h_idx in range(num_horizontal_steps):
                 gt_dist = gt_distances[v_idx, h_idx]
-                
+
                 if gt_dist <= self.min_gt_distance:
                     continue
-                
+
                 signal_dist = signal_distances[v_idx, h_idx]
                 if signal_dist <= 0:
                     continue
 
                 altitude_deg = self.vertical_angles[v_idx]
                 azimuth_deg = (h_idx / num_horizontal_steps) * self.fov
-                
+
                 alpha = np.deg2rad(azimuth_deg)
                 omega = np.deg2rad(altitude_deg)
-                
-                x = signal_dist * np.cos(omega) * np.sin(alpha)
-                y = signal_dist * np.cos(omega) * np.cos(alpha)
-                z = signal_dist * np.sin(omega)
-                
-                point = [x, y, z]
-                
-                if abs_error[v_idx, h_idx] <= self.threshold:
-                    correct_points.append(point)
-                else:
-                    incorrect_points.append(point)
 
-        print(f"Found {len(correct_points)} correct points (red) and {len(incorrect_points)} incorrect points (blue).")
+                # Calculate signal point
+                x_signal = signal_dist * np.cos(omega) * np.sin(alpha)
+                y_signal = signal_dist * np.cos(omega) * np.cos(alpha)
+                z_signal = signal_dist * np.sin(omega)
+                signal_point = [x_signal, y_signal, z_signal]
+
+                if abs_error[v_idx, h_idx] <= self.threshold:
+                    correct_points.append(signal_point)
+                else:
+                    incorrect_points.append(signal_point)
+
+                    # Also add GT point for incorrect cases (yellow)
+                    x_gt = gt_dist * np.cos(omega) * np.sin(alpha)
+                    y_gt = gt_dist * np.cos(omega) * np.cos(alpha)
+                    z_gt = gt_dist * np.sin(omega)
+                    gt_point = [x_gt, y_gt, z_gt]
+                    incorrect_gt_points.append(gt_point)
+
+        print(f"Found {len(correct_points)} correct points (red), {len(incorrect_points)} incorrect points (blue), and {len(incorrect_gt_points)} GT points for incorrect (yellow).")
 
         pcds_to_draw = []
         if correct_points:
@@ -162,13 +170,19 @@ class AccuracyVisualizer:
             correct_pcd.points = o3d.utility.Vector3dVector(np.array(correct_points))
             correct_pcd.paint_uniform_color([1, 0, 0])  # Red
             pcds_to_draw.append(correct_pcd)
-            
+
         if incorrect_points:
             incorrect_pcd = o3d.geometry.PointCloud()
             incorrect_pcd.points = o3d.utility.Vector3dVector(np.array(incorrect_points))
             incorrect_pcd.paint_uniform_color([0, 0, 1])  # Blue
             pcds_to_draw.append(incorrect_pcd)
-            
+
+        if incorrect_gt_points:
+            incorrect_gt_pcd = o3d.geometry.PointCloud()
+            incorrect_gt_pcd.points = o3d.utility.Vector3dVector(np.array(incorrect_gt_points))
+            incorrect_gt_pcd.paint_uniform_color([1, 1, 0])  # Yellow
+            pcds_to_draw.append(incorrect_gt_pcd)
+
         if pcds_to_draw:
             dir_name = os.path.basename(os.path.normpath(self.directory))
             o3d.visualization.draw_geometries(pcds_to_draw, window_name=f"Accuracy Visualization: {dir_name}")

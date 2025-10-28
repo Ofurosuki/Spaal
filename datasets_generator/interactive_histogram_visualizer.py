@@ -152,7 +152,7 @@ def visualize_interactive(dataset_root_path: str, frame_specifier: str):
                 ax.fill_between(time_axis, 0, bar_height, where=labels == 2,
                                 color='pink', alpha=0.8, label='HFR (2)')
 
-        bar_height = 10
+        bar_height = 30
         ax.set_xlabel("Time Sample Index")
         ax.set_ylabel("Intensity")
         ax.set_ylim(0, bar_height)

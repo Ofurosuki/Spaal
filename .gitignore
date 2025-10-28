@@ -20,3 +20,4 @@ my_new_dataset/*
 pcd_datasets/*
 sony_data/*
 .claude/*
+lidar_datasets*/*
