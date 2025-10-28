@@ -85,13 +85,27 @@ class PcdLidarHDL64E:
     vertical_angles: list[float] = [fa.v_angle for fa in fire_angles]
 
 
-    def __init__(self, pcd_file_path: Optional[str], lidar_position: np.ndarray, lidar_rotation: np.ndarray, base_timestamp: PreciseDuration = PreciseDuration(nanoseconds=0), amplitude: float = 1.0, pulse_width: PreciseDuration = PreciseDuration(nanoseconds=10), time_resolution_ns: float = 1.0, intensity_to_amplitude_ratio: float = 12.0, initial_point_offset: int = 0, scan_mode: str = 'horizontal', horizontal_resolution_deg: float = 0.1, output_horizontal_resolution_deg: float = 0.0818) -> None:
+    def __init__(self, pcd_file_path: Optional[str], lidar_position: np.ndarray, lidar_rotation: np.ndarray, base_timestamp: PreciseDuration = PreciseDuration(nanoseconds=0), amplitude: float = 1.0, pulse_width: PreciseDuration = PreciseDuration(nanoseconds=10), time_resolution_ns: float = 1.0, intensity_to_amplitude_ratio: float = 12.0, initial_point_offset: int = 0, scan_mode: str = 'horizontal', horizontal_resolution_deg: float = 0.1, output_horizontal_resolution_deg: float = 0.0818, output_channels: int = 64) -> None:
         self.index: int = 0
         self.horizontal_resolution_deg = horizontal_resolution_deg  # Internal resolution (0.1° for fine-grained depth map)
         self.output_horizontal_resolution_deg = output_horizontal_resolution_deg  # Output resolution (0.0818° = 4400 samples for ML training)
-        # Calculate horizontal_steps first, then max_index to ensure exact multiple of 64
+
+        # Output channel configuration
+        if output_channels not in [32, 64]:
+            raise ValueError(f"output_channels must be 32 or 64, got {output_channels}")
+        self.output_channels = output_channels
+
+        # Create channel mapping: maps output channel index to internal 64-channel index
+        if self.output_channels == 32:
+            # Select every other channel (0, 2, 4, ..., 62) to get 32 channels
+            self.channel_mapping = list(range(0, 64, 2))
+        else:
+            # Use all 64 channels
+            self.channel_mapping = list(range(64))
+
+        # Calculate horizontal_steps first, then max_index
         self.horizontal_steps: int = int(360 / self.output_horizontal_resolution_deg)  # e.g., 4400 for 0.0818°
-        self.max_index: int = 64 * self.horizontal_steps  # 64 channels × horizontal steps
+        self.max_index: int = self.output_channels * self.horizontal_steps  # output_channels × horizontal steps
         self.accept_window = PreciseDuration(nanoseconds=800)
         self.base_timestamp = base_timestamp
         self.amplitude = amplitude
@@ -110,11 +124,18 @@ class PcdLidarHDL64E:
         self.sync_channel_step = 1  # channels (for vertical mode)
 
         # Create a sorted list of vertical angles for the new scan pattern
-        self.sorted_vertical_angles = sorted(self.vertical_angles, reverse=True)
+        # Use all 64 channels internally for data lookup
+        self.all_sorted_vertical_angles = sorted(self.vertical_angles, reverse=True)
 
-        # Create mapping from sorted vertical angle index to original fire_angle
+        # For output, use only the channels specified by channel_mapping
+        if self.output_channels < 64:
+            self.sorted_vertical_angles = [self.all_sorted_vertical_angles[i] for i in self.channel_mapping]
+        else:
+            self.sorted_vertical_angles = self.all_sorted_vertical_angles
+
+        # Create mapping from sorted vertical angle index to original fire_angle (for all 64 channels)
         self.sorted_v_angle_to_fire_angle = {}
-        for i, v_angle in enumerate(self.sorted_vertical_angles):
+        for i, v_angle in enumerate(self.all_sorted_vertical_angles):
             for fire_angle in self.fire_angles:
                 if abs(fire_angle.v_angle - v_angle) < 1e-6:
                     self.sorted_v_angle_to_fire_angle[i] = fire_angle
@@ -535,33 +556,34 @@ class PcdLidarHDL64E:
     def _get_current_angle(self) -> tuple[int, int]:
         # Determine which altitude ring and azimuth step we are on based on the scan pattern
         if self.scan_mode == 'vertical':
-            azimuth_index_in_ring = self.index // 64
-            altitude_index = self.index % 64
+            azimuth_index_in_ring = self.index // self.output_channels
+            altitude_output_idx = self.index % self.output_channels
         else:  # horizontal
-            altitude_index = self.index // self.horizontal_steps
+            altitude_output_idx = self.index // self.horizontal_steps
             azimuth_index_in_ring = self.index % self.horizontal_steps
 
-        # INDEX-BASED: Return (channel_idx, azimuth_step) for direct depth_map lookup
-        # azimuth_step corresponds to output resolution (0.2°)
-        channel_idx = altitude_index
+        # Map output channel index to internal 64-channel index
+        channel_idx = self.channel_mapping[altitude_output_idx]
         azimuth_step = azimuth_index_in_ring
 
         return azimuth_step, channel_idx
 
     def _get_current_timestamp(self) -> int:
-        horizontal_steps_per_ring = self.max_index // 64
+        horizontal_steps_per_ring = self.max_index // self.output_channels
 
         if self.scan_mode == 'vertical':
-            num_vertical_channels = 64
-            azimuth_step_index = self.index // num_vertical_channels
-            altitude_step_index = self.index % num_vertical_channels
+            azimuth_step_index = self.index // self.output_channels
+            altitude_output_idx = self.index % self.output_channels
 
-            # Get current vertical angle from the pre-sorted list
-            current_vertical_angle = self.sorted_vertical_angles[altitude_step_index]
+            # Map to internal 64-channel index for vertical angle lookup
+            altitude_step_index = self.channel_mapping[altitude_output_idx]
 
-            # Timestamp logic: channel-based for vertical mode
+            # Get current vertical angle from the pre-sorted list (use all 64 channels)
+            current_vertical_angle = self.all_sorted_vertical_angles[altitude_step_index]
+
+            # Timestamp logic: channel-based for vertical mode (use output index for timing)
             time_increase_per_step = 20  # ns
-            timestamp = (altitude_step_index // self.sync_channel_step) * time_increase_per_step
+            timestamp = (altitude_output_idx // self.sync_channel_step) * time_increase_per_step
 
             # Add a large time jump for each new azimuth column
             time_jump_per_azimuth = 50234
@@ -571,15 +593,15 @@ class PcdLidarHDL64E:
 
         else: # horizontal
             azimuth_step_index = self.index % horizontal_steps_per_ring
-            altitude_step_index = self.index // horizontal_steps_per_ring
+            altitude_output_idx = self.index // horizontal_steps_per_ring
             current_azimuth_deg = azimuth_step_index * self.horizontal_resolution_deg + 8
 
             # Timestamp increases as azimuth increases
             time_increase_per_step = 20  # ns
             timestamp = (current_azimuth_deg // self.sync_angle_step) * time_increase_per_step
 
-            # Add time jump for each altitude ring change
-            timestamp += altitude_step_index * 50234
+            # Add time jump for each altitude ring change (use output index for timing)
+            timestamp += altitude_output_idx * 50234
 
         return int(timestamp) + self.base_timestamp.in_nanoseconds
 
@@ -662,7 +684,8 @@ class PcdLidarHDL64E:
 
         azimuth_key = int((actual_azimuth_deg % 360) * 100)  # Wrap to [0, 36000)
 
-        v_angle = self.sorted_vertical_angles[channel_idx]
+        # Use all_sorted_vertical_angles for internal channel lookup (64 channels)
+        v_angle = self.all_sorted_vertical_angles[channel_idx]
         altitude_key = int(v_angle * 100)
 
         if not has_data:

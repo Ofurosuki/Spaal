@@ -12,6 +12,7 @@ uv run python datasets_generator/hist_matrix_generator.py \
   --sync-angle 1 4 \
   --start-frame 0 \
   --output-horizontal-resolution-deg 0.2 \
-  --spoofer-angle 90
+  --spoofer-angle 90 \
+  --output-channels 32
 
 echo "HDL-64E dataset generation complete!"

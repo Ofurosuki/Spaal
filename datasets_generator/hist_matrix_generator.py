@@ -83,7 +83,8 @@ class LidarSignalDatasetGenerator:
                  initial_point_offset: int = 0,
                  horizontal_resolution_deg: float = 0.1,
                  output_horizontal_resolution_deg: float = None,
-                 scan_mode: str = 'vertical'):
+                 scan_mode: str = 'vertical',
+                 output_channels: int = None):
 
         self.lidar_type = lidar_type
 
@@ -95,6 +96,19 @@ class LidarSignalDatasetGenerator:
                 output_horizontal_resolution_deg = 0.2  # 1800 samples
             else:
                 output_horizontal_resolution_deg = 0.2  # Default
+
+        # Auto-detect output_channels if not provided
+        if output_channels is None:
+            if lidar_type == "PCD_HDL64E":
+                output_channels = 64  # Default: use all 64 channels
+            elif lidar_type in ["PCD_VLP32c", "PCD_VLP16"]:
+                output_channels = 32  # VLP32c has 32 channels
+            elif lidar_type == "VLP16":
+                output_channels = 16  # VLP16 has 16 channels
+            else:
+                output_channels = 32  # Default
+
+        self.output_channels = output_channels
 
         self.pcd_directory = pcd_directory
         self.json_path = json_path
@@ -140,13 +154,13 @@ class LidarSignalDatasetGenerator:
 
             if self.lidar_type == "PCD_VLP16":
                 lidar_class = PcdLidarVLP16
-                self.channels = 16
+                self.channels = self.output_channels
             elif self.lidar_type == "PCD_VLP32c":
                 lidar_class = PcdLidarVLP32c
-                self.channels = 32
+                self.channels = self.output_channels
             else:  # PCD_HDL64E
                 lidar_class = PcdLidarHDL64E
-                self.channels = 64
+                self.channels = self.output_channels
 
             # Build initialization parameters (common to all PCD-based LiDARs)
             init_params = {
@@ -164,6 +178,7 @@ class LidarSignalDatasetGenerator:
             if self.lidar_type == "PCD_HDL64E":
                 init_params['horizontal_resolution_deg'] = self.horizontal_resolution_deg
                 init_params['output_horizontal_resolution_deg'] = self.output_horizontal_resolution_deg
+                init_params['output_channels'] = self.output_channels
 
             self.lidar = lidar_class(**init_params)
             if self.lidar_type == "PCD_VLP32c" or self.lidar_type == "PCD_HDL64E":
@@ -185,7 +200,11 @@ class LidarSignalDatasetGenerator:
             raise ValueError(f"Unknown LiDAR model: {lidar_type}")
 
         # Create a spatially sorted list of vertical angles for the output matrix
-        self.sorted_vertical_angles = sorted(self.lidar.vertical_angles, reverse=True)
+        # Use the LiDAR's sorted_vertical_angles which already accounts for channel_mapping
+        self.sorted_vertical_angles = self.lidar.sorted_vertical_angles
+
+        print(f"Using {len(self.sorted_vertical_angles)} vertical angles (LiDAR output channels: {self.lidar.output_channels})")
+
         self.altitude_to_sorted_v_idx_map = {int(angle * 100): i for i, angle in enumerate(self.sorted_vertical_angles)}
 
         self.samples_per_scan = int(self.lidar.accept_window.in_nanoseconds / self.lidar.time_resolution_ns)
@@ -448,6 +467,8 @@ if __name__ == '__main__':
                         help="Internal horizontal resolution in degrees for PCD-based LiDARs. Default is 0.1 degrees.")
     parser.add_argument("--output-horizontal-resolution-deg", type=float, default=None,
                         help="Output horizontal resolution in degrees (determines samples per channel). Auto-detected if not specified: HDL-64E=0.0818° (4400 samples), VLP32c/VLP16=0.2° (1800 samples).")
+    parser.add_argument("--output-channels", type=int, default=None, choices=[16, 32, 64],
+                        help="Number of output channels. For HDL-64E: 32 or 64 (default 64). For VLP32c: 32. For VLP16: 16. Auto-detected if not specified.")
 
     args = parser.parse_args()
 
@@ -476,7 +497,8 @@ if __name__ == '__main__':
         sync_angle_range=sync_angle_range,
         horizontal_resolution_deg=args.horizontal_resolution_deg,
         output_horizontal_resolution_deg=args.output_horizontal_resolution_deg,
-        scan_mode=args.scan_mode
+        scan_mode=args.scan_mode,
+        output_channels=args.output_channels
     )
     
     print("\nStarting dataset generation...")
