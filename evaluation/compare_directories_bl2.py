@@ -48,7 +48,7 @@ def get_peak_time_and_amplitude(signal: np.ndarray) -> Tuple[float, float]:
 class DirectoryBl2Evaluator:
     def __init__(self, gt_directory: str, denoised_directory: str, threshold: float,
                  min_gt_distance: float = 0.0, plot: bool = False, output_dir: str = None,
-                 eval_angle: float = None, eval_width: float = None):
+                 eval_angle: float = None, eval_width: float = None, max_samples: int = None):
         self.gt_directory = gt_directory
         self.denoised_directory = denoised_directory
         self.threshold = threshold
@@ -57,6 +57,7 @@ class DirectoryBl2Evaluator:
         self.output_dir = output_dir if output_dir else denoised_directory
         self.eval_angle = eval_angle  # Center angle for evaluation (user-facing, 0=front, CCW)
         self.eval_width = eval_width  # Width of evaluation cone
+        self.max_samples = max_samples  # Maximum number of samples to evaluate (for debugging)
 
         # Create output directory if it doesn't exist
         os.makedirs(self.output_dir, exist_ok=True)
@@ -67,7 +68,13 @@ class DirectoryBl2Evaluator:
         if not self.subdirs:
             raise ValueError(f"No matching subdirectories found between {gt_directory} and {denoised_directory}")
 
-        print(f"Found {len(self.subdirs)} matching subdirectories to evaluate")
+        # Limit samples if max_samples is specified
+        if self.max_samples is not None and self.max_samples > 0:
+            original_count = len(self.subdirs)
+            self.subdirs = self.subdirs[:self.max_samples]
+            print(f"Found {original_count} matching subdirectories, limiting to {len(self.subdirs)} samples for debugging")
+        else:
+            print(f"Found {len(self.subdirs)} matching subdirectories to evaluate")
 
         if self.eval_angle is not None and self.eval_width is not None:
             print(f"Evaluation will be restricted to azimuth angle: {self.eval_angle}° ± {self.eval_width/2}° (width: {self.eval_width}°)")
@@ -171,6 +178,7 @@ class DirectoryBl2Evaluator:
 
                 # Check if within angle range
                 is_in_range = (eval_start_az <= azimuth_key <= eval_end_az)
+                
 
                 # Handle wrapping around 360 degrees
                 if eval_start_az < 0:
@@ -226,9 +234,18 @@ class DirectoryBl2Evaluator:
         )
 
         # Calculate metrics with both distance and angle masks
-        valid_pixels_mask = (gt_distances > self.min_gt_distance) & angle_mask
+        # Include pixels where either GT or denoised has a detection
+        # This ensures false positives (GT=0, denoised>0) are counted as errors
+        has_gt_detection = gt_distances > self.min_gt_distance
+        has_denoised_detection = denoised_distances > self.min_gt_distance
+
+        valid_pixels_mask = (has_gt_detection | has_denoised_detection) & angle_mask
         total_valid_pixels = np.sum(valid_pixels_mask)
         total_angle_pixels = np.sum(angle_mask)
+
+        gt_only_pixels = np.sum(has_gt_detection & ~has_denoised_detection & angle_mask)  # False negatives
+        denoised_only_pixels = np.sum(~has_gt_detection & has_denoised_detection & angle_mask)  # False positives
+        both_pixels = np.sum(has_gt_detection & has_denoised_detection & angle_mask)
 
         if total_valid_pixels == 0:
             return {
@@ -237,10 +254,21 @@ class DirectoryBl2Evaluator:
                 'accuracy': np.nan,
                 'valid_pixels': 0,
                 'total_pixels': gt_distances.size,
-                'angle_pixels': total_angle_pixels
+                'angle_pixels': total_angle_pixels,
+                'false_positives': 0,
+                'false_negatives': 0,
+                'true_positives': 0
             }
 
+        # Calculate errors for all valid pixels
         abs_error = np.abs(gt_distances - denoised_distances)
+
+        # For false positives (GT=0, denoised>0), assign large penalty error
+        # This ensures they are counted as incorrect
+        false_positive_mask = ~has_gt_detection & has_denoised_detection & angle_mask
+        penalty_error = 100.0  # Large error for false positives (in meters)
+        abs_error = np.where(false_positive_mask, penalty_error, abs_error)
+
         valid_errors = abs_error[valid_pixels_mask]
 
         mae = np.mean(valid_errors)
@@ -254,6 +282,9 @@ class DirectoryBl2Evaluator:
             'valid_pixels': total_valid_pixels,
             'total_pixels': gt_distances.size,
             'angle_pixels': total_angle_pixels,
+            'false_positives': denoised_only_pixels,
+            'false_negatives': gt_only_pixels,
+            'true_positives': both_pixels,
             'errors': valid_errors
         }
 
@@ -363,11 +394,12 @@ class DirectoryBl2Evaluator:
 
         with open(output_path, 'w') as f:
             # Write header
-            f.write("subdir,mae,accuracy,valid_pixels,total_pixels\n")
+            f.write("subdir,mae,accuracy,valid_pixels,total_pixels,angle_pixels,false_positives,false_negatives,true_positives\n")
 
             # Write data
             for r in results:
-                f.write(f"{r['subdir']},{r['mae']:.6f},{r['accuracy']:.2f},{r['valid_pixels']},{r['total_pixels']}\n")
+                f.write(f"{r['subdir']},{r['mae']:.6f},{r['accuracy']:.2f},{r['valid_pixels']},{r['total_pixels']},")
+                f.write(f"{r.get('angle_pixels', 0)},{r.get('false_positives', 0)},{r.get('false_negatives', 0)},{r.get('true_positives', 0)}\n")
 
         print(f"\nSaved detailed results to {output_path}")
 
@@ -384,6 +416,8 @@ if __name__ == '__main__':
                         help="Center angle for evaluation (user-facing: 0=front, CCW). Corresponds to spoofer-angle.")
     parser.add_argument("--eval-width", type=float, default=None,
                         help="Width of evaluation angle cone in degrees. Corresponds to spoofer-width-deg.")
+    parser.add_argument("--max-samples", type=int, default=None,
+                        help="Maximum number of samples to evaluate (for debugging). If not specified, all samples are evaluated.")
 
     args = parser.parse_args()
 
@@ -396,7 +430,8 @@ if __name__ == '__main__':
             plot=args.plot,
             output_dir=args.output_dir,
             eval_angle=args.eval_angle,
-            eval_width=args.eval_width
+            eval_width=args.eval_width,
+            max_samples=args.max_samples
         )
 
         overall_mae, overall_accuracy, results = evaluator.evaluate()
@@ -426,6 +461,19 @@ if __name__ == '__main__':
             print(f"  Max:    {np.max(valid_accs):.2f}%")
             print(f"  Median: {np.median(valid_accs):.2f}%")
             print(f"  Std:    {np.std(valid_accs):.2f}%")
+
+        # Show detection statistics
+        total_fps = sum(r.get('false_positives', 0) for r in results)
+        total_fns = sum(r.get('false_negatives', 0) for r in results)
+        total_tps = sum(r.get('true_positives', 0) for r in results)
+        total_detections = total_fps + total_fns + total_tps
+
+        if total_detections > 0:
+            print(f"\nDetection Statistics:")
+            print(f"  True Positives:  {total_tps:8d} ({100*total_tps/total_detections:.2f}%)")
+            print(f"  False Positives: {total_fps:8d} ({100*total_fps/total_detections:.2f}%)")
+            print(f"  False Negatives: {total_fns:8d} ({100*total_fns/total_detections:.2f}%)")
+            print(f"  Total Pixels:    {total_detections:8d}")
 
         # Save CSV if requested
         if args.save_csv:
