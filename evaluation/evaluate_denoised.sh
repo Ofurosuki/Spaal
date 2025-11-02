@@ -2,11 +2,19 @@
 
 # Evaluate denoised results against ground truth
 # This script evaluates all SYNC_ANGLE variations
+# Usage: ./evaluate_denoised.sh [--single-sample]
+
+# Parse command line arguments
+SINGLE_SAMPLE=false
+if [[ "$1" == "--single-sample" ]]; then
+  SINGLE_SAMPLE=true
+fi
 
 # Base directories
 GT_DIR="D:/eval_cvpr2026/data/gt_bl2"
-DENOISED_BASE_DIR="D:/eval_cvpr2026/data/denoised_bl2"
-RESULTS_DIR="D:/eval_cvpr2026/evaluation_results"
+DENOISED_BASE_DIR="D:/eval_cvpr2026/data/attacked_bl2"
+#DENOISED_BASE_DIR="D:/kitti_denoised_bl2"
+RESULTS_DIR="D:/eval_cvpr2026/evaluation_results/attacked"
 
 # Evaluation parameters
 THRESHOLD=0.5  # meters
@@ -17,7 +25,16 @@ EVAL_ANGLE=0  # 0 degrees = front (user-facing coordinate system)
 EVAL_WIDTH=90  # 90 degrees width (matching spoofer-width-deg default)
 
 # SYNC_ANGLE values to evaluate
-SYNC_ANGLES=(0_2 0_8 1 2 5 11 22 45)
+if [ "$SINGLE_SAMPLE" = true ]; then
+  SYNC_ANGLES=(1)  # Only first SYNC_ANGLE for debugging
+  MAX_SAMPLES_ARG="--max-samples 1"
+  echo "DEBUG MODE: Evaluating only 1 sample from SYNC_ANGLE=1"
+else
+  #SYNC_ANGLES=(0_2 0_8 1 2 5 11 22 45)
+  SYNC_ANGLES=(0_2 0_8)
+  #SYNC_ANGLES=(0_8)
+  MAX_SAMPLES_ARG=""
+fi
 
 echo "Starting evaluation of denoised results..."
 echo "=================================================================="
@@ -72,6 +89,7 @@ do
     --plot \
     --save-csv \
     --output-dir "${OUTPUT_DIR}" \
+    ${MAX_SAMPLES_ARG} \
     > "${OUTPUT_DIR}/evaluation_log.txt" 2>&1
 
   if [ $? -eq 0 ]; then

@@ -7,9 +7,9 @@ uv run python datasets_generator/hist_matrix_generator.py \
   --pcd-directory ./nuscenes_data \
   --num-frames 1 \
   --output-dir ./lidar_datasets_vlp32c \
-  --scan-mode vertical \
-  --sync-angle 2 4 \
+  --scan-mode horizontal \
+  --sync-angle 4 \
   --spoofer-angle 0 \
-  --spoofer-altitude 50
+  --spoofer-altitude 50 
 
 echo "VLP-32c dataset generation complete!"

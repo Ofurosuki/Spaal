@@ -7,7 +7,9 @@
       "Bash(python:*)",
       "Bash(./test_hdl64e_generator.sh:*)",
       "Bash(chmod:*)",
-      "Bash(./evaluate_denoised.sh:*)"
+      "Bash(./evaluate_denoised.sh:*)",
+      "Bash(cat:*)",
+      "Bash(./evaluation/evaluate_denoised.sh:*)"
     ],
     "deny": [],
     "ask": [],

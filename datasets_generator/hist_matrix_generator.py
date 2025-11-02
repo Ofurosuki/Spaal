@@ -203,7 +203,11 @@ class LidarSignalDatasetGenerator:
         # Use the LiDAR's sorted_vertical_angles which already accounts for channel_mapping
         self.sorted_vertical_angles = self.lidar.sorted_vertical_angles
 
-        print(f"Using {len(self.sorted_vertical_angles)} vertical angles (LiDAR output channels: {self.lidar.output_channels})")
+        # Print output channels info (only for LiDARs that support it)
+        if hasattr(self.lidar, 'output_channels'):
+            print(f"Using {len(self.sorted_vertical_angles)} vertical angles (LiDAR output channels: {self.lidar.output_channels})")
+        else:
+            print(f"Using {len(self.sorted_vertical_angles)} vertical angles")
 
         self.altitude_to_sorted_v_idx_map = {int(angle * 100): i for i, angle in enumerate(self.sorted_vertical_angles)}
 

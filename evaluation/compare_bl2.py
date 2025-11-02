@@ -139,7 +139,7 @@ class Bl2Evaluator:
         if gt_distances.shape != signal_distances.shape:
             raise ValueError(f"Shape mismatch between GT distances {gt_distances.shape} and signal distances {signal_distances.shape}")
 
-        valid_pixels_mask = gt_distances > self.min_gt_distance
+        valid_pixels_mask = gt_distances >= self.min_gt_distance
         total_pixels = gt_distances.size
         total_valid_pixels = np.sum(valid_pixels_mask)
 
