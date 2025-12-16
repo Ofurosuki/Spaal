@@ -12,9 +12,12 @@ fi
 
 # Base directories
 GT_DIR="D:/eval_cvpr2026/data/gt_bl2"
-DENOISED_BASE_DIR="D:/eval_cvpr2026/data/attacked_bl2"
+#DENOISED_BASE_DIR="D:/eval_cvpr2026/data/attacked_bl2"
+#DENOISED_BASE_DIR="D:/regression"
+DENOISED_BASE_DIR="D:/1108_ablation/dim24/bl2"
 #DENOISED_BASE_DIR="D:/kitti_denoised_bl2"
-RESULTS_DIR="D:/eval_cvpr2026/evaluation_results/attacked"
+#RESULTS_DIR="D:/eval_cvpr2026/evaluation_results/attacked"
+RESULTS_DIR="D:/1108_ablation/dim24"
 
 # Evaluation parameters
 THRESHOLD=0.5  # meters
@@ -31,7 +34,7 @@ if [ "$SINGLE_SAMPLE" = true ]; then
   echo "DEBUG MODE: Evaluating only 1 sample from SYNC_ANGLE=1"
 else
   #SYNC_ANGLES=(0_2 0_8 1 2 5 11 22 45)
-  SYNC_ANGLES=(0_2 0_8)
+  SYNC_ANGLES=(1)
   #SYNC_ANGLES=(0_8)
   MAX_SAMPLES_ARG=""
 fi

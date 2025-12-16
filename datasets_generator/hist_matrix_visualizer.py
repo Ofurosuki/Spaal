@@ -116,11 +116,12 @@ def get_peak_time_and_amplitude(signal: np.ndarray) -> Tuple[float, float]:
     return interpolated_time, peak_amplitude
 
 class HistMatrixVisualizer:
-    def __init__(self, dataset_root_path: str, frame_index: int = 0, pcd_directory_path: str = None, data: dict = None, amplitude_to_intensity_ratio: float = 255.0/10.0, use_answer_matrix: bool = False, sor_params: Tuple[float, float] = None, show_grid: bool = False, grid_max_radius: float = 100.0, grid_step: float = 10.0):
+    def __init__(self, dataset_root_path: str, frame_index: int = 0, pcd_directory_path: str = None, data: dict = None, amplitude_to_intensity_ratio: float = 255.0/10.0, use_answer_matrix: bool = False, use_gt_mask: bool = False, sor_params: Tuple[float, float] = None, show_grid: bool = False, grid_max_radius: float = 100.0, grid_step: float = 10.0):
         self.dataset_root_path = dataset_root_path
         self.frame_index = frame_index
         self.pcd_directory_path = pcd_directory_path
         self.is_prediction = use_answer_matrix
+        self.use_gt_mask = use_gt_mask
         self.amplitude_to_intensity_ratio = amplitude_to_intensity_ratio
         self.sor_params = sor_params
         self.show_grid = show_grid
@@ -134,13 +135,13 @@ class HistMatrixVisualizer:
                 raise FileNotFoundError(f"No sample directories found in {dataset_root_path}")
             if frame_index >= len(sample_dirs):
                 raise ValueError(f"Frame index {frame_index} is out of bounds for {len(sample_dirs)} sample directories.")
-            
+
             sample_dir = os.path.join(dataset_root_path, sample_dirs[frame_index])
             print(f"Loading data from {sample_dir}")
 
             with open(os.path.join(sample_dir, 'config.json'), 'r') as f:
                 config_data = json.load(f)
-            
+
             if use_answer_matrix:
                 bl2_file = os.path.join(sample_dir, 'answer_matrix.bl2')
                 self.is_prediction = True
@@ -150,9 +151,22 @@ class HistMatrixVisualizer:
 
             with open(bl2_file, 'rb') as f:
                 packed_data = f.read()
-            
+
             hist_matrix_single_frame = blosc2.unpack_array(packed_data)
             self.hist_matrix = np.expand_dims(hist_matrix_single_frame, axis=0)
+
+            # Load ground truth mask if requested
+            self.gt_mask = None
+            if use_gt_mask:
+                answer_file = os.path.join(sample_dir, 'answer_matrix.bl2')
+                if os.path.exists(answer_file):
+                    with open(answer_file, 'rb') as f:
+                        answer_data = f.read()
+                    answer_matrix = blosc2.unpack_array(answer_data)
+                    self.gt_mask = np.expand_dims(answer_matrix > 0, axis=0)
+                    print(f"Loaded ground truth mask with {np.sum(self.gt_mask)} valid points")
+                else:
+                    print(f"Warning: --use-gt-mask specified but answer_matrix.bl2 not found")
 
             # Try to load angles.bl2 if available (for HDL-64E channel-based architecture)
             angles_file = os.path.join(sample_dir, 'angles.bl2')
@@ -169,6 +183,7 @@ class HistMatrixVisualizer:
         else:
             # Data provided directly - no angles.bl2 file available
             self.azimuth_angles = None
+            self.gt_mask = None
 
         print(f"shape of hist_matrix: {self.hist_matrix.shape}")
 
@@ -211,14 +226,28 @@ class HistMatrixVisualizer:
 
         for v_idx in range(channels):
             for h_idx in range(horizontal_resolution):
+                # Apply ground truth mask if available
+                if self.gt_mask is not None:
+                    if not self.gt_mask[frame_index, v_idx, h_idx]:
+                        continue
+
                 if not is_prediction_local:
                     signal = frame_data[v_idx, h_idx, :]
-                    highest_peak_time, peak_amplitude = get_peak_time_and_amplitude(signal)
 
-                    if highest_peak_time == 0.0:
-                        continue
-                    
-                    intensity = np.clip(peak_amplitude * self.amplitude_to_intensity_ratio, 0, 255)
+                    # Check if signal dimension is 1 (already contains interpolated_time)
+                    if len(signal) == 1:
+                        highest_peak_time = signal[0]
+                        if highest_peak_time <= 0:
+                            continue
+                        intensity = 100  # Default intensity when interpolated_time is directly provided
+                    else:
+                        # Normal case: calculate peak time and amplitude from histogram
+                        highest_peak_time, peak_amplitude = get_peak_time_and_amplitude(signal)
+
+                        if highest_peak_time == 0.0:
+                            continue
+
+                        intensity = np.clip(peak_amplitude * self.amplitude_to_intensity_ratio, 0, 255)
                 else:
                     highest_peak_time = frame_data[v_idx, h_idx]
                     if highest_peak_time <= 0:
@@ -339,7 +368,7 @@ class HistMatrixVisualizer:
         elif self.pcd_directory_path:
              print(f"Warning: Frame index {frame_index} is out of bounds for the number of PCD files found ({len(self.pcd_files)}). Original PCD will not be displayed.")
         # Add frame axes
-        frame_axes = o3d.geometry.TriangleMesh.create_coordinate_frame(size=10.0, origin=[0, 0, 0])
+        frame_axes = o3d.geometry.TriangleMesh.create_coordinate_frame(size=2.0, origin=[0, 0, 0])
         geometries.append(frame_axes)
         o3d.visualization.draw_geometries(geometries, window_name=f"Frame {frame_index}")
 
@@ -376,6 +405,7 @@ if __name__ == '__main__':
     parser.add_argument("--output-pcd-dir", type=str, default=None, help="Path to the directory to save reconstructed .pcd files. If provided, visualization is skipped.")
     parser.add_argument("--amplitude-to-intensity-ratio", type=float, default=1.0, help="Ratio to convert signal amplitude to intensity for reconstructed PCD.")
     parser.add_argument("--use-answer-matrix", action='store_true', help="Use answer_matrix.bl2 instead of signal.bl2 for reconstruction.")
+    parser.add_argument("--use-gt-mask", action='store_true', help="Only visualize points where ground truth (answer_matrix) exists. Useful for evaluating model predictions.")
     parser.add_argument("--sor", nargs=2, type=float, metavar=('NB_NEIGHBORS', 'STD_RATIO'), help="Apply Statistical Outlier Removal with given nb_neighbors and std_ratio.")
     parser.add_argument("--show-grid", action='store_true', help="Display concentric circular grid centered at origin.")
     parser.add_argument("--grid-max-radius", type=float, default=100.0, help="Maximum radius of the grid in meters (default: 100.0).")
@@ -389,6 +419,7 @@ if __name__ == '__main__':
         pcd_directory_path=args.pcd_directory,
         amplitude_to_intensity_ratio=args.amplitude_to_intensity_ratio,
         use_answer_matrix=args.use_answer_matrix,
+        use_gt_mask=args.use_gt_mask,
         sor_params=args.sor,
         show_grid=args.show_grid,
         grid_max_radius=args.grid_max_radius,
