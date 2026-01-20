@@ -2,7 +2,7 @@ import numpy as np
 import os
 import argparse
 import glob
-from typing import Tuple
+from typing import Tuple, Dict
 from spaal2.core import (
     PreciseDuration, DummyOutdoor, apply_noise, gen_sunlight,
 )
@@ -57,6 +57,82 @@ def get_peak_time_and_amplitude(signal: np.ndarray) -> Tuple[float, float]:
     
     return interpolated_time, peak_amplitude
 
+def reconstruct_point_cloud_from_memory(
+    hist_matrix: np.ndarray,
+    config_data: Dict,
+    azimuth_angles: np.ndarray,
+    amplitude_to_intensity_ratio: float = 255.0/10.0,
+    use_answer_matrix: bool = False,
+    answer_matrix: np.ndarray = None
+) -> np.ndarray:
+    """
+    Reconstruct point cloud from in-memory data.
+    """
+    initial_azimuth_offset = config_data.get('initial_azimuth_offset', 0.0)
+    vertical_angles = config_data.get('vertical_angles', [])
+    fov = config_data.get('fov', 360.0)
+    time_resolution_ns = config_data.get('time_resolution_ns', 1.0)
+
+    is_prediction_local = len(hist_matrix.shape) == 2
+
+    if is_prediction_local:
+        channels, horizontal_resolution = hist_matrix.shape
+    else:
+        channels, horizontal_resolution, _ = hist_matrix.shape
+
+    points = []
+
+    for v_idx in range(channels):
+        for h_idx in range(horizontal_resolution):
+            if use_answer_matrix and answer_matrix is not None:
+                highest_peak_time = answer_matrix[v_idx, h_idx]
+                if highest_peak_time <= 0:
+                    continue
+                # Since we don't have amplitude from answer_matrix, we can't calculate real intensity.
+                # We can either use a default value or try to get amplitude from signal.
+                # For now, let's try to get it from the signal matrix if available.
+                if not is_prediction_local:
+                    signal = hist_matrix[v_idx, h_idx, :]
+                    _, peak_amplitude = get_peak_time_and_amplitude(signal)
+                    intensity = np.clip(peak_amplitude * amplitude_to_intensity_ratio, 0, 255)
+                else:
+                    intensity = 100 # Default for prediction
+            elif not is_prediction_local:
+                signal = hist_matrix[v_idx, h_idx, :]
+                highest_peak_time, peak_amplitude = get_peak_time_and_amplitude(signal)
+
+                if highest_peak_time == 0.0:
+                    continue
+                intensity = np.clip(peak_amplitude * amplitude_to_intensity_ratio, 0, 255)
+            else: # is_prediction_local but not use_answer_matrix
+                highest_peak_time = hist_matrix[v_idx, h_idx]
+                if highest_peak_time <= 0:
+                    continue
+                intensity = 100  # Default intensity for predictions
+
+            distance_m = (highest_peak_time * time_resolution_ns) * 0.15
+            altitude_deg = vertical_angles[v_idx]
+
+            if azimuth_angles is not None:
+                actual_azimuth = azimuth_angles[v_idx, h_idx]
+                if not np.isnan(actual_azimuth):
+                    azimuth_deg = actual_azimuth
+                else:
+                    azimuth_deg = (h_idx / horizontal_resolution) * fov + initial_azimuth_offset
+            else:
+                azimuth_deg = (h_idx / horizontal_resolution) * fov + initial_azimuth_offset
+
+            alpha = np.deg2rad(azimuth_deg)
+            omega = np.deg2rad(altitude_deg)
+
+            x = distance_m * np.cos(omega) * np.sin(alpha)
+            y = distance_m * np.cos(omega) * np.cos(alpha)
+            z = distance_m * np.sin(omega)
+
+            points.append([x, y, z, intensity, v_idx])
+
+    return np.array(points, dtype=np.float32)
+
 class LidarSignalDatasetGenerator:
     def __init__(self,
                  lidar_type: str = "PCD_VLP32c",
@@ -84,9 +160,11 @@ class LidarSignalDatasetGenerator:
                  horizontal_resolution_deg: float = 0.1,
                  output_horizontal_resolution_deg: float = None,
                  scan_mode: str = 'vertical',
-                 output_channels: int = None):
+                 output_channels: int = None,
+                 bin_format: str = 'nuscenes'):
 
         self.lidar_type = lidar_type
+        self.bin_format = bin_format
 
         # Auto-detect output_horizontal_resolution_deg if not provided
         if output_horizontal_resolution_deg is None:
@@ -213,7 +291,9 @@ class LidarSignalDatasetGenerator:
 
         self.samples_per_scan = int(self.lidar.accept_window.in_nanoseconds / self.lidar.time_resolution_ns)
         
-        self.output_dir = output_dir
+        # Create base output directory including the sync angle
+        sync_angle_dir_name = str(self.sync_angle_range[0])
+        self.output_dir = os.path.join(output_dir, sync_angle_dir_name)
         if not os.path.exists(self.output_dir):
             os.makedirs(self.output_dir)
 
@@ -238,6 +318,56 @@ class LidarSignalDatasetGenerator:
             self.spoofer = DummySpooferOff()
         else:
             raise ValueError(f"Spoofer type {self.spoofer_type} not implemented for this script yet.")
+
+    def _save_frame_data(self,
+                         sample_token: str,
+                         status: str,
+                         signal_matrix: np.ndarray,
+                         labels_matrix: np.ndarray,
+                         answer_matrix: np.ndarray,
+                         azimuth_angles: np.ndarray,
+                         timestamp_matrix: np.ndarray,
+                         config_data: dict):
+        """Helper function to save one version (attacked/noattack) of the frame data."""
+        frame_output_dir = os.path.join(self.output_dir, sample_token, status)
+        bl2_dir = os.path.join(frame_output_dir, 'bl2')
+        bin_dir = os.path.join(frame_output_dir, 'bin')
+        os.makedirs(bl2_dir, exist_ok=True)
+        os.makedirs(bin_dir, exist_ok=True)
+
+        # Save data using blosc2
+        with open(os.path.join(bl2_dir, 'signal.bl2'), 'wb') as f:
+            f.write(blosc2.pack_array(signal_matrix))
+        with open(os.path.join(bl2_dir, 'labels.bl2'), 'wb') as f:
+            f.write(blosc2.pack_array(labels_matrix))
+        with open(os.path.join(bl2_dir, 'answer_matrix.bl2'), 'wb') as f:
+            f.write(blosc2.pack_array(answer_matrix))
+        with open(os.path.join(bl2_dir, 'angles.bl2'), 'wb') as f:
+            f.write(blosc2.pack_array(azimuth_angles))
+        with open(os.path.join(bl2_dir, 'timestamps.bl2'), 'wb') as f:
+            f.write(blosc2.pack_array(timestamp_matrix))
+
+        # Save config to json
+        with open(os.path.join(bl2_dir, 'config.json'), 'w') as f:
+            json.dump(config_data, f, indent=2)
+
+        # Generate and save .bin file from memory
+        point_cloud = reconstruct_point_cloud_from_memory(
+            hist_matrix=signal_matrix,
+            config_data=config_data,
+            azimuth_angles=azimuth_angles,
+            use_answer_matrix=False, # Or True, depending on desired output
+            answer_matrix=answer_matrix
+        )
+
+        if len(point_cloud) > 0:
+            if self.bin_format == 'kitti':
+                output_data = point_cloud[:, :4]
+            else: # nuscenes
+                output_data = point_cloud
+            
+            output_path = os.path.join(bin_dir, f"{sample_token}.bin")
+            output_data.tofile(output_path)
 
     def generate(self, num_frames: int, start_frame: int = 0, filename_prefix: str = "lidar_signal", save_to_file: bool = True):
         if self.pcd_directory or self.json_path:
@@ -275,11 +405,11 @@ class LidarSignalDatasetGenerator:
                     # Vertical mode: interpret as channel steps (integer)
                     sync_channel = int(sync_value)
                     self.lidar.set_sync_channel_step(sync_channel)
-                    print(f"Frame {frame_idx}: Using sync {sync_channel} channels (range: {int(self.sync_angle_range[0])}-{int(self.sync_angle_range[1])} channels, vertical mode)")
+                    #print(f"Frame {frame_idx}: Using sync {sync_channel} channels (range: {int(self.sync_angle_range[0])}-{int(self.sync_angle_range[1])} channels, vertical mode)")
                 else:
                     # Horizontal mode: interpret as angle in degrees (float)
                     self.lidar.set_sync_angle_step(sync_value)
-                    print(f"Frame {frame_idx}: Using sync {sync_value:.4f}° (range: {self.sync_angle_range[0]:.2f}°-{self.sync_angle_range[1]:.2f}°, horizontal mode)")
+                    #print(f"Frame {frame_idx}: Using sync {sync_value:.4f}° (range: {self.sync_angle_range[0]:.2f}°-{self.sync_angle_range[1]:.2f}°, horizontal mode)")
 
             if self.lidar_type in ["PCD_VLP16", "PCD_VLP32c", "PCD_HDL64E"]:
                 current_lidar = self.lidar.new_frame(frame_num=frame_idx, base_timestamp=PreciseDuration(nanoseconds=frame_idx * 10**9))
@@ -304,7 +434,7 @@ class LidarSignalDatasetGenerator:
                     print("Warning: Cannot determine spoofer trigger point, depth map is empty.")
                 elif target_point in current_lidar.depth_map:
                     actual_trigger_point = target_point
-                    print(f"Using exact spoofer trigger point at {self.spoofer_angle_deg} deg (front=0, ccw).")
+                    #print(f"Using exact spoofer trigger point at {self.spoofer_angle_deg} deg (front=0, ccw).")
                 else:
                     # Find the closest point, prioritizing points on the same altitude ring
                     points_on_same_altitude = [p for p in available_points if p[1] == target_altitude]
@@ -314,17 +444,22 @@ class LidarSignalDatasetGenerator:
                         azimuth_distances = [abs(az - target_azimuth) for az, alt in points_on_same_altitude]
                         closest_index_on_alt = np.argmin(azimuth_distances)
                         actual_trigger_point = points_on_same_altitude[closest_index_on_alt]
-                        print(f"Target spoofer point at az={target_azimuth/100}, alt={target_altitude/100} deg not found. Using closest point on same altitude ring: az={actual_trigger_point[0]/100}, alt={actual_trigger_point[1]/100} deg")
+                        #print(f"Target spoofer point at az={target_azimuth/100}, alt={target_altitude/100} deg not found. Using closest point on same altitude ring: az={actual_trigger_point[0]/100}, alt={actual_trigger_point[1]/100} deg")
                     else:
                         # Fallback: find the closest point to the target azimuth on the HIGHEST altitude ring.
                         new_target_altitude = self.sorted_vertical_angles[0] * 100
                         distances = [np.sqrt((az - target_azimuth)**2 + (alt - new_target_altitude)**2) for az, alt in available_points]
                         closest_index = np.argmin(distances)
                         actual_trigger_point = available_points[closest_index]
-                        print(f"Target spoofer point at az={target_azimuth/100}, alt={target_altitude/100} deg not found. No points on target altitude ring. Using closest point to highest altitude ring: az={actual_trigger_point[0]/100}, alt={actual_trigger_point[1]/100} deg")
+                        #print(f"Target spoofer point at az={target_azimuth/100}, alt={target_altitude/100} deg not found. No points on target altitude ring. Using closest point to highest altitude ring: az={actual_trigger_point[0]/100}, alt={actual_trigger_point[1]/100} deg")
 
-            frame_data = np.zeros((self.channels, self.horizontal_resolution, self.samples_per_scan), dtype=np.float32)
-            frame_labels = np.zeros((self.channels, self.horizontal_resolution, self.samples_per_scan), dtype=np.uint8)
+            # Create matrices for noattack and attacked versions
+            noattack_frame_data = np.zeros((self.channels, self.horizontal_resolution, self.samples_per_scan), dtype=np.float32)
+            attack_frame_data = np.zeros_like(noattack_frame_data)
+            noattack_frame_labels = np.zeros((self.channels, self.horizontal_resolution, self.samples_per_scan), dtype=np.uint8)
+            attack_frame_labels = np.zeros_like(noattack_frame_labels)
+            
+            # Shared matrices
             answer_matrix = np.zeros((self.channels, self.horizontal_resolution), dtype=np.float32)
             azimuth_angles = np.full((self.channels, self.horizontal_resolution), np.nan, dtype=np.float32)
             timestamp_matrix = np.zeros((self.channels, self.horizontal_resolution), dtype=np.int64)
@@ -338,49 +473,41 @@ class LidarSignalDatasetGenerator:
                     # labeling: 0 = no return, 1 = legitimate return, 2 = HFR return
                     LEGITIMATE_PULSE = 1
                     HFR_PULSE = 2
-                    current_labels = np.zeros_like(signal, dtype=np.uint8)              
-                    current_labels[signal > 0.01] = LEGITIMATE_PULSE   # legitimate bin = 1
+
+                    # --- Base (No-Attack) Data ---
+                    noattack_signal = signal.copy()
+                    current_noattack_labels = np.zeros_like(signal, dtype=np.uint8)
+                    current_noattack_labels[noattack_signal > 0.01] = LEGITIMATE_PULSE
+
+                    # --- Attacked Data ---
+                    attack_signal = signal # This will be modified
+                    current_attack_labels = current_noattack_labels.copy()
 
                     if self.spoofer_type != "off":
                         # Proximity-based trigger logic
                         if actual_trigger_point is not None and self.spoofer.trigger_time is None:
-                            az_key_ideal = config.azimuth
-                            alt_key_ideal = config.altitude
-                            
-                            az_key_target = actual_trigger_point[0]
-                            alt_key_target = actual_trigger_point[1]
-
-                            # Check if the current ideal scan angle is 'close' to the target trigger angle
-                            azimuth_tolerance = 800
-                            altitude_tolerance = 400
-
-                            azimuth_diff = abs(az_key_ideal - az_key_target)
-                            azimuth_diff = min(azimuth_diff, 36000 - azimuth_diff)
-
+                            az_key_ideal, alt_key_ideal = config.azimuth, config.altitude
+                            az_key_target, alt_key_target = actual_trigger_point
+                            azimuth_tolerance, altitude_tolerance = 800, 400
+                            azimuth_diff = min(abs(az_key_ideal - az_key_target), 36000 - abs(az_key_ideal - az_key_target))
                             altitude_diff = abs(alt_key_ideal - alt_key_target)
 
-                            # Scan mode-dependent trigger logic
-                            if current_lidar.scan_mode == 'vertical':
-                                # Vertical mode: trigger when altitude matches (azimuth changes slowly)
-                                if altitude_diff <= altitude_tolerance:
-                                    self.spoofer.trigger(config, signal)
-                            else:
-                                # Horizontal mode: trigger when both azimuth and altitude match
-                                if azimuth_diff <= azimuth_tolerance and altitude_diff <= altitude_tolerance:
-                                    self.spoofer.trigger(config, signal)
+                            if (current_lidar.scan_mode == 'vertical' and altitude_diff <= altitude_tolerance) or \
+                               (current_lidar.scan_mode != 'vertical' and azimuth_diff <= azimuth_tolerance and altitude_diff <= altitude_tolerance):
+                                self.spoofer.trigger(config, signal)
                         
-                        external_signal = np.zeros_like(signal)
-                        
+                        external_signal = np.zeros_like(attack_signal)
                         is_in_attack_angle = (spoofer_attack_start_az <= config.azimuth <= spoofer_attack_end_az)
                         if spoofer_attack_start_az < 0:
                             is_in_attack_angle = (config.azimuth >= (36000 + spoofer_attack_start_az) or config.azimuth <= spoofer_attack_end_az)
+                        
                         if self.spoofer.trigger_time is not None and is_in_attack_angle:
                             external_signal = apply_noise(self.spoofer.get_range_signal(config.start_timestamp, config.accept_duration), ratio=0.01)
 
-                        current_labels = np.where(external_signal > signal, HFR_PULSE, current_labels)
-                        signal = np.maximum(signal, external_signal)
+                        current_attack_labels = np.where(external_signal > attack_signal, HFR_PULSE, current_attack_labels)
+                        attack_signal = np.maximum(attack_signal, external_signal)
 
-                    signal = np.clip(signal, 0, 9)
+                    attack_signal = np.clip(attack_signal, 0, 9);
 
                     # Use horizontal_index if available (channel-based architecture, collision-free)
                     if hasattr(config, 'horizontal_index') and config.horizontal_index is not None:
@@ -394,11 +521,15 @@ class LidarSignalDatasetGenerator:
                     vertical_index = self.altitude_to_sorted_v_idx_map.get(config.altitude)
 
                     if horizontal_index < self.horizontal_resolution and vertical_index is not None:
-                        frame_data[vertical_index, horizontal_index, :] = signal
-                        frame_labels[vertical_index, horizontal_index, :] = current_labels
+                        # Populate matrices for both versions
+                        noattack_frame_data[vertical_index, horizontal_index, :] = noattack_signal
+                        noattack_frame_labels[vertical_index, horizontal_index, :] = current_noattack_labels
+                        attack_frame_data[vertical_index, horizontal_index, :] = attack_signal
+                        attack_frame_labels[vertical_index, horizontal_index, :] = current_attack_labels
+                        
+                        # Populate shared matrices
                         answer_matrix[vertical_index, horizontal_index] = true_peak_time
                         timestamp_matrix[vertical_index, horizontal_index] = config.start_timestamp.in_nanoseconds
-                        # Store actual azimuth angle if available (for HDL-64E channel-based architecture)
                         if hasattr(config, 'azimuth_deg') and config.azimuth_deg is not None:
                             azimuth_angles[vertical_index, horizontal_index] = config.azimuth_deg
 
@@ -406,22 +537,6 @@ class LidarSignalDatasetGenerator:
                 pass
 
             if save_to_file:
-                frame_output_dir = os.path.join(self.output_dir, sample_token)
-                os.makedirs(frame_output_dir, exist_ok=True)
-
-                # Save data using blosc2
-                with open(os.path.join(frame_output_dir, 'signal.bl2'), 'wb') as f:
-                    f.write(blosc2.pack_array(frame_data))
-                with open(os.path.join(frame_output_dir, 'labels.bl2'), 'wb') as f:
-                    f.write(blosc2.pack_array(frame_labels))
-                with open(os.path.join(frame_output_dir, 'answer_matrix.bl2'), 'wb') as f:
-                    f.write(blosc2.pack_array(answer_matrix))
-                with open(os.path.join(frame_output_dir, 'angles.bl2'), 'wb') as f:
-                    f.write(blosc2.pack_array(azimuth_angles))
-                with open(os.path.join(frame_output_dir, 'timestamps.bl2'), 'wb') as f:
-                    f.write(blosc2.pack_array(timestamp_matrix))
-
-                # Save config to json
                 config_data = {
                     'original_bin_path': sample_info['path'],
                     'initial_azimuth_offset': float(initial_azimuth_offset),
@@ -429,8 +544,22 @@ class LidarSignalDatasetGenerator:
                     'fov': 360.0,
                     'time_resolution_ns': float(self.time_resolution_ns)
                 }
-                with open(os.path.join(frame_output_dir, 'config.json'), 'w') as f:
-                    json.dump(config_data, f, indent=2)
+
+                # Save "noattack" version
+                self._save_frame_data(
+                    sample_token=sample_token, status='noattack',
+                    signal_matrix=noattack_frame_data, labels_matrix=noattack_frame_labels,
+                    answer_matrix=answer_matrix, azimuth_angles=azimuth_angles,
+                    timestamp_matrix=timestamp_matrix, config_data=config_data
+                )
+
+                # Save "attacked" version
+                self._save_frame_data(
+                    sample_token=sample_token, status='attacked',
+                    signal_matrix=attack_frame_data, labels_matrix=attack_frame_labels,
+                    answer_matrix=answer_matrix, azimuth_angles=azimuth_angles,
+                    timestamp_matrix=timestamp_matrix, config_data=config_data
+                )
         
         print(f"Finished processing {num_frames} frames. Output saved in {self.output_dir}")
 
@@ -473,6 +602,8 @@ if __name__ == '__main__':
                         help="Output horizontal resolution in degrees (determines samples per channel). Auto-detected if not specified: HDL-64E=0.0818° (4400 samples), VLP32c/VLP16=0.2° (1800 samples).")
     parser.add_argument("--output-channels", type=int, default=None, choices=[16, 32, 64],
                         help="Number of output channels. For HDL-64E: 32 or 64 (default 64). For VLP32c: 32. For VLP16: 16. Auto-detected if not specified.")
+    parser.add_argument("--bin-format", type=str, default='nuscenes', choices=['nuscenes', 'kitti'],
+                        help="Output format for .bin files: 'nuscenes' (x,y,z,intensity,ring) or 'kitti' (x,y,z,intensity). Default: nuscenes")
 
     args = parser.parse_args()
 
@@ -502,7 +633,8 @@ if __name__ == '__main__':
         horizontal_resolution_deg=args.horizontal_resolution_deg,
         output_horizontal_resolution_deg=args.output_horizontal_resolution_deg,
         scan_mode=args.scan_mode,
-        output_channels=args.output_channels
+        output_channels=args.output_channels,
+        bin_format=args.bin_format
     )
     
     print("\nStarting dataset generation...")
