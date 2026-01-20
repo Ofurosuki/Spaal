@@ -4,12 +4,20 @@
 # This script processes all SYNC_ANGLE variations
 
 # Base directories
+<<<<<<< HEAD
 INPUT_BASE_DIR="/data2/yoshida/kitti_100/kitti/horizontal"
 OUTPUT_BASE_DIR="/data2/yoshida/kitti_100/baseline_denoised_64"
 
 # SYNC_ANGLE values to process
 #SYNC_ANGLES=(0_2 0_8 1 2 5 11 22 45)
 SYNC_ANGLES=(0_2 1)
+=======
+INPUT_BASE_DIR="D:/eval_cvpr2026/data/attacked_bl2"
+OUTPUT_BASE_DIR="D:/baseline/bl2"
+
+# SYNC_ANGLE values to process
+SYNC_ANGLES=(0_8)
+>>>>>>> 1bbb0ae6e35556cfcca48d13dbacc006f6112dd7
 
 # Denoising parameters
 MIN_TEMPLATE_SAMPLES=2
@@ -26,8 +34,13 @@ echo ""
 # Loop through each SYNC_ANGLE
 for SYNC_ANGLE in "${SYNC_ANGLES[@]}"
 do
+<<<<<<< HEAD
   INPUT_DIR="${INPUT_BASE_DIR}/${SYNC_ANGLE}"
   OUTPUT_DIR="${OUTPUT_BASE_DIR}/${SYNC_ANGLE}"
+=======
+  INPUT_DIR="${INPUT_BASE_DIR}/sync_${SYNC_ANGLE}"
+  OUTPUT_DIR="${OUTPUT_BASE_DIR}/sync_${SYNC_ANGLE}"
+>>>>>>> 1bbb0ae6e35556cfcca48d13dbacc006f6112dd7
 
   # Check if input directory exists
   if [ ! -d "${INPUT_DIR}" ]; then

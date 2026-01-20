@@ -8,11 +8,16 @@
       "Bash(./test_hdl64e_generator.sh:*)",
       "Bash(chmod:*)",
       "Bash(./evaluate_denoised.sh:*)",
+<<<<<<< HEAD
       "Bash(docker inspect:*)",
       "Bash(docker exec:*)",
       "Bash(cat:*)",
       "Bash(bash:*)",
       "Bash(ls:*)"
+=======
+      "Bash(cat:*)",
+      "Bash(./evaluation/evaluate_denoised.sh:*)"
+>>>>>>> 1bbb0ae6e35556cfcca48d13dbacc006f6112dd7
     ],
     "deny": [],
     "ask": [],

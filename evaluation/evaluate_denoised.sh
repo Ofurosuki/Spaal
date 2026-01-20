@@ -2,13 +2,30 @@
 
 # Evaluate denoised results against ground truth
 # This script evaluates all SYNC_ANGLE variations
+# Usage: ./evaluate_denoised.sh [--single-sample]
+
+# Parse command line arguments
+SINGLE_SAMPLE=false
+if [[ "$1" == "--single-sample" ]]; then
+  SINGLE_SAMPLE=true
+fi
 
 # Base directories
+<<<<<<< HEAD
 GT_DIR="/data2/yoshida/kitti_100/kitti_no_spoofer_64"
 #GT_DIR="/data2/yoshida/1121_data_gt"
 DENOISED_BASE_DIR="/data2/yoshida/kitti_100/baseline_denoised_64"
 
 RESULTS_DIR="/data2/yoshida/kitti_100/baseline_denoised_64/evaluation_results"
+=======
+GT_DIR="D:/eval_cvpr2026/data/gt_bl2"
+#DENOISED_BASE_DIR="D:/eval_cvpr2026/data/attacked_bl2"
+#DENOISED_BASE_DIR="D:/regression"
+DENOISED_BASE_DIR="D:/1108_ablation/dim24/bl2"
+#DENOISED_BASE_DIR="D:/kitti_denoised_bl2"
+#RESULTS_DIR="D:/eval_cvpr2026/evaluation_results/attacked"
+RESULTS_DIR="D:/1108_ablation/dim24"
+>>>>>>> 1bbb0ae6e35556cfcca48d13dbacc006f6112dd7
 
 # Evaluation parameters
 THRESHOLD=0.5  # meters
@@ -19,7 +36,20 @@ EVAL_ANGLE=90  # 0 degrees = front (user-facing coordinate system) # kitti coord
 EVAL_WIDTH=90  # 90 degrees width (matching spoofer-width-deg default)
 
 # SYNC_ANGLE values to evaluate
+<<<<<<< HEAD
 SYNC_ANGLES=(11 22 5 2 1 0_8 45)
+=======
+if [ "$SINGLE_SAMPLE" = true ]; then
+  SYNC_ANGLES=(1)  # Only first SYNC_ANGLE for debugging
+  MAX_SAMPLES_ARG="--max-samples 1"
+  echo "DEBUG MODE: Evaluating only 1 sample from SYNC_ANGLE=1"
+else
+  #SYNC_ANGLES=(0_2 0_8 1 2 5 11 22 45)
+  SYNC_ANGLES=(1)
+  #SYNC_ANGLES=(0_8)
+  MAX_SAMPLES_ARG=""
+fi
+>>>>>>> 1bbb0ae6e35556cfcca48d13dbacc006f6112dd7
 
 echo "Starting evaluation of denoised results..."
 echo "=================================================================="
@@ -76,6 +106,7 @@ do
     --plot \
     --save-csv \
     --output-dir "${OUTPUT_DIR}" \
+    ${MAX_SAMPLES_ARG} \
     > "${OUTPUT_DIR}/evaluation_log.txt" 2>&1
 
   if [ $? -eq 0 ]; then
