@@ -1,0 +1,26 @@
+KITTI Evaluation Package - File List
+====================================
+
+Core Python Files (Required):
+  calculate_map_kitti_official.py  - Main evaluation script
+  kitti_eval.py                     - Data structures (BBox3D, Detection, GroundTruth)
+  kitti_label_parser.py             - KITTI label file parser
+  evaluate_kitti_predictions.py     - Prediction JSON parser and IoU calculation
+  coordinate_transform.py           - Camera ↔ Velodyne coordinate transformations
+
+Documentation:
+  README.md                         - Complete documentation
+  QUICKSTART.md                     - Quick start guide
+  FILES.txt                         - This file
+
+Examples:
+  example_usage.sh                  - Example shell script
+
+Dependencies:
+  - numpy (install via: uv pip install numpy)
+  - Python standard library (json, sys, os, pathlib, typing, dataclasses, collections)
+
+Usage:
+  uv run python calculate_map_kitti_official.py <predictions.json> --gt-label-dir <path_to_labels>
+
+For more details, see README.md or QUICKSTART.md

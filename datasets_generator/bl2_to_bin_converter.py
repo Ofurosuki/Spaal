@@ -7,10 +7,17 @@ import json
 import blosc2
 from tqdm import tqdm
 
-def get_peak_time_and_amplitude(signal: np.ndarray) -> Tuple[float, float]:
+def get_peak_time_and_amplitude(signal: np.ndarray, min_peak_amplitude: float = 0.01) -> Tuple[float, float]:
     """
     Finds the interpolated time and amplitude of the highest peak in a signal.
     Returns (0.0, 0.0) if no peak is found.
+
+    Parameters:
+    -----------
+    signal : np.ndarray
+        Signal array
+    min_peak_amplitude : float
+        Minimum amplitude threshold for peak detection (default: 0.01)
     """
     raises = np.flatnonzero((signal[:-1] < 0.01) & (signal[1:] >= 0.01)) + 1
     if len(raises) == 0:
@@ -21,7 +28,7 @@ def get_peak_time_and_amplitude(signal: np.ndarray) -> Tuple[float, float]:
         return 0.0, 0.0
 
     peak_amplitude = np.max(peak_values)
-    if peak_amplitude < 0.01:
+    if peak_amplitude < min_peak_amplitude:
         return 0.0, 0.0
 
     highest_pulse_start_index = raises[np.argmax(peak_values)]
@@ -45,7 +52,7 @@ def get_peak_time_and_amplitude(signal: np.ndarray) -> Tuple[float, float]:
 
     return interpolated_time, peak_amplitude
 
-def reconstruct_point_cloud_from_bl2(sample_dir: str, amplitude_to_intensity_ratio: float = 255.0/10.0, use_answer_matrix: bool = False):
+def reconstruct_point_cloud_from_bl2(sample_dir: str, amplitude_to_intensity_ratio: float = 255.0/10.0, use_answer_matrix: bool = False, min_peak_amplitude: float = 0.01):
     """
     Reconstruct point cloud from bl2 files in a sample directory.
 
@@ -57,6 +64,8 @@ def reconstruct_point_cloud_from_bl2(sample_dir: str, amplitude_to_intensity_rat
         Ratio to convert signal amplitude to intensity
     use_answer_matrix : bool
         If True, use answer_matrix.bl2 instead of signal.bl2
+    min_peak_amplitude : float
+        Minimum amplitude threshold for peak detection (default: 0.01)
 
     Returns:
     --------
@@ -109,7 +118,7 @@ def reconstruct_point_cloud_from_bl2(sample_dir: str, amplitude_to_intensity_rat
         for h_idx in range(horizontal_resolution):
             if not is_prediction_local:
                 signal = hist_matrix[v_idx, h_idx, :]
-                highest_peak_time, peak_amplitude = get_peak_time_and_amplitude(signal)
+                highest_peak_time, peak_amplitude = get_peak_time_and_amplitude(signal, min_peak_amplitude)
 
                 if highest_peak_time == 0.0:
                     continue
@@ -149,7 +158,7 @@ def reconstruct_point_cloud_from_bl2(sample_dir: str, amplitude_to_intensity_rat
 
     return np.array(points, dtype=np.float32)
 
-def convert_bl2_to_bin(input_dir: str, output_dir: str, amplitude_to_intensity_ratio: float = 255.0/10.0, use_answer_matrix: bool = False, format: str = 'nuscenes'):
+def convert_bl2_to_bin(input_dir: str, output_dir: str, amplitude_to_intensity_ratio: float = 255.0/10.0, use_answer_matrix: bool = False, format: str = 'nuscenes', min_peak_amplitude: float = 0.01):
     """
     Convert all bl2 datasets in input directory to .bin files.
 
@@ -165,6 +174,8 @@ def convert_bl2_to_bin(input_dir: str, output_dir: str, amplitude_to_intensity_r
         If True, use answer_matrix.bl2 instead of signal.bl2
     format : str
         Output format: 'nuscenes' (5 elements) or 'kitti' (4 elements)
+    min_peak_amplitude : float
+        Minimum amplitude threshold for peak detection (default: 0.01)
     """
     # Get all sample directories
     sample_dirs = sorted([d for d in os.listdir(input_dir) if os.path.isdir(os.path.join(input_dir, d))])
@@ -175,6 +186,7 @@ def convert_bl2_to_bin(input_dir: str, output_dir: str, amplitude_to_intensity_r
     print(f"Found {len(sample_dirs)} sample directories")
     print(f"Output format: {format}")
     print(f"Amplitude to intensity ratio: {amplitude_to_intensity_ratio}")
+    print(f"Min peak amplitude threshold: {min_peak_amplitude}")
 
     # Create output directory
     os.makedirs(output_dir, exist_ok=True)
@@ -187,7 +199,8 @@ def convert_bl2_to_bin(input_dir: str, output_dir: str, amplitude_to_intensity_r
         point_cloud = reconstruct_point_cloud_from_bl2(
             sample_dir,
             amplitude_to_intensity_ratio=amplitude_to_intensity_ratio,
-            use_answer_matrix=use_answer_matrix
+            use_answer_matrix=use_answer_matrix,
+            min_peak_amplitude=min_peak_amplitude
         )
 
         if len(point_cloud) == 0:
@@ -228,6 +241,8 @@ if __name__ == '__main__':
                         help="Use answer_matrix.bl2 instead of signal.bl2 for reconstruction.")
     parser.add_argument("--format", type=str, default='nuscenes', choices=['nuscenes', 'kitti'],
                         help="Output format: 'nuscenes' (x,y,z,intensity,ring) or 'kitti' (x,y,z,intensity). Default: nuscenes")
+    parser.add_argument("--min-peak-amplitude", type=float, default=0.01,
+                        help="Minimum amplitude threshold for peak detection. Points with peak amplitude below this value will be excluded (default: 0.01).")
 
     args = parser.parse_args()
 
@@ -236,5 +251,6 @@ if __name__ == '__main__':
         output_dir=args.output_dir,
         amplitude_to_intensity_ratio=args.amplitude_to_intensity_ratio,
         use_answer_matrix=args.use_answer_matrix,
-        format=args.format
+        format=args.format,
+        min_peak_amplitude=args.min_peak_amplitude
     )

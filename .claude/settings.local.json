@@ -7,7 +7,12 @@
       "Bash(python:*)",
       "Bash(./test_hdl64e_generator.sh:*)",
       "Bash(chmod:*)",
-      "Bash(./evaluate_denoised.sh:*)"
+      "Bash(./evaluate_denoised.sh:*)",
+      "Bash(docker inspect:*)",
+      "Bash(docker exec:*)",
+      "Bash(cat:*)",
+      "Bash(bash:*)",
+      "Bash(ls:*)"
     ],
     "deny": [],
     "ask": [],

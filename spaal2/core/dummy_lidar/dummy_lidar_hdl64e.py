@@ -85,7 +85,7 @@ class PcdLidarHDL64E:
     vertical_angles: list[float] = [fa.v_angle for fa in fire_angles]
 
 
-    def __init__(self, pcd_file_path: Optional[str], lidar_position: np.ndarray, lidar_rotation: np.ndarray, base_timestamp: PreciseDuration = PreciseDuration(nanoseconds=0), amplitude: float = 1.0, pulse_width: PreciseDuration = PreciseDuration(nanoseconds=10), time_resolution_ns: float = 1.0, intensity_to_amplitude_ratio: float = 12.0, initial_point_offset: int = 0, scan_mode: str = 'horizontal', horizontal_resolution_deg: float = 0.1, output_horizontal_resolution_deg: float = 0.0818, output_channels: int = 64) -> None:
+    def __init__(self, pcd_file_path: Optional[str], lidar_position: np.ndarray, lidar_rotation: np.ndarray, base_timestamp: PreciseDuration = PreciseDuration(nanoseconds=0), amplitude: float = 1.0, pulse_width: PreciseDuration = PreciseDuration(nanoseconds=10), time_resolution_ns: float = 1.0, intensity_to_amplitude_ratio: float = 8.0, initial_point_offset: int = 0, scan_mode: str = 'horizontal', horizontal_resolution_deg: float = 0.1, output_horizontal_resolution_deg: float = 0.0818, output_channels: int = 64) -> None:
         self.index: int = 0
         self.horizontal_resolution_deg = horizontal_resolution_deg  # Internal resolution (0.1° for fine-grained depth map)
         self.output_horizontal_resolution_deg = output_horizontal_resolution_deg  # Output resolution (0.0818° = 4400 samples for ML training)

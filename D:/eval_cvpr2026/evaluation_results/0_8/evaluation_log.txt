@@ -1,0 +1,19 @@
+Found 100 matching subdirectories to evaluate
+Evaluation will be restricted to azimuth angle: 90.0° ± 45.0° (width: 90.0°)
+
+Evaluating subdirectories...
+Processing frames:   0%|          | 0/100 [00:00<?, ?it/s]Processing frames:   0%|          | 0/100 [00:00<?, ?it/s]
+Traceback (most recent call last):
+  File "/home/yoshida/Spaal/evaluation/compare_directories_bl2.py", line 402, in <module>
+    overall_mae, overall_accuracy, results = evaluator.evaluate()
+  File "/home/yoshida/Spaal/evaluation/compare_directories_bl2.py", line 323, in evaluate
+    result = self._evaluate_single_pair(subdir)
+  File "/home/yoshida/Spaal/evaluation/compare_directories_bl2.py", line 200, in _evaluate_single_pair
+    gt_matrix = self._load_bl2(gt_signal_path)
+  File "/home/yoshida/Spaal/evaluation/compare_directories_bl2.py", line 99, in _load_bl2
+    data = blosc2.unpack_array(f.read())
+  File "/home/yoshida/Spaal/.venv/lib/python3.9/site-packages/blosc2/core.py", line 393, in unpack_array
+    pickled_array = decompress(packed_array)
+  File "/home/yoshida/Spaal/.venv/lib/python3.9/site-packages/blosc2/core.py", line 186, in decompress
+    return blosc2_ext.decompress(src, dst, as_bytearray)
+KeyboardInterrupt

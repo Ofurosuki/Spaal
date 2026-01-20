@@ -4,20 +4,22 @@
 # This script evaluates all SYNC_ANGLE variations
 
 # Base directories
-GT_DIR="D:/eval_cvpr2026/data/gt_bl2"
-DENOISED_BASE_DIR="D:/eval_cvpr2026/data/denoised_bl2"
-RESULTS_DIR="D:/eval_cvpr2026/evaluation_results"
+GT_DIR="/data2/yoshida/kitti_100/kitti_no_spoofer_64"
+#GT_DIR="/data2/yoshida/1121_data_gt"
+DENOISED_BASE_DIR="/data2/yoshida/kitti_100/baseline_denoised_64"
+
+RESULTS_DIR="/data2/yoshida/kitti_100/baseline_denoised_64/evaluation_results"
 
 # Evaluation parameters
 THRESHOLD=0.5  # meters
 MIN_GT_DISTANCE=0.0  # meters
 
 # Angle restriction parameters (matching spoofer attack cone)
-EVAL_ANGLE=0  # 0 degrees = front (user-facing coordinate system)
+EVAL_ANGLE=90  # 0 degrees = front (user-facing coordinate system) # kitti coordinate: 90 degrees nuscenes coordinate: 0 degrees
 EVAL_WIDTH=90  # 90 degrees width (matching spoofer-width-deg default)
 
 # SYNC_ANGLE values to evaluate
-SYNC_ANGLES=(0_2 0_8 1 2 5 11 22 45)
+SYNC_ANGLES=(11 22 5 2 1 0_8 45)
 
 echo "Starting evaluation of denoised results..."
 echo "=================================================================="
@@ -43,8 +45,10 @@ echo "" >> "${SUMMARY_FILE}"
 # Loop through each SYNC_ANGLE
 for SYNC_ANGLE in "${SYNC_ANGLES[@]}"
 do
-  DENOISED_DIR="${DENOISED_BASE_DIR}/sync_${SYNC_ANGLE}"
-  OUTPUT_DIR="${RESULTS_DIR}/sync_${SYNC_ANGLE}"
+  #DENOISED_DIR="${DENOISED_BASE_DIR}/sync_${SYNC_ANGLE}"
+  #OUTPUT_DIR="${RESULTS_DIR}/sync_${SYNC_ANGLE}"
+  DENOISED_DIR="${DENOISED_BASE_DIR}/${SYNC_ANGLE}"
+  OUTPUT_DIR="${RESULTS_DIR}/${SYNC_ANGLE}"
 
   # Check if denoised directory exists
   if [ ! -d "${DENOISED_DIR}" ]; then

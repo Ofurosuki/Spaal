@@ -1,0 +1,15 @@
+Evaluation Summary
+==================
+Date: 2025年 11月 10日 月曜日 07:32:04 JST
+Threshold: 0.5m
+Min GT Distance: 0.0m
+Evaluation Angle: 90° ± 90/2° (width: 90°)
+
+sync_0_2: MAE=m, Accuracy=%
+sync_0_8: FAILED
+sync_1: FAILED
+sync_2: FAILED
+sync_5: FAILED
+sync_11: FAILED
+sync_22: FAILED
+sync_45: FAILED
