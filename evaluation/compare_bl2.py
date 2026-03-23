@@ -224,15 +224,11 @@ class Bl2Evaluator:
         if gt_distances.shape != signal_distances.shape:
             raise ValueError(f"Shape mismatch between GT distances {gt_distances.shape} and signal distances {signal_distances.shape}")
 
-<<<<<<< HEAD
         # Create angle mask if angle restriction is specified
         angle_mask = self._create_angle_mask(gt_distances.shape, self.gt_directory)
 
         # Calculate metrics with both distance and angle masks
         valid_pixels_mask = (gt_distances > self.min_gt_distance) & angle_mask
-=======
-        valid_pixels_mask = gt_distances >= self.min_gt_distance
->>>>>>> 1bbb0ae6e35556cfcca48d13dbacc006f6112dd7
         total_pixels = gt_distances.size
         total_valid_pixels = np.sum(valid_pixels_mask)
         total_angle_pixels = np.sum(angle_mask)

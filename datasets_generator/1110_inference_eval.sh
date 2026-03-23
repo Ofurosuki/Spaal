@@ -2,7 +2,8 @@
 
 set -e  # Exit on error
 
-ANGLES=(0_2 0_8 1 2 5 11 22 45)
+#ANGLES=(0_2 0_8 1 2 5 11 22 45)
+ANGLES=(5)
 BASE_DIR="/data2/yoshida/kitti_100"
 
 # Docker configuration

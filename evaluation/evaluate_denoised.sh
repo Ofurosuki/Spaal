@@ -11,45 +11,26 @@ if [[ "$1" == "--single-sample" ]]; then
 fi
 
 # Base directories
-<<<<<<< HEAD
-GT_DIR="/data2/yoshida/kitti_100/kitti_no_spoofer_64"
-#GT_DIR="/data2/yoshida/1121_data_gt"
-DENOISED_BASE_DIR="/data2/yoshida/kitti_100/baseline_denoised_64"
+#GT_DIR="/data2/yoshida/kitti_100/kitti_no_spoofer_64"
+GT_DIR="/data2/yoshida/1121_data_gt" # nuscenes gt
+#DENOISED_BASE_DIR="/data2/yoshida/kitti_100/baseline_denoised_64"
+#DENOISED_BASE_DIR="/data2/yoshida/kitti_100/swin_denoised_64"
+#DENOISED_BASE_DIR="/data2/yoshida/kitti_100/swin_denoised_64"
+DENOISED_BASE_DIR="/data2/yoshida/denoised_transformer_bl2"
 
-RESULTS_DIR="/data2/yoshida/kitti_100/baseline_denoised_64/evaluation_results"
-=======
-GT_DIR="D:/eval_cvpr2026/data/gt_bl2"
-#DENOISED_BASE_DIR="D:/eval_cvpr2026/data/attacked_bl2"
-#DENOISED_BASE_DIR="D:/regression"
-DENOISED_BASE_DIR="D:/1108_ablation/dim24/bl2"
-#DENOISED_BASE_DIR="D:/kitti_denoised_bl2"
-#RESULTS_DIR="D:/eval_cvpr2026/evaluation_results/attacked"
-RESULTS_DIR="D:/1108_ablation/dim24"
->>>>>>> 1bbb0ae6e35556cfcca48d13dbacc006f6112dd7
+RESULTS_DIR="/data2/yoshida/denoised_transformer_bl2/evaluation_results"
 
 # Evaluation parameters
 THRESHOLD=0.5  # meters
 MIN_GT_DISTANCE=0.0  # meters
 
 # Angle restriction parameters (matching spoofer attack cone)
-EVAL_ANGLE=90  # 0 degrees = front (user-facing coordinate system) # kitti coordinate: 90 degrees nuscenes coordinate: 0 degrees
+EVAL_ANGLE=0  # 0 degrees = front (user-facing coordinate system) # kitti coordinate: 90 degrees nuscenes coordinate: 0 degrees
 EVAL_WIDTH=90  # 90 degrees width (matching spoofer-width-deg default)
 
 # SYNC_ANGLE values to evaluate
-<<<<<<< HEAD
-SYNC_ANGLES=(11 22 5 2 1 0_8 45)
-=======
-if [ "$SINGLE_SAMPLE" = true ]; then
-  SYNC_ANGLES=(1)  # Only first SYNC_ANGLE for debugging
-  MAX_SAMPLES_ARG="--max-samples 1"
-  echo "DEBUG MODE: Evaluating only 1 sample from SYNC_ANGLE=1"
-else
-  #SYNC_ANGLES=(0_2 0_8 1 2 5 11 22 45)
-  SYNC_ANGLES=(1)
-  #SYNC_ANGLES=(0_8)
-  MAX_SAMPLES_ARG=""
-fi
->>>>>>> 1bbb0ae6e35556cfcca48d13dbacc006f6112dd7
+SYNC_ANGLES=(sync_11 sync_22 sync_5 sync_2 sync_1 sync_0_8 sync_0_2 sync_45)
+#SYNC_ANGLES=(sync_5)
 
 echo "Starting evaluation of denoised results..."
 echo "=================================================================="

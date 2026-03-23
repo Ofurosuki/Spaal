@@ -73,6 +73,42 @@ KITTI_TO_NUSCENES_CLASS = {
 }
 
 
+def is_in_angle_range(x: float, y: float, center_angle: float, angle_width: float) -> bool:
+    """
+    Check if a point is within the specified angle range.
+
+    Args:
+        x: X coordinate (forward in KITTI lidar frame)
+        y: Y coordinate (left in KITTI lidar frame)
+        center_angle: Center angle in degrees (0°=forward, 90°=left, -90°=right)
+        angle_width: Total width of angle range in degrees (e.g., 180 for ±90°)
+
+    Returns:
+        True if within range
+    """
+    angle = np.arctan2(y, x) * 180.0 / np.pi
+
+    half_width = angle_width / 2.0
+    min_angle = center_angle - half_width
+    max_angle = center_angle + half_width
+
+    def normalize(a):
+        while a > 180:
+            a -= 360
+        while a < -180:
+            a += 360
+        return a
+
+    angle = normalize(angle)
+    min_angle = normalize(min_angle)
+    max_angle = normalize(max_angle)
+
+    if min_angle <= max_angle:
+        return min_angle <= angle <= max_angle
+    else:
+        return angle >= min_angle or angle <= max_angle
+
+
 def kitti_to_detection_box(bbox_3d: np.ndarray, score: float, class_name: str,
                            sample_token: str, velocity: Tuple[float, float] = (0.0, 0.0)) -> DetectionBox:
     """
@@ -140,6 +176,8 @@ def evaluate_nuscenes_style(
     filter_kitti_range: bool = False,
     x_range: Tuple[float, float] = (0.0, 70.0),
     y_range: Tuple[float, float] = (-40.0, 40.0),
+    center_angle: float = None,
+    angle_width: float = None,
     verbose: bool = False
 ):
     """
@@ -181,6 +219,12 @@ def evaluate_nuscenes_style(
         print(f"  Y range: [{y_range[0]:.1f}, {y_range[1]:.1f}] meters (lateral)")
     else:
         print(f"KITTI range filtering: DISABLED (evaluating all predictions)")
+
+    use_angle_filter = center_angle is not None and angle_width is not None
+    if use_angle_filter:
+        print(f"Angle filtering: ENABLED")
+        print(f"  Center: {center_angle}°, Width: {angle_width}° "
+              f"(range: {center_angle - angle_width/2:.1f}° to {center_angle + angle_width/2:.1f}°)")
 
     # Create detection config using official nuScenes config
     cfg = create_nuscenes_style_config()
@@ -228,6 +272,11 @@ def evaluate_nuscenes_style(
             dets = filtered_dets
         total_preds_after_range_filter += len(dets)
 
+        # Filter by angle range
+        if use_angle_filter:
+            dets = [d for d in dets
+                    if is_in_angle_range(d.bbox.x, d.bbox.y, center_angle, angle_width)]
+
         # Convert to DetectionBox
         pred_boxes = []
         for det in dets:
@@ -258,6 +307,11 @@ def evaluate_nuscenes_style(
 
         # Filter GT by class
         gts = [g for g in gts if g.class_name == target_class]
+
+        # Filter GT by angle range
+        if use_angle_filter:
+            gts = [g for g in gts
+                   if is_in_angle_range(g.bbox.x, g.bbox.y, center_angle, angle_width)]
 
         # Convert to DetectionBox
         gt_boxes = []
@@ -292,7 +346,11 @@ def evaluate_nuscenes_style(
               f"({total_preds_after_range_filter/total_preds_after_score_filter*100:.1f}% of scored)")
         excluded = total_preds_after_score_filter - total_preds_after_range_filter
         if excluded > 0:
-            print(f"  ⚠️  Excluded {excluded} predictions outside KITTI range")
+            print(f"  Excluded {excluded} predictions outside KITTI range")
+
+    if use_angle_filter:
+        print(f"  After angle filter ({center_angle}° ±{angle_width/2:.0f}°): {total_preds} "
+              f"({total_preds/max(total_preds_after_range_filter,1)*100:.1f}% of range-filtered)")
 
     print(f"\nFinal predictions for evaluation: {total_preds}")
     print(f"Total ground truth: {total_gts}")
@@ -401,6 +459,9 @@ def evaluate_nuscenes_style(
             f.write(f"KITTI range filter: ENABLED\n")
             f.write(f"  X range: [{x_range[0]:.1f}, {x_range[1]:.1f}] meters\n")
             f.write(f"  Y range: [{y_range[0]:.1f}, {y_range[1]:.1f}] meters\n")
+        if use_angle_filter:
+            f.write(f"Angle filter: center={center_angle}°, width={angle_width}° "
+                    f"(range: {center_angle - angle_width/2:.1f}° to {center_angle + angle_width/2:.1f}°)\n")
         f.write("\n")
 
         f.write(f"Total predictions: {total_preds}\n")
@@ -459,6 +520,14 @@ if __name__ == "__main__":
                         help='Maximum Y coordinate (lateral) in meters (default: 40.0)')
     parser.add_argument('--verbose', action='store_true',
                         help='Print verbose output')
+    parser.add_argument('--center-angle', type=float, default=None,
+                        help='Center angle in degrees for angle-based filtering '
+                             '(KITTI lidar: 0°=forward/+X, 90°=left/+Y, -90°=right/-Y). '
+                             'Requires --angle-width.')
+    parser.add_argument('--angle-width', type=float, default=None,
+                        help='Total width of angle range in degrees '
+                             '(e.g., 180 for ±90° front half, 90 for ±45°). '
+                             'Requires --center-angle.')
 
     args = parser.parse_args()
 
@@ -470,5 +539,7 @@ if __name__ == "__main__":
         args.filter_kitti_range,
         (args.x_min, args.x_max),
         (args.y_min, args.y_max),
+        args.center_angle,
+        args.angle_width,
         args.verbose
     )
