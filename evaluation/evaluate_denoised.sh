@@ -12,15 +12,16 @@ fi
 
 # Base directories
 GT_DIR="D:/eval_cvpr2026/data/gt_bl2"
-#DENOISED_BASE_DIR="D:/eval_cvpr2026/data/attacked_bl2"
+DENOISED_BASE_DIR="D:/eval_cvpr2026/data/denoised_bl2"
 #DENOISED_BASE_DIR="D:/regression"
-DENOISED_BASE_DIR="D:/1108_ablation/dim24/bl2"
+#DENOISED_BASE_DIR="D:/1108_ablation/dim24/bl2"
 #DENOISED_BASE_DIR="D:/kitti_denoised_bl2"
 #RESULTS_DIR="D:/eval_cvpr2026/evaluation_results/attacked"
-RESULTS_DIR="D:/1108_ablation/dim24"
+#RESULTS_DIR="D:/1108_ablation/dim24"
+RESULTS_DIR="D:/cvpr2026_data/dump"
 
 # Evaluation parameters
-THRESHOLD=0.5  # meters
+THRESHOLD=0.05  # meters
 MIN_GT_DISTANCE=0.0  # meters
 
 # Angle restriction parameters (matching spoofer attack cone)

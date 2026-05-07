@@ -239,7 +239,8 @@ class DirectoryBl2Evaluator:
         has_gt_detection = gt_distances > self.min_gt_distance
         has_denoised_detection = denoised_distances > self.min_gt_distance
 
-        valid_pixels_mask = (has_gt_detection | has_denoised_detection) & angle_mask
+        #valid_pixels_mask = (has_gt_detection | has_denoised_detection) & angle_mask
+        valid_pixels_mask = (gt_distances > self.min_gt_distance) & angle_mask
         total_valid_pixels = np.sum(valid_pixels_mask)
         total_angle_pixels = np.sum(angle_mask)
 

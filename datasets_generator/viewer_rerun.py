@@ -6,7 +6,8 @@ import os
 rr.init("kitti_visualizer", spawn=True)
 
 # .bin ファイルの検索パターンを定義
-search_pattern = "D:/cvpr2026_data/test/4.0/*/attacked/bin/*.bin"
+#search_pattern = "D:/cvpr2026_data/test/4.0/*/attacked/bin/*.bin"
+search_pattern = "D:/eval_cvpr2026/data/denoised_transformer_bin/*.bin"
 bin_files = sorted(glob.glob(search_pattern))
 
 if not bin_files:
